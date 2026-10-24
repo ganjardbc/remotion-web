@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Image</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:960px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 16px; }
+  .ratio-row { display:flex; gap:24px; flex-wrap:wrap; }
+  .ratio-box { background:var(--color-surface-alt); border:1px solid var(--color-surface-border); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:12px; color:var(--color-surface-text-muted); border-radius:var(--radius-md); }
+  .overlay-demo { position:relative; width:280px; height:180px; border-radius:var(--radius-md); overflow:hidden; background:linear-gradient(135deg,#6b7fc7,#3051b8); }
+  .overlay-demo::after { content:""; position:absolute; inset:0; background:var(--color-ground); opacity:.55; }
+  .overlay-demo span { position:relative; z-index:1; color:#fff; font-family:var(--font-heading); font-weight:800; }
+  .overlay-demo { display:flex; align-items:center; justify-content:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Foto di sistem ini tampil apa adanya — warna asli, bukan grayscale. Yang konsisten adalah rasio crop dan radius sudut, bukan filter warna.</p>
+
+  <div class="section-title">Rasio crop</div>
+  <div class="ratio-row">
+    <div class="ratio-box" style="width:180px; height:180px; border-radius:var(--radius-full);">1:1 — circle<br>(avatar foto)</div>
+    <div class="ratio-box" style="width:180px; height:225px;">4:5<br>(carousel/post)</div>
+    <div class="ratio-box" style="width:240px; height:135px;">16:9<br>(video thumbnail, hero)</div>
+  </div>
+
+  <div class="section-title">Radius per konteks</div>
+  <p class="body-text text-muted">Foto profil/avatar → <code>--radius-full</code> (lingkaran, biasanya + ring putih 4–6px). Foto konten di dalam card/artikel → <code>--radius-md</code>. Foto full-bleed di hero/banner → tanpa radius.</p>
+
+  <div class="section-title">Overlay tint (buat hero/banner di atas foto)</div>
+  <div class="overlay-demo"><span>Headline di atas foto</span></div>
+  <p class="body-text text-muted" style="margin-top:12px;">Kalau perlu naruh teks putih di atas foto (hero section), kasih overlay <code>--color-ground</code> opacity ~55% biar kontras teks terjaga tanpa foto ilang sama sekali. Jangan pakai hitam polos — overlay tetap harus kerasa brand.</p>
+
+  <div class="section-title">Do &amp; Don't</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li>✅ Warna foto asli, jangan di-desaturate</li>
+    <li>✅ Ring putih di avatar foto profil (4–6px) buat separasi dari ground biru</li>
+    <li>❌ Jangan taruh teks langsung di atas foto tanpa overlay — kontrasnya gak terjamin</li>
+    <li>❌ Jangan campur rasio crop dalam satu grid/carousel yang sama</li>
+  </ul>
+</div>
+</body>
+</html>

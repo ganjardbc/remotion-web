@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Components — Wayfinding</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:600px; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-title">Breadcrumb</div>
+  <nav class="breadcrumb">
+    <a href="#">Beranda</a><span class="sep">/</span>
+    <a href="#">Konten</a><span class="sep">/</span>
+    <span class="current">Draft #12</span>
+  </nav>
+
+  <div class="section-title">Pagination</div>
+  <div class="pagination">
+    <div class="page-item is-disabled">‹</div>
+    <div class="page-item is-active">1</div>
+    <div class="page-item">2</div>
+    <div class="page-item">3</div>
+    <div class="page-item">…</div>
+    <div class="page-item">9</div>
+    <div class="page-item">›</div>
+  </div>
+</div>
+</body>
+</html>

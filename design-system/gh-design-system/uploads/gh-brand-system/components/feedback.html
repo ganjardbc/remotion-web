@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Components — Feedback</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:600px; display:flex; flex-direction:column; gap:12px; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-title">Alert</div>
+  <div class="alert alert-info"><span><span class="alert-title">Info</span>Update tersedia buat sistem ini.</span></div>
+  <div class="alert alert-success"><span><span class="alert-title">Berhasil</span>Perubahan udah disimpan.</span></div>
+  <div class="alert alert-warning"><span><span class="alert-title">Peringatan</span>Sesi kamu bakal habis dalam 5 menit.</span></div>
+  <div class="alert alert-danger"><span><span class="alert-title">Gagal</span>Gak bisa nyimpen perubahan, coba lagi.</span></div>
+
+  <div class="section-title">Toast</div>
+  <div style="position:relative; height:100px;">
+    <div class="toast-stack" style="position:absolute; bottom:0; right:0;">
+      <div class="toast toast-success">Item berhasil ditambahkan.</div>
+      <div class="toast toast-danger">Upload gagal — coba lagi.</div>
+    </div>
+  </div>
+
+  <div class="section-title">Tooltip</div>
+  <div class="tooltip">
+    <button class="btn btn-outline">Hover aku</button>
+    <div class="tooltip-bubble">Ini isi tooltip-nya</div>
+  </div>
+</div>
+</body>
+</html>

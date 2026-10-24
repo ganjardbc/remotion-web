@@ -1,0 +1,11 @@
+:root{
+  --bp-sm:480px;--bp-md:768px;--bp-lg:1080px;--bp-xl:1440px;
+  --container-sm:480px;--container-md:720px;--container-lg:960px;--container-xl:1200px;
+  --grid-columns:12; /* @kind other */
+  --grid-gutter:var(--space-4);
+}
+.container{width:100%;max-width:var(--container-xl);margin:0 auto;padding:0 var(--space-4);box-sizing:border-box}
+.container-sm{max-width:var(--container-sm)}.container-md{max-width:var(--container-md)}.container-lg{max-width:var(--container-lg)}
+.grid{display:grid;grid-template-columns:repeat(var(--grid-columns),1fr);gap:var(--grid-gutter)}
+.col-2{grid-column:span 2}.col-3{grid-column:span 3}.col-4{grid-column:span 4}.col-6{grid-column:span 6}.col-8{grid-column:span 8}.col-12{grid-column:span 12}
+@media (max-width:767px){.grid>[class*="col-"]{grid-column:1/-1}}

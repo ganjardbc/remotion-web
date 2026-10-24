@@ -1,0 +1,22 @@
+:root{
+  --font-heading:"Poppins",system-ui,sans-serif;--font-body:"Poppins",system-ui,sans-serif;--font-mono:ui-monospace,"SF Mono","Courier New",monospace;
+  /* Case is dynamic: mixed-case by default; flip to uppercase with .is-upper or by setting --case-display / --case-label. */
+  --case-display:none; /* @kind other */
+  --case-label:none; /* @kind other */
+  --weight-regular:400;--weight-medium:500;--weight-semibold:600;--weight-bold:700;--weight-extrabold:800;--weight-black:900;
+  --text-xs:13px;--text-sm:15px;--text-md:17px;--text-lg:20px;--text-xl:24px;--text-2xl:32px;--text-3xl:40px;--text-4xl:56px;
+}
+body{font-family:var(--font-body);font-weight:var(--weight-regular);color:var(--color-surface-text);background:var(--color-surface)}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-heading);font-weight:var(--weight-bold);line-height:1.2;letter-spacing:-0.02em;margin:0}
+h1{font-size:var(--text-4xl)}h2{font-size:var(--text-3xl)}h3{font-size:var(--text-2xl)}h4{font-size:var(--text-xl)}h5{font-size:var(--text-lg)}h6{font-size:var(--text-md);font-weight:var(--weight-semibold)}
+p,.body-text{font-family:var(--font-body);font-weight:var(--weight-regular);font-size:var(--text-md);line-height:1.6;margin:0}
+.body-lg{font-size:var(--text-lg);line-height:1.6}.body-sm{font-size:var(--text-sm);line-height:1.55}
+.caption{font-size:var(--text-xs);line-height:1.4;color:var(--color-surface-text-muted)}
+.overline{font-family:var(--font-mono);font-size:var(--text-xs);font-weight:var(--weight-medium);text-transform:var(--case-label);letter-spacing:.04em;color:var(--color-surface-text-muted)}
+.mono{font-family:var(--font-mono)}
+.is-upper{--case-display:uppercase;--case-label:uppercase}
+.text-muted{color:var(--color-surface-text-muted)}.accent{color:var(--color-accent)}.primary{color:var(--color-primary)}.accent-2{color:var(--color-accent-2)}
+.display-1,.display-2,.display-3{font-family:var(--font-heading);font-weight:var(--weight-extrabold);text-transform:var(--case-display);line-height:1.08;letter-spacing:-0.025em;margin:0}
+.display-1{font-size:64px}.display-2{font-size:44px}.display-3{font-size:30px}
+a{color:var(--color-primary);text-decoration:none}a:hover{text-decoration:underline}
+a:focus-visible{outline:none;box-shadow:var(--focus-ring);border-radius:4px}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Motion</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:800px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 16px; }
+  .demo-btn { padding:14px 24px; border-radius:var(--radius-sm); background:var(--color-accent-100); color:var(--color-accent-800); border:none; font-family:var(--font-heading); font-weight:600; cursor:pointer; }
+  .demo-btn:hover { background:var(--color-accent-600); color:#fff; }
+  .fast { transition: background-color var(--duration-fast) var(--easing-standard), color var(--duration-fast) var(--easing-standard); }
+  .base { transition: background-color var(--duration-base) var(--easing-standard), color var(--duration-base) var(--easing-standard); }
+  .slow { transition: background-color var(--duration-slow) var(--easing-standard), color var(--duration-slow) var(--easing-standard); }
+  .row { display:flex; gap:20px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Tiga durasi, tiga easing — hover tombol di bawah buat ngerasain bedanya. Jangan tulis angka ms atau bezier manual di komponen baru, pakai token ini.</p>
+
+  <div class="section-title">Durasi (hover buat coba)</div>
+  <div class="row">
+    <button class="demo-btn fast">fast — 120ms</button>
+    <button class="demo-btn base">base — 180ms</button>
+    <button class="demo-btn slow">slow — 280ms</button>
+  </div>
+
+  <div class="section-title">Kapan pakai yang mana</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li><code>--duration-fast</code> — feedback state kecil: hover/active tombol, tag, link</li>
+    <li><code>--duration-base</code> — default buat hampir semua transisi (border, background, shadow)</li>
+    <li><code>--duration-slow</code> — perubahan besar: modal muncul, dropdown terbuka, progress bar mengisi</li>
+  </ul>
+
+  <div class="section-title">Easing</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li><code>--easing-standard</code> — default, dipakai hampir di semua tempat</li>
+    <li><code>--easing-decelerate</code> — elemen masuk/muncul (modal, dropdown open) — mulai cepat, berhenti halus</li>
+    <li><code>--easing-accelerate</code> — elemen keluar/hilang — mulai pelan, cepat di akhir</li>
+  </ul>
+</div>
+</body>
+</html>

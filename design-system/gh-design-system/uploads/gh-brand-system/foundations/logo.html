@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Logo usage</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:900px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 16px; }
+  .clearspace-demo { position:relative; width:220px; height:220px; border:2px dashed var(--color-accent-400); border-radius:var(--radius-full); display:flex; align-items:center; justify-content:center; margin:0 auto; }
+  .clearspace-demo .badge { width:110px; height:110px; }
+  .clearspace-demo .badge img { width:60%; }
+  .clearspace-label { text-align:center; font-family:var(--font-mono); font-size:12px; color:var(--color-accent-700); margin-top:10px; }
+  .size-row { display:flex; gap:32px; align-items:flex-end; }
+  .misuse-row { display:flex; gap:24px; flex-wrap:wrap; }
+  .misuse-card { width:160px; text-align:center; }
+  .misuse-card .badge { margin:0 auto 10px; }
+  .misuse-card span { font-size:12px; color:var(--color-danger); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-title">Clear space</div>
+  <div class="clearspace-demo">
+    <div class="badge"><img src="../assets/gh-logo.png" alt="GH"></div>
+  </div>
+  <div class="clearspace-label">Ruang kosong minimum di semua sisi ≥ 0.5× tinggi mark itu sendiri</div>
+
+  <div class="section-title">Ukuran minimum</div>
+  <div class="size-row">
+    <div style="text-align:center;"><div class="badge" style="width:24px; height:24px;"><img src="../assets/gh-logo.png" alt="GH"></div><div class="clearspace-label" style="margin-top:6px;">24px — minimum digital</div></div>
+    <div style="text-align:center;"><div class="badge" style="width:56px; height:56px;"><img src="../assets/gh-logo.png" alt="GH"></div><div class="clearspace-label" style="margin-top:6px;">56px — default (.badge)</div></div>
+    <div style="text-align:center;"><div class="badge" style="width:84px; height:84px;"><img src="../assets/gh-logo.png" alt="GH"></div><div class="clearspace-label" style="margin-top:6px;">84px — .badge-lg</div></div>
+  </div>
+  <p class="body-text text-muted" style="margin-top:12px;">Di bawah 24px, monogram G+H mulai gak kebaca — jangan dipaksa lebih kecil dari itu.</p>
+
+  <div class="section-title">Misuse — jangan lakukan ini</div>
+  <div class="misuse-row">
+    <div class="misuse-card">
+      <div class="badge" style="filter:grayscale(1); width:80px; height:80px;"><img src="../assets/gh-logo.png" alt="GH"></div>
+      <span>❌ Jangan desaturate gradient-nya</span>
+    </div>
+    <div class="misuse-card">
+      <div class="badge" style="width:120px; height:70px; border-radius:12px;"><img src="../assets/gh-logo.png" alt="GH" style="width:80%;"></div>
+      <span>❌ Jangan stretch jadi non-circle</span>
+    </div>
+    <div class="misuse-card">
+      <div class="badge" style="width:80px; height:80px; background:#000;"><img src="../assets/gh-logo.png" alt="GH"></div>
+      <span>❌ Jangan ganti background gradient-nya</span>
+    </div>
+    <div class="misuse-card">
+      <div class="badge" style="width:80px; height:80px; transform:rotate(20deg);"><img src="../assets/gh-logo.png" alt="GH"></div>
+      <span>❌ Jangan dirotasi</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>

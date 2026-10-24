@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Color</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { background:#151529; padding:48px; }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+  .section-title { font-family:var(--font-heading); font-weight:800; color:#fff; text-transform:uppercase; font-size:22px; margin:48px 0 16px; }
+  .roles { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
+  .role-card { border-radius:var(--radius-md); overflow:hidden; }
+  .role-swatch { height:120px; display:flex; align-items:flex-end; padding:12px; font-family:var(--font-mono); font-size:13px; color:#fff; }
+  .role-label { background:#0e0e1c; color:#fff; padding:10px 12px; font-family:var(--font-body); font-size:14px; }
+  .ramp { display:flex; border-radius:var(--radius-sm); overflow:hidden; margin-bottom:10px; }
+  .ramp div { flex:1; height:64px; display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px; font-family:var(--font-mono); font-size:11px; color:#00000099; }
+  .ramp-name { color:#fff; font-family:var(--font-body); font-size:14px; margin-bottom:8px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-title">Ground (dark — social/deck canvases)</div>
+  <div class="roles">
+    <div class="role-card">
+      <div class="role-swatch" style="background:#3051b8">--color-ground</div>
+      <div class="role-label">#3051b8 — the slide/deck ground</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#3051b8; color:#fff;">Aa --color-ground-text</div>
+      <div class="role-label">#ffffff — text on ground</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#3051b8; color:rgba(255,255,255,.78);">Aa --color-ground-text-muted</div>
+      <div class="role-label">rgba(255,255,255,.78)</div>
+    </div>
+  </div>
+
+  <div class="section-title">Surface (light — web/app pages, cards)</div>
+  <div class="roles">
+    <div class="role-card">
+      <div class="role-swatch" style="background:#ffffff; color:#14141f; border:1px solid #eee;">--color-surface</div>
+      <div class="role-label">#ffffff — page/card background</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#f4f5fa; color:#14141f;">--color-surface-alt</div>
+      <div class="role-label">#f4f5fa — subtle fill, hover</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#ffffff; color:#14141f; border:1px solid #eee;">Aa --color-surface-text</div>
+      <div class="role-label">#14141f — text on surface</div>
+    </div>
+  </div>
+
+  <div class="section-title">Accent roles</div>
+  <div class="roles">
+    <div class="role-card">
+      <div class="role-swatch" style="background:#ff914d; color:#201812;">--color-accent</div>
+      <div class="role-label">#ff914d — headline emphasis, one phrase only</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#af67de;">--color-accent-2</div>
+      <div class="role-label">#af67de — chevron nav only</div>
+    </div>
+  </div>
+
+  <div class="section-title">Semantic &amp; brand mark</div>
+  <div class="roles">
+    <div class="role-card">
+      <div class="role-swatch" style="background:#e5484d;">--color-danger</div>
+      <div class="role-label">#e5484d — form errors</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:#1a9c6b;">--color-success</div>
+      <div class="role-label">#1a9c6b — confirmations</div>
+    </div>
+    <div class="role-card">
+      <div class="role-swatch" style="background:linear-gradient(90deg,#024aad,#c96ce5);">--gradient-brand</div>
+      <div class="role-label">#024aad → #c96ce5 — the GH badge only</div>
+    </div>
+  </div>
+
+  <div class="section-title">Tonal ramps</div>
+  <div class="ramp-name">accent (orange)</div>
+  <div class="ramp">
+    <div style="background:#ffefe5">100</div><div style="background:#ffd9c2">200</div><div style="background:#ffba8f">300</div>
+    <div style="background:#ff9a5c">400</div><div style="background:#ff7b29">500</div><div style="background:#f55e00">600</div>
+    <div style="background:#c24a00; color:#fff9">700</div><div style="background:#8f3700; color:#fff9">800</div><div style="background:#5c2300; color:#fff9">900</div>
+  </div>
+  <div class="ramp-name">accent-2 (purple)</div>
+  <div class="ramp">
+    <div style="background:#f4eafb">100</div><div style="background:#e5ccf5">200</div><div style="background:#cfa1ed">300</div>
+    <div style="background:#b976e5">400</div><div style="background:#a34cdc; color:#fff9">500</div><div style="background:#8c28cd; color:#fff9">600</div>
+    <div style="background:#6f1fa2; color:#fff9">700</div><div style="background:#521778; color:#fff9">800</div><div style="background:#340f4d; color:#fff9">900</div>
+  </div>
+  <div class="ramp-name">brand (blue)</div>
+  <div class="ramp">
+    <div style="background:#eaeefa">100</div><div style="background:#ced7f3">200</div><div style="background:#a4b5e9">300</div>
+    <div style="background:#7b94e0">400</div><div style="background:#5272d6; color:#fff9">500</div><div style="background:#2f54c6; color:#fff9">600</div>
+    <div style="background:#25429d; color:#fff9">700</div><div style="background:#1b3173; color:#fff9">800</div><div style="background:#121f4a; color:#fff9">900</div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Type</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:900px; margin:0 auto; }
+  .row { border-bottom:1px solid var(--color-surface-border); padding:20px 0; display:flex; align-items:baseline; justify-content:space-between; gap:24px; }
+  .meta { font-family:var(--font-mono); font-size:12px; color:var(--color-surface-text-muted); white-space:nowrap; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:40px 0 8px; }
+  .display-demo { background:var(--color-ground); border-radius:20px; padding:32px; margin-top:12px; }
+  .display-demo .display-1, .display-demo .display-2, .display-demo .display-3 { color:#fff; margin-bottom:14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="section-title">Semantic scale — web &amp; app content (h1–h6)</div>
+  <div class="row"><h1>Heading satu</h1><span class="meta">h1 — 56px, weight 700</span></div>
+  <div class="row"><h2>Heading dua</h2><span class="meta">h2 — 40px</span></div>
+  <div class="row"><h3>Heading tiga</h3><span class="meta">h3 — 32px</span></div>
+  <div class="row"><h4>Heading empat</h4><span class="meta">h4 — 24px</span></div>
+  <div class="row"><h5>Heading lima</h5><span class="meta">h5 — 20px</span></div>
+  <div class="row"><h6>Heading enam</h6><span class="meta">h6 — 17px semibold</span></div>
+  <div class="row"><p class="body-lg">Body large — buat lead paragraph</p><span class="meta">.body-lg — 20px</span></div>
+  <div class="row"><p>Body default — buat paragraf umum</p><span class="meta">p / .body-text — 17px</span></div>
+  <div class="row"><p class="body-sm">Body small — caption panjang, meta info</p><span class="meta">.body-sm — 15px</span></div>
+  <div class="row"><span class="caption">Caption — label kecil di bawah gambar/tabel</span><span class="meta">.caption — 13px</span></div>
+  <div class="row"><span class="overline">OVERLINE LABEL</span><span class="meta">.overline — 13px, uppercase, tracked</span></div>
+
+  <div class="section-title">Display scale — social/deck headline only (always uppercase)</div>
+  <div class="display-demo">
+    <div class="display-1"><span class="accent">Display</span> satu</div>
+    <div class="display-2">Display dua</div>
+    <div class="display-3">Display tiga</div>
+  </div>
+  <p style="margin-top:12px; color:var(--color-surface-text-muted); max-width:600px;">
+    <code>.display-1/2/3</code> dipakai khusus buat headline besar di canvas 1080px (carousel, slide deck) — jangan dipakai buat heading halaman web/app, itu tugasnya h1–h6 di atas.
+  </p>
+</div>
+</body>
+</html>

@@ -1,0 +1,21 @@
+<!-- @dsCard group="Components" viewport="700x220" name="Wayfinding" subtitle="Breadcrumb + Pagination" -->
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css"><script src="../../_ds_bundle.js"></script><script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>body{margin:0;padding:24px}.lbl{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--color-surface-text-muted);margin:16px 0 8px}</style></head>
+<body><div id="root"></div>
+<script type="text/babel">
+const { Breadcrumb, Pagination } = window.GHPersonalBrandDesignSystem_a922a5;
+function Demo(){
+  const [page, setPage] = React.useState(1);
+  return (
+    <div>
+      <div className="lbl">Breadcrumb</div>
+      <Breadcrumb items={[{label:'Home',href:'#'},{label:'Content',href:'#'},{label:'Draft #12'}]} />
+      <div className="lbl">Pagination</div>
+      <Pagination page={page} totalPages={9} onChange={setPage} />
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<Demo/>);
+</script></body></html>

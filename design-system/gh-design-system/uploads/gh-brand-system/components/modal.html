@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Components — Modal</title>
+<link rel="stylesheet" href="../styles.css">
+<style> body{padding:0;} </style>
+</head>
+<body>
+<div class="modal-backdrop" style="position:relative; min-height:100vh;">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Hapus item?</h3>
+      <button class="modal-close">
+        <svg class="icon icon-md" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">Tindakan ini gak bisa dibatalkan. Item bakal terhapus permanen dari daftar kamu.</div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost">Batal</button>
+      <button class="btn btn-primary">Hapus</button>
+    </div>
+  </div>
+</div>
+</body>
+</html>

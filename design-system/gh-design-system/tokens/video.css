@@ -1,0 +1,15 @@
+:root{
+  /* Video and reels. Every GH video pins the brand footer for its full duration. */
+  --video-safe-top:200px;--video-safe-bottom:280px;--video-safe-side:80px; /* @kind other */
+  --video-footer-height:128px;--video-footer-height-landscape:96px; /* @kind other */
+  --video-footer-offset-bottom:46px;--video-footer-padding-x:46px; /* @kind other */
+  --video-footer-logo-size:64px;--video-footer-logo-size-landscape:52px; /* @kind other */
+  --video-footer-icon-size:30px;--video-footer-text-size:26px; /* @kind other */
+}
+/* Transparent bar. The social group is white with a difference blend: white on dark scenes, near-black on light ones. Keep the logo outside the blended element. */
+.video-footer{position:absolute;left:0;right:0;bottom:var(--video-footer-offset-bottom);display:flex;align-items:center;justify-content:space-between;height:var(--video-footer-height);padding:0 var(--video-footer-padding-x);background:transparent}
+.video-footer .badge{width:var(--video-footer-logo-size);height:var(--video-footer-logo-size)}
+.video-footer-social{color:#fff;mix-blend-mode:difference;display:flex;align-items:center;gap:14px;font-family:var(--font-body);font-weight:var(--weight-regular);font-size:var(--video-footer-text-size)}
+.video-footer-social svg{width:var(--video-footer-icon-size);height:var(--video-footer-icon-size)}
+.video-footer-landscape{height:var(--video-footer-height-landscape)}
+.video-footer-landscape .badge{width:var(--video-footer-logo-size-landscape);height:var(--video-footer-logo-size-landscape)}

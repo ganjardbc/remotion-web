@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Dark mode</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; transition: background-color var(--duration-base) var(--easing-standard), color var(--duration-base) var(--easing-standard); }
+  .wrap { max-width:900px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 16px; }
+  .toggle-row { display:flex; align-items:center; gap:12px; margin-bottom:32px; }
+  .demo-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="toggle-row">
+    <button class="btn btn-primary" onclick="document.body.classList.toggle('dark')">Toggle dark mode</button>
+    <span class="body-text text-muted">Klik buat lihat komponen re-theme secara real-time — cuma toggle class <code>.dark</code> di body.</span>
+  </div>
+
+  <p class="body-text text-muted">Tiga context berbeda di sistem ini, jangan ketuker: <strong>default (light surface)</strong> buat konten sehari-hari, <strong>.on-ground</strong> (biru brand) buat momen marketing, <strong>.dark</strong> (near-black netral) buat mode gelap interface app/web. .dark diaktifkan lewat class di <code>&lt;html&gt;</code> atau <code>&lt;body&gt;</code> — biasanya dari theme switcher, bukan otomatis dari OS.</p>
+
+  <div class="section-title">Komponen</div>
+  <div class="demo-grid">
+    <div class="card">
+      <div class="card-title">Card</div>
+      <div class="card-body">Elevation lewat tint (--color-surface-alt), bukan shadow — shadow nyaris gak kelihatan di background gelap.</div>
+    </div>
+    <div class="field">
+      <label class="label">Input</label>
+      <input class="input" placeholder="Otomatis re-theme">
+    </div>
+    <div>
+      <div class="row" style="display:flex; gap:8px; flex-wrap:wrap;">
+        <button class="btn btn-primary">Primary</button>
+        <button class="btn btn-outline">Outline</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Alert &amp; tag — warna disesuaikan, bukan cuma bg gelap</div>
+  <div style="display:flex; flex-direction:column; gap:10px; max-width:500px; margin-bottom:20px;">
+    <div class="alert alert-info"><span><span class="alert-title">Info</span>Pastel jadi translucent tint di dark mode.</span></div>
+    <div class="alert alert-success"><span><span class="alert-title">Berhasil</span>Kontras tetap terjaga.</span></div>
+  </div>
+  <div class="row" style="display:flex; gap:8px;">
+    <span class="tag tag-accent">Accent</span>
+    <span class="tag tag-accent-2">Accent-2</span>
+    <span class="tag tag-brand">Brand</span>
+  </div>
+
+  <div class="section-title">Yang berubah vs yang tetap</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li><strong>Berubah:</strong> --color-surface/-alt/-text/-text-muted/-border, elevation (tint bukan shadow), warna link/outline (naik ke step 400), background alert &amp; tag (jadi translucent)</li>
+    <li><strong>Tetap sama:</strong> --color-accent, --color-accent-2, radius, spacing, motion, tipografi, brand mark gradient — identitas brand-nya gak berubah, cuma "ruangan"-nya yang gelap</li>
+  </ul>
+</div>
+</body>
+</html>

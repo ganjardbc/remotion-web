@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Components — Dropdown</title>
+<link rel="stylesheet" href="../styles.css">
+<style> body{padding:80px 48px;} </style>
+</head>
+<body>
+<div class="dropdown">
+  <button class="btn btn-outline">Menu <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6" transform="rotate(90 12 12)"/></svg></button>
+  <div class="dropdown-menu">
+    <div class="dropdown-item is-active">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Profil
+    </div>
+    <div class="dropdown-item">
+      <svg class="icon icon-sm" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg> Jadwal
+    </div>
+    <div class="dropdown-divider"></div>
+    <div class="dropdown-item" aria-disabled="true">Diarsipkan (disabled)</div>
+    <div class="dropdown-item">Keluar</div>
+  </div>
+</div>
+<p class="body-text text-muted" style="margin-top:32px; max-width:500px;">.dropdown-item punya default/hover/is-active/disabled — sama polanya kayak .navbar-link dan .page-item.</p>
+</body>
+</html>

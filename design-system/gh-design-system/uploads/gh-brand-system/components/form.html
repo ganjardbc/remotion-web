@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Components — Form</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:20px; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:24px 0 4px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="field">
+    <label class="label">Nama</label>
+    <input class="input" type="text" placeholder="Tulis nama kamu">
+    <span class="help-text">Ini contoh helper text.</span>
+  </div>
+
+  <div class="field">
+    <label class="label">Email — focus state</label>
+    <input class="input" type="email" placeholder="you@email.com" style="border-color:var(--color-accent-2); box-shadow:var(--focus-ring);">
+  </div>
+
+  <div class="field field-error">
+    <label class="label">Email — error state</label>
+    <input class="input" type="email" value="bukan-email-valid">
+    <span class="error-text">Format email gak valid.</span>
+  </div>
+
+  <div class="field">
+    <label class="label">Disabled</label>
+    <input class="input" type="text" value="Gak bisa diedit" disabled>
+  </div>
+
+  <div class="field">
+    <label class="label">Pesan</label>
+    <textarea class="textarea" placeholder="Tulis pesan..."></textarea>
+  </div>
+
+  <div class="section-title">Checkbox &amp; radio</div>
+  <label class="checkbox"><input type="checkbox" checked> Setuju dengan syarat</label>
+  <label class="radio"><input type="radio" name="r" checked> Pilihan A</label>
+  <label class="radio"><input type="radio" name="r"> Pilihan B</label>
+
+  <button class="btn btn-primary" style="margin-top:8px;">Kirim</button>
+</div>
+</body>
+</html>

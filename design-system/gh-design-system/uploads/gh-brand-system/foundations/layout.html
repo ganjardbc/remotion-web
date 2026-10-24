@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Spacing &amp; Padding</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:960px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:40px 0 16px; }
+  .spacing-row { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
+  .spacing-bar { background:var(--color-accent); height:16px; border-radius:3px; }
+  .spacing-label { width:200px; font-family:var(--font-mono); font-size:13px; }
+  .annot { position:relative; display:inline-block; }
+  .annot::before {
+    content: attr(data-pad);
+    position:absolute; top:-24px; left:0;
+    font-family:var(--font-mono); font-size:11px; color:var(--color-accent-700);
+    background:var(--color-accent-100); padding:2px 6px; border-radius:4px; white-space:nowrap;
+  }
+  .pad-demo { display:flex; gap:40px; flex-wrap:wrap; margin-top:32px; align-items:flex-start; }
+  .pad-demo > div { margin-top:28px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Satu skala spacing dipakai untuk gap, margin, dan padding di semua ukuran layar dan medium — tidak ada skala terpisah untuk "mobile" vs "desktop"; komponen menyesuaikan lewat berapa banyak step yang dipakai, bukan lewat angka baru.</p>
+
+  <div class="section-title">Skala</div>
+  <div class="spacing-row"><span class="spacing-label">--space-1 — 8px</span><div class="spacing-bar" style="width:8px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-2 — 12px</span><div class="spacing-bar" style="width:12px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-3 — 16px</span><div class="spacing-bar" style="width:16px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-4 — 24px</span><div class="spacing-bar" style="width:24px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-5 — 32px</span><div class="spacing-bar" style="width:32px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-6 — 48px</span><div class="spacing-bar" style="width:48px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-7 — 64px</span><div class="spacing-bar" style="width:64px"></div></div>
+  <div class="spacing-row"><span class="spacing-label">--space-8 — 96px</span><div class="spacing-bar" style="width:96px"></div></div>
+
+  <div class="section-title">Padding di komponen nyata</div>
+  <p class="body-text text-muted">Bukan angka lepas — ini padding yang beneran dipakai tiap komponen, biar konsisten kalau kamu bikin komponen baru.</p>
+  <div class="pad-demo">
+    <div class="annot" data-pad="14px 28px">
+      <button class="btn btn-primary">Button</button>
+    </div>
+    <div class="annot" data-pad="12px 16px">
+      <input class="input" style="width:180px;" placeholder="Input">
+    </div>
+    <div class="annot" data-pad="24px (space-4)">
+      <div class="card" style="width:220px;">
+        <div class="card-title">Card</div>
+        <div class="card-body">padding var(--space-4) di semua sisi</div>
+      </div>
+    </div>
+    <div class="annot" data-pad="5px 12px">
+      <span class="tag tag-accent">Tag</span>
+    </div>
+    <div class="annot" data-pad="12px 32px (space-3 / space-5)">
+      <div class="navbar" style="border:1px solid var(--color-surface-border); border-radius:12px; width:280px;">
+        <div class="navbar-brand">Navbar</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Aturan</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li>Gap antar elemen kecil (icon+label, tag di dalam baris) → <code>--space-1</code>/<code>--space-2</code></li>
+    <li>Padding internal komponen kecil (tag, input) → <code>--space-2</code>–<code>--space-3</code></li>
+    <li>Padding internal komponen besar (card, section) → <code>--space-4</code>–<code>--space-5</code></li>
+    <li>Jarak antar section di halaman → <code>--space-6</code> ke atas</li>
+  </ul>
+</div>
+</body>
+</html>

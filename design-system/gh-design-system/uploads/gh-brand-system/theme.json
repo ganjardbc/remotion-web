@@ -1,0 +1,189 @@
+{
+  "name": "GH Personal Brand",
+  "version": "1.1.0",
+  "description": "Machine-readable export of the tokens in styles.css. Regenerate by hand if styles.css changes \u2014 this file is not auto-built.",
+  "color": {
+    "ground": {
+      "value": "#3051b8",
+      "text": "#ffffff",
+      "textMuted": "rgba(255,255,255,0.78)",
+      "border": "rgba(255,255,255,0.22)"
+    },
+    "surface": {
+      "value": "#ffffff",
+      "alt": "#f4f5fa",
+      "text": "#14141f",
+      "textMuted": "rgba(20,20,31,0.64)",
+      "border": "rgba(20,20,31,0.14)"
+    },
+    "accent": {
+      "base": "#ff914d",
+      "onAccent": "#201812",
+      "ramp": {
+        "100": "#ffefe5",
+        "200": "#ffd9c2",
+        "300": "#ffba8f",
+        "400": "#ff9a5c",
+        "500": "#ff7b29",
+        "600": "#f55e00",
+        "700": "#c24a00",
+        "800": "#8f3700",
+        "900": "#5c2300"
+      }
+    },
+    "accent2": {
+      "base": "#af67de",
+      "ramp": {
+        "100": "#f4eafb",
+        "200": "#e5ccf5",
+        "300": "#cfa1ed",
+        "400": "#b976e5",
+        "500": "#a34cdc",
+        "600": "#8c28cd",
+        "700": "#6f1fa2",
+        "800": "#521778",
+        "900": "#340f4d"
+      }
+    },
+    "brand": {
+      "ramp": {
+        "100": "#eaeefa",
+        "200": "#ced7f3",
+        "300": "#a4b5e9",
+        "400": "#7b94e0",
+        "500": "#5272d6",
+        "600": "#2f54c6",
+        "700": "#25429d",
+        "800": "#1b3173",
+        "900": "#121f4a"
+      }
+    },
+    "semantic": {
+      "danger": {
+        "base": "#e5484d",
+        "bg": "#fdeceb"
+      },
+      "success": {
+        "base": "#1a9c6b",
+        "bg": "#e7f7f1"
+      }
+    },
+    "gradientBrand": {
+      "from": "#024aad",
+      "to": "#c96ce5",
+      "angle": "90deg"
+    },
+    "dark": {
+      "surface": "#121620",
+      "surfaceAlt": "#1c212e",
+      "text": "#f2f3f7",
+      "textMuted": "rgba(242,243,247,0.64)",
+      "border": "rgba(242,243,247,0.14)",
+      "note": "toggled via a .dark class on <html> or <body>; accent/accent2/radius/spacing/motion/typography stay unchanged \u2014 only surface tokens, elevation (tint not shadow), link/outline contrast (steps up to accent-400), and alert/tag backgrounds (translucent tints) differ from light mode."
+    }
+  },
+  "typography": {
+    "fontHeading": "Poppins, system-ui, sans-serif",
+    "fontBody": "Poppins, system-ui, sans-serif",
+    "fontMono": "SF Mono, Fira Code, Courier New, monospace",
+    "weight": {
+      "regular": 400,
+      "medium": 500,
+      "semibold": 600,
+      "bold": 700,
+      "extrabold": 800,
+      "black": 900
+    },
+    "scale": {
+      "xs": "13px",
+      "sm": "15px",
+      "md": "17px",
+      "lg": "20px",
+      "xl": "24px",
+      "2xl": "32px",
+      "3xl": "40px",
+      "4xl": "56px"
+    },
+    "headings": {
+      "h1": "56px",
+      "h2": "40px",
+      "h3": "32px",
+      "h4": "24px",
+      "h5": "20px",
+      "h6": "17px"
+    },
+    "display": {
+      "display1": "64px",
+      "display2": "44px",
+      "display3": "30px",
+      "textTransform": "uppercase",
+      "weight": 800
+    }
+  },
+  "spacing": {
+    "1": "8px",
+    "2": "12px",
+    "3": "16px",
+    "4": "24px",
+    "5": "32px",
+    "6": "48px",
+    "7": "64px",
+    "8": "96px"
+  },
+  "radius": {
+    "sm": "10px",
+    "md": "20px",
+    "lg": "32px",
+    "full": "999px"
+  },
+  "shadow": {
+    "sm": "0 2px 8px rgba(18,31,74,0.12)",
+    "md": "0 8px 24px rgba(18,31,74,0.16)",
+    "lg": "0 20px 48px rgba(18,31,74,0.24)",
+    "xl": "0 32px 64px rgba(18,31,74,0.32)"
+  },
+  "focusRing": "0 0 0 3px rgba(175,103,222,0.45)",
+  "motion": {
+    "duration": {
+      "fast": "120ms",
+      "base": "180ms",
+      "slow": "280ms"
+    },
+    "easing": {
+      "standard": "cubic-bezier(0.4,0,0.2,1)",
+      "decelerate": "cubic-bezier(0,0,0.2,1)",
+      "accelerate": "cubic-bezier(0.4,0,1,1)"
+    }
+  },
+  "breakpoints": {
+    "sm": "480px",
+    "md": "768px",
+    "lg": "1080px",
+    "xl": "1440px"
+  },
+  "grid": {
+    "columns": 12,
+    "gutter": "24px",
+    "container": {
+      "sm": "480px",
+      "md": "720px",
+      "lg": "960px",
+      "xl": "1200px"
+    }
+  },
+  "icon": {
+    "style": "stroke, 2px weight, round cap/join, lucide-compatible",
+    "sizes": {
+      "sm": "16px",
+      "md": "20px",
+      "lg": "24px",
+      "xl": "32px"
+    }
+  },
+  "logo": {
+    "file": "assets/gh-logo.png",
+    "gradient": "gradientBrand",
+    "clearSpace": "0.5x the mark's own height, on all sides",
+    "minSize": "24px diameter (digital), 12mm (print)"
+  }
+}

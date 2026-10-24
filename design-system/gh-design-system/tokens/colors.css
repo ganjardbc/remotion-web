@@ -1,0 +1,36 @@
+:root{
+  --color-ground:#0b0f1a;--color-ground-text:#ffffff;--color-ground-text-muted:rgba(255,255,255,.78);--color-ground-border:rgba(255,255,255,.22);
+  --color-surface:#ffffff;--color-surface-alt:#f4f5fa;--color-surface-text:#14141f;--color-surface-text-muted:rgba(20,20,31,.64);--color-surface-border:rgba(20,20,31,.14);
+  --color-accent:#ff914d;--color-accent-2:#af67de;
+  --color-danger:#e5484d;--color-danger-bg:#fdeceb;--color-success:#1a9c6b;--color-success-bg:#e7f7f1;
+  --color-on-accent:#201812;
+  /* Primary = brand blue. Accent orange is the highlight, one phrase or one control at a time. */
+  --color-primary:#3051b8;--color-primary-hover:#25429d;--color-primary-active:#1b3173;--color-on-primary:#ffffff;
+  --color-primary-soft:#eaeefa;--color-primary-text:#25429d;
+  --glow-primary:0 0 0 1px rgba(82,114,214,.45),0 6px 20px rgba(48,81,184,.32); /* @kind other */
+  --glow-accent:0 0 0 1px rgba(255,145,77,.45),0 6px 20px rgba(255,145,77,.32); /* @kind other */
+  --gradient-accent:linear-gradient(135deg,#ff7b29 0%,#ffba8f 100%); /* @kind color */
+  --highlight-inset:inset 0 1px 0 rgba(255,255,255,.6); /* @kind other */
+  --glass-bg:rgba(255,255,255,.72);--glass-border:rgba(20,20,31,.1);
+  --glass-blur:blur(14px) saturate(1.4); /* @kind other */
+  --pattern-grid-line:rgba(20,20,31,.06);--pattern-dot:rgba(20,20,31,.14);
+  --gradient-brand:linear-gradient(90deg,#024aad 0%,#c96ce5 100%); /* @kind color */
+  --color-accent-100:#ffefe5;--color-accent-200:#ffd9c2;--color-accent-300:#ffba8f;--color-accent-400:#ff9a5c;--color-accent-500:#ff7b29;--color-accent-600:#f55e00;--color-accent-700:#c24a00;--color-accent-800:#8f3700;--color-accent-900:#5c2300;
+  --color-accent-2-100:#f4eafb;--color-accent-2-200:#e5ccf5;--color-accent-2-300:#cfa1ed;--color-accent-2-400:#b976e5;--color-accent-2-500:#a34cdc;--color-accent-2-600:#8c28cd;--color-accent-2-700:#6f1fa2;--color-accent-2-800:#521778;--color-accent-2-900:#340f4d;
+  --color-brand-100:#eaeefa;--color-brand-200:#ced7f3;--color-brand-300:#a4b5e9;--color-brand-400:#7b94e0;--color-brand-500:#5272d6;--color-brand-600:#2f54c6;--color-brand-700:#25429d;--color-brand-800:#1b3173;--color-brand-900:#121f4a;
+}
+.dark{
+  --color-surface:#0b0f1a;--color-surface-alt:#121826;--color-surface-raised:#1a2234;--color-surface-text:#f2f3f7;--color-surface-text-muted:rgba(242,243,247,.64);--color-surface-border:rgba(242,243,247,.12);
+  --color-primary:#4a6fe0;--color-primary-hover:#5f80e8;--color-primary-active:#3a5bc9;--color-primary-soft:rgba(82,114,214,.18);--color-primary-text:#9fb4f2;
+  --shadow-sm:none;--shadow-md:0 0 0 1px rgba(242,243,247,.08);--shadow-lg:0 0 0 1px rgba(242,243,247,.12),0 12px 32px rgba(0,0,0,.5);--shadow-xl:0 0 0 1px rgba(242,243,247,.14),0 24px 56px rgba(0,0,0,.6);
+  --highlight-inset:inset 0 1px 0 rgba(255,255,255,.06);
+  --glass-bg:rgba(11,15,26,.72);--glass-border:rgba(242,243,247,.1);
+  --pattern-grid-line:rgba(242,243,247,.05);--pattern-dot:rgba(242,243,247,.14);
+}
+.surface-glass{background:var(--glass-bg);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);border:1px solid var(--glass-border)}
+.bg-grid{background-image:linear-gradient(var(--pattern-grid-line) 1px,transparent 1px),linear-gradient(90deg,var(--pattern-grid-line) 1px,transparent 1px);background-size:32px 32px}
+.bg-dots{background-image:radial-gradient(var(--pattern-dot) 1.2px,transparent 1.2px);background-size:20px 20px}
+.text-gradient-accent{background:var(--gradient-accent);-webkit-background-clip:text;background-clip:text;color:transparent}
+.on-ground{background:var(--color-ground);color:var(--color-ground-text);--color-primary:#4a6fe0;--color-primary-hover:#5f80e8;--color-primary-active:#3a5bc9;--color-primary-soft:rgba(82,114,214,.18);--color-primary-text:#9fb4f2;--pattern-grid-line:rgba(255,255,255,.06);--pattern-dot:rgba(255,255,255,.16);--glass-bg:rgba(11,15,26,.72);--glass-border:rgba(255,255,255,.1)}
+.on-ground p,.on-ground .body-text,.on-ground h1,.on-ground h2,.on-ground h3,.on-ground h4,.on-ground h5,.on-ground h6{color:var(--color-ground-text)}
+.on-ground .text-muted,.on-ground .caption{color:var(--color-ground-text-muted)}

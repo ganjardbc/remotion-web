@@ -1,0 +1,8 @@
+<!-- @dsCard group="Spacing" viewport="700x200" name="Real component padding" subtitle="Actual padding values, not loose numbers" -->
+<!DOCTYPE html><html><head><meta charset="UTF-8"><link rel="stylesheet" href="../styles.css"><style>body{margin:0;padding:20px;font-family:var(--font-body)}.row{display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start}.annot{position:relative;margin-top:24px}.annot::before{content:attr(data-pad);position:absolute;top:-22px;left:0;font-family:var(--font-mono);font-size:10px;color:var(--color-primary-text);background:var(--color-primary-soft);padding:2px 6px;border-radius:4px;white-space:nowrap}</style></head>
+<body><div class="row">
+<div class="annot" data-pad="14px 28px"><button class="btn btn-primary">Button</button></div>
+<div class="annot" data-pad="12px 16px"><input class="input" style="width:140px" placeholder="Input"></div>
+<div class="annot" data-pad="space-4 (24px)"><div class="card" style="width:160px"><div class="card-title">Card</div></div></div>
+<div class="annot" data-pad="4px 10px"><span class="tag tag-brand">Tag</span></div>
+</div></body></html>

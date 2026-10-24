@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Elevation</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; background:var(--color-surface-alt); }
+  .wrap { max-width:900px; margin:0 auto; }
+  .row { display:flex; gap:32px; flex-wrap:wrap; }
+  .card-demo { background:#fff; border-radius:var(--radius-md); padding:24px; width:180px; font-family:var(--font-mono); font-size:12px; color:var(--color-surface-text-muted); }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:32px 0 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Empat step, dari nyaris gak kelihatan sampai paling ngambang. Naik satu step tiap naik satu lapis konteks (card diam → card interactive saat hover → dropdown/tooltip → modal).</p>
+  <div class="row">
+    <div class="card-demo" style="box-shadow:var(--shadow-sm)">--shadow-sm<br>card statis</div>
+    <div class="card-demo" style="box-shadow:var(--shadow-md)">--shadow-md<br>card hover, popover kecil</div>
+    <div class="card-demo" style="box-shadow:var(--shadow-lg)">--shadow-lg<br>dropdown menu, toast</div>
+    <div class="card-demo" style="box-shadow:var(--shadow-xl)">--shadow-xl<br>modal/dialog</div>
+  </div>
+  <div class="section-title">Aturan</div>
+  <ul class="body-text" style="padding-left:20px; line-height:2;">
+    <li>Jangan lompat level — dari sm langsung ke xl kelihatan janggal. Naik bertahap sesuai kedalaman lapisan UI.</li>
+    <li>Warna shadow selalu tint biru gelap (<code>rgba(18,31,74,…)</code>), bukan hitam murni — biar nyambung sama <code>--color-brand-900</code>, bukan generic gray.</li>
+    <li>Di atas <code>.on-ground</code>, shadow biasanya gak kelihatan (background udah gelap) — pakai border tipis putih transparan sebagai gantinya kalau perlu pemisah.</li>
+  </ul>
+</div>
+</body>
+</html>

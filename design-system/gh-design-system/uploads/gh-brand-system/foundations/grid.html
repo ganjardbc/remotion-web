@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Grid &amp; Breakpoints</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:960px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:40px 0 16px; }
+  .bp-row { display:flex; align-items:center; gap:16px; margin-bottom:10px; }
+  .bp-label { width:200px; font-family:var(--font-mono); font-size:13px; }
+  .bp-bar { background:var(--color-brand-400); height:16px; border-radius:3px; }
+  .grid-demo .col-4, .grid-demo .col-6, .grid-demo .col-12 { background:var(--color-accent-100); border:1px solid var(--color-accent-300); border-radius:8px; padding:12px; font-family:var(--font-mono); font-size:12px; text-align:center; color:var(--color-accent-800); }
+  .container-demo { background:var(--color-surface-alt); border-radius:12px; padding:24px 0; margin-top:12px; }
+  .container-demo .container { background:#fff; border:1px dashed var(--color-surface-border); border-radius:8px; padding:16px; text-align:center; font-family:var(--font-mono); font-size:13px; color:var(--color-surface-text-muted); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Mobile-first: aturan biasa berlaku dari lebar 0 ke atas; override lewat media query <code>min-width</code> pas butuh layout beda di layar lebih besar.</p>
+
+  <div class="section-title">Breakpoints</div>
+  <div class="bp-row"><span class="bp-label">--bp-sm — 480px</span><div class="bp-bar" style="width:160px"></div></div>
+  <div class="bp-row"><span class="bp-label">--bp-md — 768px</span><div class="bp-bar" style="width:256px"></div></div>
+  <div class="bp-row"><span class="bp-label">--bp-lg — 1080px</span><div class="bp-bar" style="width:360px"></div></div>
+  <div class="bp-row"><span class="bp-label">--bp-xl — 1440px</span><div class="bp-bar" style="width:480px"></div></div>
+
+  <div class="section-title">Container</div>
+  <div class="container-demo">
+    <div class="container container-sm"><div class="container">container-sm — max 480px</div></div>
+  </div>
+  <p class="body-text text-muted" style="margin-top:8px;">Default <code>.container</code> (tanpa modifier) max-width 1200px (<code>--container-xl</code>). Tambah <code>.container-sm/md/lg</code> buat konten yang perlu lebih sempit (artikel, form).</p>
+
+  <div class="section-title">12-column grid</div>
+  <div class="grid grid-demo" style="margin-bottom:8px;">
+    <div class="col-4">.col-4</div>
+    <div class="col-4">.col-4</div>
+    <div class="col-4">.col-4</div>
+  </div>
+  <div class="grid grid-demo" style="margin-bottom:8px;">
+    <div class="col-6">.col-6</div>
+    <div class="col-6">.col-6</div>
+  </div>
+  <div class="grid grid-demo">
+    <div class="col-12">.col-12</div>
+  </div>
+  <p class="body-text text-muted" style="margin-top:12px;">Di bawah 768px, semua <code>.col-*</code> otomatis full-width (stack) — satu-satunya breakpoint yang sudah dibuilt-in ke <code>.grid</code>; layout lain atur breakpoint sendiri sesuai kebutuhan halaman.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Foundations — Icons</title>
+<link rel="stylesheet" href="../styles.css">
+<style>
+  body { padding:48px; }
+  .wrap { max-width:960px; margin:0 auto; }
+  .section-title { font-size:14px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--color-surface-text-muted); margin:40px 0 16px; }
+  .icon-grid { display:grid; grid-template-columns:repeat(6,1fr); gap:12px; }
+  .icon-cell { border:1px solid var(--color-surface-border); border-radius:var(--radius-sm); padding:16px 8px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+  .icon-cell span { font-family:var(--font-mono); font-size:11px; color:var(--color-surface-text-muted); }
+  .size-row { display:flex; align-items:center; gap:24px; }
+  .size-row .icon-cell { border:none; padding:0; }
+  .usage-row { display:flex; gap:16px; flex-wrap:wrap; align-items:center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="body-text text-muted">Icon pakai gaya stroke 2px, rounded cap/join — set ini kompatibel sama <a href="https://lucide.dev" target="_blank">Lucide</a>, tapi disimpan sebagai inline SVG jadi gak perlu load library. Warna selalu ikut <code>currentColor</code>, jadi otomatis nyocok sama teks/elemen di sebelahnya.</p>
+
+  <div class="section-title">Ukuran</div>
+  <div class="size-row">
+    <div class="icon-cell"><svg class="icon icon-sm" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span>.icon-sm 16px</span></div>
+    <div class="icon-cell"><svg class="icon icon-md" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span>.icon-md 20px</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span>.icon-lg 24px</span></div>
+    <div class="icon-cell"><svg class="icon icon-xl" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span>.icon-xl 32px</span></div>
+  </div>
+
+  <div class="section-title">Set inti</div>
+  <div class="icon-grid">
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg><span>arrow-right</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg><span>check</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg><span>close</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg><span>chevron-right</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><span>search</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span>menu</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>mail</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>user</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg><span>calendar</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M14 3h7v7M21 3l-9 9M5 5h6M5 5v14h14v-6"/></svg><span>external-link</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg><span>plus</span></div>
+    <div class="icon-cell"><svg class="icon icon-lg" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6L22 9.3l-5 4.8 1.2 7L12 17.8 5.8 21l1.2-7-5-4.8 7.1-1.1z"/></svg><span>star</span></div>
+  </div>
+
+  <div class="section-title">Dipakai bareng teks &amp; komponen</div>
+  <div class="usage-row">
+    <button class="btn btn-primary"><svg class="icon icon-md" viewBox="0 0 24 24"><path d="M5 12h14M13 5l7 7-7 7"/></svg>Lanjut</button>
+    <button class="btn btn-outline"><svg class="icon icon-md" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg>Hubungi</button>
+    <span class="tag tag-accent"><svg class="icon icon-sm" viewBox="0 0 24 24" style="margin-right:4px;"><path d="M20 6L9 17l-5-5"/></svg>Selesai</span>
+  </div>
+  <p class="body-text text-muted" style="margin-top:16px;">Icon dalam tombol/tag ukuran <code>.icon-sm</code> atau <code>.icon-md</code> — jangan lebih besar dari teks di sebelahnya. Beri <code>gap</code> lewat <code>var(--space-2)</code> (komponen <code>.btn</code> udah otomatis).</p>
+</div>
+</body>
+</html>
