@@ -49,7 +49,7 @@ import { HookScene } from "./videos/ClaudeMd/HookScene";
 import { ProblemScene } from "./videos/ClaudeMd/ProblemScene";
 import { ResultScene } from "./videos/ClaudeMd/ResultScene";
 import { TipsScene } from "./videos/ClaudeMd/TipsScene";
-import { CharacterSheet } from "./characters";
+import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -343,14 +343,9 @@ export const RemotionRoot: React.FC = () => {
           defaultProps={{ tagline: "AI Agent, rekan kerja digital Anda." }}
         />
       </Folder>
-      <Composition
-        id="CharacterSheet"
-        component={CharacterSheet}
-        durationInFrames={90}
-        fps={30}
-        width={1920}
-        height={1080}
-      />
+      <Folder name="Characters">
+        <RigDemoRoot />
+      </Folder>
     </>
   );
 };
