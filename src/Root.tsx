@@ -52,6 +52,10 @@ import { TipsScene } from "./videos/ClaudeMd/TipsScene";
 import { SejarahAIStoryVideo } from "./videos/SejarahAIStory/SejarahAIStoryVideo";
 import { TOTAL_FRAMES as SEJARAH_AI_STORY_FRAMES } from "./videos/SejarahAIStory/config";
 import { SejarahAIStoryReelsVideo } from "./videos/SejarahAIStoryReels/SejarahAIStoryReelsVideo";
+import {
+  ProgrammerBodohVideo,
+  TOTAL_FRAMES as PROGRAMMER_BODOH_FRAMES,
+} from "./videos/ProgrammerBodoh/ProgrammerBodohVideo";
 import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 
 export const RemotionRoot: React.FC = () => {
@@ -167,6 +171,15 @@ export const RemotionRoot: React.FC = () => {
         id="SejarahAIStory-Reels"
         component={SejarahAIStoryReelsVideo}
         durationInFrames={SEJARAH_AI_STORY_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ theme: "gh" }}
+      />
+      <Composition
+        id="ProgrammerBodoh-Reels"
+        component={ProgrammerBodohVideo}
+        durationInFrames={PROGRAMMER_BODOH_FRAMES}
         fps={30}
         width={1080}
         height={1920}
