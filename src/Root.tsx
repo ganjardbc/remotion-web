@@ -49,6 +49,9 @@ import { HookScene } from "./videos/ClaudeMd/HookScene";
 import { ProblemScene } from "./videos/ClaudeMd/ProblemScene";
 import { ResultScene } from "./videos/ClaudeMd/ResultScene";
 import { TipsScene } from "./videos/ClaudeMd/TipsScene";
+import { SejarahAIStoryVideo } from "./videos/SejarahAIStory/SejarahAIStoryVideo";
+import { TOTAL_FRAMES as SEJARAH_AI_STORY_FRAMES } from "./videos/SejarahAIStory/config";
+import { SejarahAIStoryReelsVideo } from "./videos/SejarahAIStoryReels/SejarahAIStoryReelsVideo";
 import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 
 export const RemotionRoot: React.FC = () => {
@@ -147,6 +150,23 @@ export const RemotionRoot: React.FC = () => {
         id="SejarahAIV2-Reels"
         component={SejarahAIV2Video}
         durationInFrames={SEJARAH_AI_V2_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ theme: "gh" }}
+      />
+      <Composition
+        id="SejarahAIStory"
+        component={SejarahAIStoryVideo}
+        durationInFrames={SEJARAH_AI_STORY_FRAMES}
+        fps={30}
+        width={1920}
+        height={1080}
+      />
+      <Composition
+        id="SejarahAIStory-Reels"
+        component={SejarahAIStoryReelsVideo}
+        durationInFrames={SEJARAH_AI_STORY_FRAMES}
         fps={30}
         width={1080}
         height={1920}
