@@ -44,6 +44,7 @@ const BrandFooterInner: React.FC<{ readonly handle: string }> = ({
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
+        translate: "0px 46px"
       }}
     >
       <CanvasImage
