@@ -3,7 +3,7 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { eyeShape } from "../block/RobotBlock";
 import type { RobotExpression } from "../rig";
 import { COLORS as C } from "../rig/geometry";
-import { HAND, poseAt, reach, type ArmPose, type LegPose } from "../../stickman/Stickman";
+import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../stickman/Stickman";
 
 // Robot gaya stickman: garis tipis dan tampak depan seperti Stickman. Seperti robot aslinya,
 // tidak ada leher atau badan terpisah: satu kotak oranye berlayar (kepala dan badan sekaligus)
@@ -14,7 +14,7 @@ export const ROBOT_STICKMAN_EXPRESSIONS: readonly RobotExpression[] = ["normal",
 
 const VIEWBOX = { w: 400, h: 270 } as const;
 // Lengan dan kaki pendek, seperti robot aslinya yang bertumpu pada satu kotak besar.
-const BONE = { upperArm: 30, foreArm: 28, leg: 50 } as const;
+const BONE = { upperArm: 36, foreArm: 34, leg: 50 } as const;
 const BOX = { x: 122, y: 56, w: 156, h: 140, r: 22 } as const;
 const SCREEN = { x: 136, y: 70, w: 128, h: 96, r: 12 } as const;
 const BOX_BOTTOM = BOX.y + BOX.h;
@@ -28,6 +28,8 @@ export type RobotStickmanProps = {
   readonly expression?: RobotExpression;
   readonly walk?: boolean;
   readonly wave?: boolean;
+  // Gerak tangan; menimpa `wave`. Lihat stickman/gestures.ts.
+  readonly gesture?: Gesture;
   readonly color?: string;
   // Tebal garis dalam unit viewBox (400 lebar).
   readonly strokeWidth?: number;
@@ -44,17 +46,19 @@ export const RobotStickman: React.FC<RobotStickmanProps> = ({
   expression = "normal",
   walk = false,
   wave = false,
+  gesture,
   color = "#232540",
   strokeWidth = 5,
   style,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const pose = poseAt(frame / fps, walk, wave);
+  const pose = poseAt(frame / fps, walk, wave, gesture, true);
   const line = { stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round" } as const;
   const open = { ...line, fill: "none" } as const;
 
-  const arm = (side: 1 | -1, a: ArmPose): React.ReactNode => {
+  const arm = (side: 1 | -1, a: ArmPose, front: boolean): React.ReactNode => {
+    if (Boolean(a.front) !== front) return null;
     const from = { x: 200 + side * SHOULDER.dx, y: SHOULDER.y };
     const elbow = reach(from, BONE.upperArm, a.shoulder, side);
     const dir = a.shoulder + a.elbow;
@@ -112,8 +116,8 @@ export const RobotStickman: React.FC<RobotStickmanProps> = ({
         {leg(1, pose.legs[1])}
         <g transform={`rotate(${pose.sway + pose.headTilt * 0.5} 200 ${BOX_BOTTOM})`}>
           {/* lengan di belakang kotak: pangkalnya tertutup kotak */}
-          {arm(-1, pose.arms[0])}
-          {arm(1, pose.arms[1])}
+          {arm(-1, pose.arms[0], false)}
+          {arm(1, pose.arms[1], false)}
           {/* antena: batang tipis berujung kotak biru */}
           {([-1, 1] as const).map((side) => (
             <g key={side}>
@@ -133,6 +137,9 @@ export const RobotStickman: React.FC<RobotStickmanProps> = ({
               <path d={`M${200 + dx} 177 L${200 + dx} 186`} stroke="#c9660f" strokeWidth={strokeWidth * 0.6} strokeLinecap="round" />
             </g>
           ))}
+          {/* lengan yang melintas di depan kotak (facepalm, mikir, tepuk, ...) */}
+          {arm(-1, pose.arms[0], true)}
+          {arm(1, pose.arms[1], true)}
         </g>
       </g>
     </svg>

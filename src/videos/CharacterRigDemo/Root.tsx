@@ -8,7 +8,7 @@ import { GanjarStill } from "./ganjar/GanjarStill";
 import { ROBOT_BLOCK_DEMO_FRAMES, RobotBlockDemo, RobotBlockStill } from "./robot/RobotBlockDemo";
 import { ROBOT_DEMO_FRAMES, RobotDemo } from "./robot/RobotDemo";
 import { ROBOT_STICKMAN_DEMO_FRAMES, RobotStickmanDemo, RobotStickmanStill } from "./robot/RobotStickmanDemo";
-import { STICKMAN_DEMO_FRAMES, StickmanDemo, StickmanHair, StickmanPlain, StickmanStill } from "./stickman/StickmanDemo";
+import { STICKMAN_DEMO_FRAMES, StickmanDemo, StickmanExpressions, StickmanGestures, RobotStickmanGestures, StickmanHair, StickmanPlain, StickmanStill, StickmanTalking } from "./stickman/StickmanDemo";
 
 // Semua demo berukuran vertikal 1080x1920, 30 fps. `frames` = 1 berarti gambar diam.
 const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readonly frames?: number }> = ({
@@ -41,11 +41,15 @@ export const RigDemoRoot: React.FC = () => (
         <Clip id="RobotBlock" component={RobotBlockDemo} frames={ROBOT_BLOCK_DEMO_FRAMES} />
       </Folder>
       <Folder name="Stickman">
+        <Clip id="RobotStickmanGestures" component={RobotStickmanGestures} />
         <Clip id="RobotStickmanStill" component={RobotStickmanStill} />
         <Clip id="RobotStickman" component={RobotStickmanDemo} frames={ROBOT_STICKMAN_DEMO_FRAMES} />
       </Folder>
     </Folder>
     <Folder name="Stickman">
+      <Clip id="StickmanExpressions" component={StickmanExpressions} />
+      <Clip id="StickmanGestures" component={StickmanGestures} />
+      <Clip id="StickmanTalking" component={StickmanTalking} frames={60} />
       <Clip id="StickmanStill" component={StickmanStill} />
       <Clip id="StickmanHair" component={StickmanHair} />
       <Clip id="StickmanPlain" component={StickmanPlain} />

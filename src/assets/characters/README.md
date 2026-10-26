@@ -48,7 +48,7 @@ Demo dan komposisi Studio: `src/videos/CharacterRigDemo/{ganjar,robot,stickman,d
 
 ## Stickman
 
-`Stickman`: rig SVG gaya gambar tangan tampak depan, berheadphone, hoodie, dan celana pendek abu kotak (kepala oval, badan buah pir, tangan dan kaki berujung loop). Props: `height`, `expression` (`senyum`, `kaget`, `netral`, `sedih`, `marah`, `mataTertutup`), `walk`, `wave`, `headphones` (default `true`), `outfit` (hoodie dan celana pendek, default `true`; `false` = polos), `hair` (tiga helai rambut hitam, default `false`), `color`, `strokeWidth`. Komposisi: `Stickman`, `StickmanStill`, `StickmanHair`, dan `StickmanPlain`.
+`Stickman`: rig SVG gaya gambar tangan tampak depan, berheadphone, hoodie, dan celana pendek abu kotak (kepala oval, badan buah pir, tangan dan kaki berujung loop). Props: `height`, `expression` (`senyum`, `senyumSantai`, `senang`, `tertawa`, `kaget`, `netral`, `serius`, `bingung`, `mikir`, `malu`, `sedih`, `kesal`, `marah`, `mataTertutup`), `talking` (mulut membuka-menutup, menimpa mulut ekspresi), `gesture` (gerak tangan: `netral`, `lambai`, `angkatTangan`, `tunjuk`, `sorak`, `menyerah`, `angkatBahu`, `facepalm`, `mikir`, `garukKepala`, `tepuk`, `pinggang`; definisi di `stickman/gestures.ts`, dipakai juga oleh `RobotStickman`), `walk`, `wave`, `headphones` (default `true`), `outfit` (hoodie dan celana pendek, default `true`; `false` = polos), `hair` (tiga helai rambut hitam, default `false`), `color`, `strokeWidth`. Komposisi: `Stickman`, `StickmanStill`, `StickmanHair`, `StickmanPlain`, `StickmanExpressions` (lembar semua ekspresi), `StickmanTalking`, `StickmanGestures`, dan `RobotStickmanGestures` (lembar semua gerak tangan).
 
 ## Robot Blok
 

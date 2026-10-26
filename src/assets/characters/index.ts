@@ -15,7 +15,7 @@ export type { PlacedClip as RobotClip } from "./robot/rig/clips";
 export { armGesture, surprise, walk } from "./robot/rig";
 
 // Stickman
-export { Stickman, STICKMAN_EXPRESSIONS, stickmanSize, type StickmanProps, type StickmanExpression } from "./stickman/Stickman";
+export { Stickman, STICKMAN_EXPRESSIONS, GESTURES, stickmanSize, type StickmanProps, type StickmanExpression, type Gesture } from "./stickman/Stickman";
 
 // Gabungan dan referensi
 export { Duo, duoSize, type DuoProps } from "./Duo";
