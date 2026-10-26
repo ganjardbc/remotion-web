@@ -183,7 +183,7 @@ export const RemotionRoot: React.FC = () => {
         fps={30}
         width={1080}
         height={1920}
-        defaultProps={{ theme: "gh" }}
+        defaultProps={{ theme: "gh", sfx: "free" }}
       />
       <Composition
         id="AgenBodoh-Reels"

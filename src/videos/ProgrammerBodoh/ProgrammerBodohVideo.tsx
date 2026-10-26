@@ -9,6 +9,7 @@ import {
 import { BrandFooter } from "../../BrandFooter";
 import { RobotStickman, Stickman, robotStickmanSize, stickmanSize } from "../../assets/characters";
 import { ThemeProvider, useTheme } from "../../themes";
+import { Sfx, type SfxSet } from "./Sfx";
 import { Chair, DESK_TOP, Desk, Laptop, Mug, RoomBack, SEAT_X } from "./Room";
 import { CTA, CTA_START, FPS, HOOK, HOOK_SECONDS, LINES, LINE_START, TOTAL_FRAMES, type Speaker } from "./config";
 
@@ -323,10 +324,11 @@ const Stage: React.FC = () => {
   );
 };
 
-type Props = { readonly theme: string };
+// `sfx`: "free" (efek CC0, sisanya jatuh ke synth) atau "synth" (semua buatan skrip).
+type Props = { readonly theme: string; readonly sfx?: SfxSet };
 
 // Reels 9:16 satir: Ganjar (stickman, duduk di depan laptop) ngobrol dengan Robot (Claude) di atas meja soal programmer yang makin lupa ngoding.
-export const ProgrammerBodohVideo: React.FC<Props> = ({ theme }) => (
+export const ProgrammerBodohVideo: React.FC<Props> = ({ theme, sfx = "free" }) => (
   <ThemeProvider name={theme}>
     <RoomBack />
     <AbsoluteFill>
@@ -336,6 +338,7 @@ export const ProgrammerBodohVideo: React.FC<Props> = ({ theme }) => (
       <ChatFeed />
       <CtaCard />
     </AbsoluteFill>
+    <Sfx set={sfx} />
     <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
   </ThemeProvider>
 );
