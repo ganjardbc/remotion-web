@@ -19,6 +19,17 @@ import { ROBOT_BLOCK_DEMO_FRAMES, RobotBlockDemo, RobotBlockStill } from "../../
 import { ROBOT_DEMO_FRAMES, RobotDemo } from "../../assets/characters/robot/demo/RobotDemo";
 import { ROBOT_STICKMAN_DEMO_FRAMES, RobotStickmanDemo, RobotStickmanStill } from "../../assets/characters/robot/demo/RobotStickmanDemo";
 
+import {
+  CLAUDE_CODE_DEMO_FRAMES,
+  CLAUDE_CODE_VARIANT_DEMO_FRAMES,
+  ClaudeCodeBlockDemo,
+  ClaudeCodeBlockStill,
+  ClaudeCodeDemo,
+  ClaudeCodeStickmanDemo,
+  ClaudeCodeStickmanStill,
+  ClaudeCodeStill,
+} from "../../assets/characters/claudecode/demo/ClaudeCodeDemo";
+
 // Semua demo berukuran vertikal 1080x1920, 30 fps. `frames` = 1 berarti gambar diam.
 const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readonly frames?: number }> = ({
   id,
@@ -62,6 +73,20 @@ export const RigDemoRoot: React.FC = () => (
         <Clip id="RobotStickmanGestures" component={RobotStickmanGestures} />
         <Clip id="RobotStickmanStill" component={RobotStickmanStill} />
         <Clip id="RobotStickman" component={RobotStickmanDemo} frames={ROBOT_STICKMAN_DEMO_FRAMES} />
+      </Folder>
+    </Folder>
+    <Folder name="ClaudeCode">
+      <Folder name="Rig-2D">
+        <Clip id="ClaudeCodeStill" component={ClaudeCodeStill} />
+        <Clip id="ClaudeCodeRig" component={ClaudeCodeDemo} frames={CLAUDE_CODE_DEMO_FRAMES} />
+      </Folder>
+      <Folder name="Block">
+        <Clip id="ClaudeCodeBlockStill" component={ClaudeCodeBlockStill} />
+        <Clip id="ClaudeCodeBlock" component={ClaudeCodeBlockDemo} frames={CLAUDE_CODE_VARIANT_DEMO_FRAMES} />
+      </Folder>
+      <Folder name="Stickman">
+        <Clip id="ClaudeCodeStickmanStill" component={ClaudeCodeStickmanStill} />
+        <Clip id="ClaudeCodeStickman" component={ClaudeCodeStickmanDemo} frames={CLAUDE_CODE_VARIANT_DEMO_FRAMES} />
       </Folder>
     </Folder>
   </>
