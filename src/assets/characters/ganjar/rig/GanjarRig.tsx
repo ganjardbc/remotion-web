@@ -59,7 +59,7 @@ const HEAD_HALF_WIDTH = 122;
 const HEAD_TOP = 122;
 const HEAD_BOTTOM = 408;
 // Kebulatan rahang 0.2 sampai 1: kecil = dagu meruncing (oval), besar = rahang penuh (bulat atau kotak).
-const HEAD_JAW = 0.86;
+const HEAD_JAW = 0.96;
 // Kebulatan dahi 0.2 sampai 1: kecil = dahi menyempit, besar = dahi penuh dan membulat.
 const HEAD_CROWN = 0.61;
 
