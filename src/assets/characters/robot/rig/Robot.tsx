@@ -13,6 +13,11 @@ export const ROBOT_EXPRESSIONS: readonly RobotExpression[] = [
   "malu",
   "sedih",
   "marah",
+  "bingung",
+  "mikir",
+  "kesal",
+  "serius",
+  "mataTertutup",
 ];
 
 export type RobotProps = {

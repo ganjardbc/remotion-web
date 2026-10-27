@@ -1,5 +1,16 @@
 // Ekspresi layar dipisah dari gerak badan: bisa bicara/kaget sambil jalan.
-export type RobotExpression = "normal" | "senang" | "kaget" | "malu" | "sedih" | "marah";
+export type RobotExpression =
+  | "normal"
+  | "senang"
+  | "kaget"
+  | "malu"
+  | "sedih"
+  | "marah"
+  | "bingung"
+  | "mikir"
+  | "kesal"
+  | "serius"
+  | "mataTertutup";
 
 export type FaceKey = { readonly at: number; readonly expression: RobotExpression };
 

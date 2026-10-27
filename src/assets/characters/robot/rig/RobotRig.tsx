@@ -53,6 +53,31 @@ const Eye: React.FC<{ readonly kind: RobotExpression; readonly side: -1 | 1 }> =
           fill={C.blueLight}
         />
       );
+    case "bingung":
+      // Kiri kecil bulat, kanan besar: satu alis terangkat.
+      return side === -1 ? (
+        <rect x={-14} y={-14} width={28} height={28} rx={14} fill={C.blueLight} />
+      ) : (
+        <rect x={-25} y={-32} width={50} height={64} rx={9} fill={C.blueLight} />
+      );
+    case "mikir":
+      // Pil pipih di atas: melirik ke atas.
+      return <rect x={-23} y={-32} width={46} height={26} rx={13} fill={C.blueLight} />;
+    case "kesal":
+      return (
+        <path
+          d={
+            side === -1
+              ? "M-24 -2 L24 12 L24 24 Q24 28 20 28 L-20 28 Q-24 28 -24 24 Z"
+              : "M24 -2 L-24 12 L-24 24 Q-24 28 -20 28 L20 28 Q24 28 24 24 Z"
+          }
+          fill={C.blueLight}
+        />
+      );
+    case "serius":
+      return <rect x={-27} y={-6} width={54} height={26} rx={5} fill={C.blueLight} />;
+    case "mataTertutup":
+      return <path d="M-22 -6 Q0 20 22 -6" {...EYE_STROKE} />;
   }
 };
 

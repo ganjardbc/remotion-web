@@ -1,7 +1,8 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { eyeShape } from "../block/RobotBlock";
-import type { RobotExpression } from "../rig";
+import type { RobotExpression } from "../rig/face";
+import { ROBOT_EXPRESSIONS } from "../rig/Robot";
 import { COLORS as C } from "../rig/geometry";
 import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../ganjar/stickman/GanjarStickman";
 
@@ -10,7 +11,7 @@ import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from ".
 // dengan dua antena berujung biru di atas, lengan di sisi, dan kaki langsung di bawah kotak.
 // Tangan dan kaki krem berbentuk kotak membulat. Gerak memakai pose yang sama dengan GanjarStickman.
 
-export const ROBOT_STICKMAN_EXPRESSIONS: readonly RobotExpression[] = ["normal", "senang", "kaget", "malu", "sedih", "marah"];
+export const ROBOT_STICKMAN_EXPRESSIONS = ROBOT_EXPRESSIONS;
 
 const VIEWBOX = { w: 400, h: 270 } as const;
 // Lengan dan kaki pendek, seperti robot aslinya yang bertumpu pada satu kotak besar.

@@ -1,7 +1,8 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
-import type { RobotExpression } from "../rig";
+import type { RobotExpression } from "../rig/face";
+import { ROBOT_EXPRESSIONS } from "../rig/Robot";
 import { COLORS as C } from "../rig/geometry";
 
 // Robot versi balok, gaya yang sama dengan GanjarBlock: kubus CSS 3D dengan sisi vektor halus.
@@ -9,7 +10,7 @@ import { COLORS as C } from "../rig/geometry";
 // mata biru kotak, dua antena krem berujung biru, lengan krem di sisi, kaki oranye bersepatu krem.
 // Proporsi (U): badan 14x11x8, antena 2.6x3 + ujung 2.8x1.6, lengan 3x8x4, kaki 4.4x4.3, sepatu 5x1.8x6.
 
-export const ROBOT_BLOCK_EXPRESSIONS: readonly RobotExpression[] = ["normal", "senang", "kaget", "malu", "sedih", "marah"];
+export const ROBOT_BLOCK_EXPRESSIONS = ROBOT_EXPRESSIONS;
 
 // ---------- Wajah ----------
 
@@ -26,6 +27,20 @@ export const eyeShape = (kind: RobotExpression, side: -1 | 1): React.ReactNode =
       return <rect x={-9} y={-4} width={18} height={15} rx={3} fill={fill} />;
     case "marah":
       return <path d={side === -1 ? "M-11 -6 L11 3 L11 12 H-11 Z" : "M11 -6 L-11 3 L-11 12 H11 Z"} fill={fill} />;
+    case "bingung":
+      return side === -1 ? (
+        <rect x={-7} y={-7} width={14} height={14} rx={7} fill={fill} />
+      ) : (
+        <rect x={-11} y={-14} width={22} height={28} rx={4} fill={fill} />
+      );
+    case "mikir":
+      return <rect x={-10} y={-14} width={20} height={11} rx={5.5} fill={fill} />;
+    case "kesal":
+      return <path d={side === -1 ? "M-11 -2 L11 5 L11 10 Q11 12 9 12 L-9 12 Q-11 12 -11 10 Z" : "M11 -2 L-11 5 L-11 10 Q-11 12 -9 12 L9 12 Q11 12 11 10 Z"} fill={fill} />;
+    case "serius":
+      return <rect x={-12} y={-3} width={24} height={11} rx={2.5} fill={fill} />;
+    case "mataTertutup":
+      return stroke("M-10 -3 Q0 9 10 -3", fill, 5);
     default:
       return <rect x={-11} y={-12} width={22} height={24} rx={4} fill={fill} />;
   }
