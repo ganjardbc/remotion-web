@@ -9,7 +9,7 @@ import { FLOOR_Y } from "./geometry";
 export const GANJAR_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarExpression[];
 
 // Kepala dan bahu saja, untuk thumbnail atau lembar referensi.
-const BUST_BOX = { x: -250, y: -30, w: 500, h: 520 } as const;
+const BUST_BOX = { x: -250, y: 30, w: 500, h: 460 } as const;
 
 export type GanjarProps = {
   // Tinggi kotak viewBox penuh (1250 unit) dalam px. Karakter sendiri sedikit lebih kecil.

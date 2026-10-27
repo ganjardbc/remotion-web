@@ -75,7 +75,7 @@ export const CharacterSheet: React.FC = () => (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
           {GANJAR_EXPRESSIONS.map((e) => (
             <Cell key={e} label={LABEL[e]}>
-              <Ganjar bust expression={e} height={(190 * 520) / 500} />
+              <Ganjar bust expression={e} height={(190 * 460) / 500} />
             </Cell>
           ))}
         </div>
