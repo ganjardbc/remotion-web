@@ -137,8 +137,6 @@ const hairTop: Paint = (w, h) => (
   </>
 );
 
-const tuftFlat: Paint = (w, h) => <rect width={w} height={h} fill={C.hair} />;
-
 // Badan: kaos hitam, kerah bulat dan lipatan halus.
 const shirtBase: Paint = (w, h) => (
   <>
@@ -232,12 +230,6 @@ const HAIR_FACES: Faces = {
 const TORSO: Faces = { front: torsoFront, back: torsoBack, left: shirtBase, right: shirtBase, top: shirtTopFlat, bottom: pantsTop };
 const ARM: Faces = { front: armSide, back: armSide, left: armSide, right: armSide, top: shirtTopFlat, bottom: skinBottom };
 const LEG: Faces = { front: legFront, back: legBase, left: legSide, right: flip(legSide), top: pantsTop, bottom: soleBottom };
-const TUFT: Faces = { front: tuftFlat, back: tuftFlat, left: tuftFlat, right: tuftFlat, top: hairTop };
-
-const TUFTS = [
-  { x: -2.2, z: 0.4, w: 3, h: 1.8, d: 3, rz: -14 },
-  { x: 1.6, z: -0.8, w: 2.6, h: 2.2, d: 2.6, rz: 12 },
-] as const;
 
 export type GanjarBlockProps = {
   // Tinggi seluruh kotak karakter dalam px.
@@ -314,17 +306,6 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
           <Joint transform={`translateY(${-10 * u}px) rotateY(${headTurn}deg) rotateX(${nod}deg)`}>
             <Cube w={10} h={9} d={9} u={u} faces={headFaces(expression)} transform={`translateY(${-4.5 * u}px)`} />
             <Cube w={10.6} h={5} d={9.6} u={u} faces={HAIR_FACES} transform={`translateY(${-6.9 * u}px)`} />
-            {TUFTS.map((p, i) => (
-              <Cube
-                key={i}
-                w={p.w}
-                h={p.h}
-                d={p.d}
-                u={u}
-                faces={TUFT}
-                transform={`translate3d(${p.x * u}px, ${-10 * u}px, ${p.z * u}px) rotateZ(${p.rz}deg)`}
-              />
-            ))}
           </Joint>
 
           <Joint transform={`translate(${6.4 * u}px, ${-9.4 * u}px) ${armPlus}`}>
