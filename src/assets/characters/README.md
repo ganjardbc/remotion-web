@@ -38,9 +38,21 @@ src/assets/characters/
 
 `GanjarStickman` menyediakan pose (`poseAt`, `HAND`, `reach`) yang dipakai juga oleh `RobotStickman`. Komposisi Studio didaftarkan di `src/videos/CharacterRigDemo/Root.tsx`. Bagian bernama via `data-part`, pivot eksplisit.
 
+## Ganjar (rig 2D)
+
+Tampilan Ganjar sudah final (jangan diubah tanpa persetujuan): rambut pendek cokelat gelap dari `design-references/characters/male-short-hair-shape.svg`, kaos hitam lembut oversized, celana kargo hitam lembut longgar dengan saku berpenutup, sneaker hitam-putih. Warna di `ganjar/rig/geometry.ts` (`COLORS`), tidak ada hitam pekat.
+
+Ukuran dan bentuk diatur lewat konstanta di `ganjar/rig/GanjarRig.tsx`, semuanya bernilai default yang sudah disetujui:
+
+- Rambut: `HAIR_SCALE_X/Y` (lebar, tinggi), `HAIR_X/Y` (posisi), `HAIR_ROTATE` dan `HAIR_PIVOT` (rotasi), `HAIR_ROUNDNESS` (kebulatan ujung).
+- Wajah: `HEAD_HALF_WIDTH`, `HEAD_TOP`, `HEAD_BOTTOM`, `HEAD_JAW`, `HEAD_CROWN`. Posisi mata, alis, dan mulut ada di `FACE` (`geometry.ts`).
+- Kepala utuh: `HEAD_SCALE`, skala dari pangkal leher.
+
+Bentuk digambar dua lapis (garis lalu isi) supaya tepi luarnya satu siluet bersih tanpa garis sambungan di bahu, siku, lutut, dan dahi.
+
 ## Ganjar Blok (gaya Minecraft)
 
-`GanjarBlock` memakai kubus CSS 3D dengan sisi vektor halus (bukan piksel, bukan rig SVG). Props: `height`, `expression` (`senyum`, `kaget`, `mataTertutup`), `yaw`, `spin`, `walk`, `wave`. Komposisi: `GanjarBlock` dan `GanjarBlockStill`.
+`GanjarBlock` memakai kubus CSS 3D dengan sisi vektor halus (bukan piksel, bukan rig SVG). Props: `height`, `expression` (sama dengan rig 2D: `netral`, `senang`, `bingung`, `kaget`, `senyumSantai`, `serius`, `kesal`, `mikir`, `mataTertutup`; wajah digambar dari data `FaceState` yang sama), `yaw`, `spin`, `walk`, `wave`. Komposisi: `GanjarBlock` dan `GanjarBlockStill`.
 
 ## Ganjar Stickman
 
@@ -48,8 +60,8 @@ src/assets/characters/
 
 ## Robot Blok
 
-`RobotBlock`: robot dari kubus CSS 3D dengan sisi vektor halus, sepasang dengan `GanjarBlock` (kubus dan sendi bersama ada di `blockKit.tsx`). Props: `height`, `expression` (`normal`, `senang`, `kaget`, `malu`, `sedih`, `marah`), `yaw`, `spin`, `walk`, `wave`. Komposisi: `RobotBlock` dan `RobotBlockStill`.
+`RobotBlock`: robot dari kubus CSS 3D dengan sisi vektor halus, sepasang dengan `GanjarBlock` (kubus dan sendi bersama ada di `blockKit.tsx`). Props: `height`, `expression` (`normal`, `senang`, `kaget`, `malu`, `sedih`, `marah`, `bingung`, `mikir`, `kesal`, `serius`, `mataTertutup`), `yaw`, `spin`, `walk`, `wave`. Komposisi: `RobotBlock` dan `RobotBlockStill`.
 
 ## Robot Stickman
 
-`RobotStickman`: robot gaya stickman (garis tipis, tampak depan). Seperti robot aslinya: tidak ada leher atau badan terpisah, hanya satu kotak oranye berlayar (kepala dan badan sekaligus), dua antena, lengan di sisi, kaki di bawah, tangan dan kaki krem berbentuk kotak membulat. Memakai pose `GanjarStickman`. Props: `height`, `expression` (`normal`, `senang`, `kaget`, `malu`, `sedih`, `marah`), `walk`, `wave`, `color`, `strokeWidth`. Komposisi: `RobotStickman` dan `RobotStickmanStill`.
+`RobotStickman`: robot gaya stickman (garis tipis, tampak depan). Seperti robot aslinya: tidak ada leher atau badan terpisah, hanya satu kotak oranye berlayar (kepala dan badan sekaligus), dua antena, lengan di sisi, kaki di bawah, tangan dan kaki krem berbentuk kotak membulat. Memakai pose `GanjarStickman`. Props: `height`, `expression` (`normal`, `senang`, `kaget`, `malu`, `sedih`, `marah`, `bingung`, `mikir`, `kesal`, `serius`, `mataTertutup`), `walk`, `wave`, `color`, `strokeWidth`. Komposisi: `RobotStickman` dan `RobotStickmanStill`.
