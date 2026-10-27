@@ -8,7 +8,7 @@ import { COLORS as C } from "../rig/geometry";
 // Robot versi balok, gaya yang sama dengan GanjarBlock: kubus CSS 3D dengan sisi vektor halus.
 // Desain mengikuti design-references/characters/robot-approved.png: badan oranye dengan layar hitam,
 // mata biru kotak, dua antena krem berujung biru, lengan krem di sisi, kaki oranye bersepatu krem.
-// Proporsi (U): badan 14x11x8, antena 2.6x3 + ujung 2.8x1.6, lengan 3x8x4, kaki 4.4x4.3, sepatu 5x1.8x6.
+// Proporsi (U): badan 14x11x8, antena 1.6x2.2 + ujung 1.9x1.2, lengan 2.4x6.4x3, kaki 3.4x3.9, sepatu 3.9x1.5x4.8.
 
 export const ROBOT_BLOCK_EXPRESSIONS = ROBOT_EXPRESSIONS;
 
@@ -163,8 +163,8 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
   const wobble = (k: number) => Math.sin(t * 3.1 + k) * (walk ? 9 : 4);
 
-  const armPlus = wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${3 + idle}deg)`;
-  const armMinus = `rotateX(${swing}deg) rotateZ(${-3 - idle}deg)`;
+  const armPlus = wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${-(1 + idle)}deg)`;
+  const armMinus = `rotateX(${swing}deg) rotateZ(${1 + idle}deg)`;
 
   return (
     <div style={{ position: "relative", width, height, perspective: u * 70, perspectiveOrigin: "50% 45%", ...style }}>
@@ -186,22 +186,22 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
 
           {([-1, 1] as const).map((side) => (
             <Joint key={side} transform={`translate(${side * 4.6 * u}px, ${-11 * u}px) rotateZ(${wobble(side)}deg)`}>
-              <Cube w={2.6} h={3} d={2.6} u={u} faces={STEM} transform={`translateY(${-1.35 * u}px)`} />
-              <Cube w={2.8} h={1.6} d={2.8} u={u} faces={TIP} transform={`translateY(${-3.6 * u}px)`} />
+              <Cube w={1.6} h={2.2} d={1.6} u={u} faces={STEM} transform={`translateY(${-1 * u}px)`} />
+              <Cube w={1.9} h={1.2} d={1.9} u={u} faces={TIP} transform={`translateY(${-2.65 * u}px)`} />
             </Joint>
           ))}
 
-          <Joint transform={`translate(${8.7 * u}px, ${-9 * u}px) ${armPlus}`}>
-            <Cube w={3} h={8} d={4} u={u} faces={ARM} transform={`translateY(${4 * u}px)`} />
+          <Joint transform={`translate(${8.4 * u}px, ${-8.2 * u}px) ${armPlus}`}>
+            <Cube w={2.4} h={6.4} d={3} u={u} faces={ARM} transform={`translateY(${3.2 * u}px)`} />
           </Joint>
-          <Joint transform={`translate(${-8.7 * u}px, ${-9 * u}px) ${armMinus}`}>
-            <Cube w={3} h={8} d={4} u={u} faces={ARM} transform={`translateY(${4 * u}px)`} />
+          <Joint transform={`translate(${-8.4 * u}px, ${-8.2 * u}px) ${armMinus}`}>
+            <Cube w={2.4} h={6.4} d={3} u={u} faces={ARM} transform={`translateY(${3.2 * u}px)`} />
           </Joint>
 
           {([1, -1] as const).map((side) => (
-            <Joint key={side} transform={`translate(${side * 3.6 * u}px, ${-0.2 * u}px) rotateX(${-side * swing}deg)`}>
-              <Cube w={4.4} h={4.5} d={4.4} u={u} faces={LEG} transform={`translateY(${2.25 * u}px)`} />
-              <Cube w={5} h={1.8} d={6} u={u} faces={FOOT} transform={`translate3d(0, ${4.5 * u}px, ${0.6 * u}px)`} />
+            <Joint key={side} transform={`translate(${side * 3.2 * u}px, ${-0.2 * u}px) rotateX(${-side * swing}deg)`}>
+              <Cube w={3.4} h={3.9} d={3.4} u={u} faces={LEG} transform={`translateY(${1.95 * u}px)`} />
+              <Cube w={3.9} h={1.5} d={4.8} u={u} faces={FOOT} transform={`translate3d(0, ${4.65 * u}px, ${0.5 * u}px)`} />
             </Joint>
           ))}
         </Joint>
