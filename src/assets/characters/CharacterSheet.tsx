@@ -2,9 +2,10 @@ import type React from "react";
 import { AbsoluteFill } from "remotion";
 import { Ganjar, GANJAR_EXPRESSIONS } from "./ganjar/rig/Ganjar";
 import { ROBOT_EXPRESSIONS, Robot } from "./robot/rig/Robot";
+import { ClaudeCode, CLAUDE_CODE_EXPRESSIONS } from "./claudecode/rig/ClaudeCode";
 
 const INK = "#17171b";
-const PALETTE = [INK, "#6b6b70", "#f5e9d8", "#fbd34d", "#f6932a", "#1d78f0"];
+const PALETTE = [INK, "#6b6b70", "#f5e9d8", "#fbd34d", "#f6932a", "#1d78f0", "#D97757"];
 
 const LABEL: Record<string, string> = {
   netral: "Netral",
@@ -35,8 +36,9 @@ const heading: React.CSSProperties = {
 const Cell: React.FC<{
   readonly label: string;
   readonly dark?: boolean;
+  readonly cellHeight?: number;
   readonly children: React.ReactNode;
-}> = ({ label, dark, children }) => (
+}> = ({ label, dark, cellHeight = 180, children }) => (
   <div style={{ textAlign: "center", fontFamily: "sans-serif", fontSize: 18, color: INK }}>
     <div
       style={{
@@ -45,7 +47,7 @@ const Cell: React.FC<{
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        height: 180,
+        height: cellHeight,
         overflow: "hidden",
       }}
     >
@@ -58,12 +60,23 @@ const Cell: React.FC<{
 // Halaman referensi: semua ekspresi. Buka di Studio untuk memilih aset.
 export const CharacterSheet: React.FC = () => (
   <AbsoluteFill style={{ background: "#f8f6f1", padding: 48, flexDirection: "row", gap: 48 }}>
-    <div style={{ width: 460, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+    <div style={{ width: 460, display: "flex", flexDirection: "column", gap: 28 }}>
       <div>
         <h3 style={heading}>Palet Warna</h3>
         <div style={{ display: "flex", gap: 12 }}>
           {PALETTE.map((c) => (
             <div key={c} style={{ width: 44, height: 44, borderRadius: 22, background: c }} />
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <h3 style={heading}>Ekspresi Claude Code</h3>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, minmax(0, 1fr))", gap: 14 }}>
+          {CLAUDE_CODE_EXPRESSIONS.map((e) => (
+            <Cell key={e} label={LABEL[e]} cellHeight={120}>
+              <ClaudeCode expression={e} height={95} />
+            </Cell>
           ))}
         </div>
       </div>
