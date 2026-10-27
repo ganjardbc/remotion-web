@@ -1,63 +1,99 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
+import { EXPRESSIONS, type FaceState, type GanjarExpression } from "../rig/face";
 
 // Ganjar versi balok: kubus CSS 3D asli, tiap sisi digambar vektor halus (bukan piksel)
-// dengan warna dan wajah yang sama seperti rig SVG Ganjar. Satuan model: U; 1 U = 10 unit viewBox sisi.
+// dengan warna (kaos dan celana hitam lembut, rambut cokelat gelap) dan wajah yang sama seperti rig SVG Ganjar. Satuan model: U; 1 U = 10 unit viewBox sisi.
 // Proporsi: kepala 10x9x9, badan 9x10x5, lengan 3.6x10x3.6, kaki 4.6x11x4.6, rambut berupa kubus tersendiri.
 
-export type GanjarBlockExpression = "senyum" | "kaget" | "mataTertutup";
+// Ekspresi sama dengan rig 2D: wajah blok digambar dari angka FaceState yang sama (alis, mata, mulut, pipi).
+export type GanjarBlockExpression = GanjarExpression;
 
-export const GANJAR_BLOCK_EXPRESSIONS: readonly GanjarBlockExpression[] = ["senyum", "kaget", "mataTertutup"];
+export const GANJAR_BLOCK_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarBlockExpression[];
 
 const C = {
   skin: "#f2b98c",
   skinShade: "#dc9a6c",
   blush: "#ee8a78",
-  hair: "#19191d",
-  hairLight: "#34343e",
+  hair: "#3b2418",
+  hairLight: "#5a3a28",
   eye: "#0b0b0e",
   mouth: "#7a3b2a",
-  shirt: "#1d1d22",
-  shirtLight: "#2d2d35",
-  pants: "#2f5aa6",
-  pantsLight: "#4a78c9",
+  shirt: "#2c2c32",
+  shirtLight: "#3e3e46",
+  pants: "#36363d",
+  pantsLight: "#4a4a53",
   shoe: "#111115",
   sole: "#f1ece2",
 } as const;
 
 // ---------- Sisi vektor ----------
 
-// Kepala: wajah di depan; rambut ada di kubus tersendiri.
-const eyes = (e: GanjarBlockExpression): React.ReactNode => {
-  const xs = [30, 70];
-  if (e === "mataTertutup") return xs.map((x) => <g key={x}>{stroke(`M${x - 8} 52 Q${x} 61 ${x + 8} 52`, C.eye, 3.4)}</g>);
-  const [rx, ry] = e === "kaget" ? [8.5, 12] : [6.8, 9.5];
-  return xs.map((x) => (
-    <g key={x}>
-      <ellipse cx={x} cy={52} rx={rx} ry={ry} fill={C.eye} />
-      <circle cx={x + 2.2} cy={52 - ry * 0.42} r={2.3} fill="#fff" opacity={0.9} />
-    </g>
-  ));
-};
+// Kepala: wajah di depan (kanvas 100 x 90); rambut ada di kubus tersendiri.
+const EYE_XS = [30, 70] as const;
 
-const mouth = (e: GanjarBlockExpression): React.ReactNode => {
-  if (e === "kaget") return <ellipse cx={50} cy={73} rx={5.5} ry={7} fill={C.mouth} />;
-  return stroke("M41 69 Q50 77 59 69", C.mouth, 3);
+// Alis: poni sudah terangkat, jadi alis di y 34..46 selalu terlihat. rot positif = ujung dalam turun.
+const brows = (f: FaceState): React.ReactNode =>
+  EYE_XS.map((x, i) => {
+    const brow = i === 0 ? f.browL : f.browR;
+    const y = Math.max(34, 38 + brow.y * 0.45);
+    const rot = i === 0 ? brow.rot : -brow.rot;
+    return (
+      <g key={x} transform={`rotate(${rot} ${x} ${y})`}>
+        {stroke(`M${x - 9} ${y} L${x + 9} ${y}`, C.hair, 3.6)}
+      </g>
+    );
+  });
+
+const eyes = (f: FaceState): React.ReactNode =>
+  EYE_XS.map((x) => {
+    const cx = x + f.lookX * 0.35;
+    const cy = 52 + f.lookY * 0.35;
+    if (f.eyeOpen < 0.2) {
+      // Tertutup: eyeArc -1 = lengkung rileks, 1 = ^ (tertawa).
+      const ctrl = cy - f.eyeArc * 9;
+      const end = cy + 2 + f.eyeArc * 2.5;
+      return <g key={x}>{stroke(`M${cx - 8} ${end} Q${cx} ${ctrl} ${cx + 8} ${end}`, C.eye, 3.4)}</g>;
+    }
+    const wide = f.eyeOpen > 1;
+    const rx = 6.8 * (wide ? 1 + (f.eyeOpen - 1) * 1.6 : 1);
+    const ry = 9.5 * (wide ? 1 + (f.eyeOpen - 1) * 2.4 : f.eyeOpen);
+    return (
+      <g key={x}>
+        <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill={C.eye} />
+        <circle cx={cx + 2.2} cy={cy - ry * 0.42} r={2.3} fill="#fff" opacity={0.9} />
+      </g>
+    );
+  });
+
+const mouth = (f: FaceState): React.ReactNode => {
+  const hw = f.mouthWidth * 0.2;
+  const x0 = 50 - hw;
+  const x1 = 50 + hw;
+  if (f.mouthOpen < 0.1) return stroke(`M${x0} 69 Q50 ${69 + f.smile * 9} ${x1} 69`, C.mouth, 3);
+  // Terbuka lebar tanpa senyum/cemberut = oval; selain itu bentuk D.
+  if (Math.abs(f.smile) < 0.3) return <ellipse cx={50} cy={72} rx={hw * 0.6} ry={f.mouthOpen * 10} fill={C.mouth} />;
+  const depth = f.mouthOpen * 14;
+  return <path d={`M${x0} 68 Q50 ${68 + f.smile * 4} ${x1} 68 Q50 ${68 + depth * 2} ${x0} 68 Z`} fill={C.mouth} />;
 };
 
 const headFront =
   (e: GanjarBlockExpression): Paint =>
-  (w, h) => (
-    <>
-      <rect width={w} height={h} fill={C.skin} />
-      <rect y={h - 18} width={w} height={18} fill={C.skinShade} opacity={0.22} />
-      <ellipse cx={19} cy={66} rx={7} ry={4} fill={C.blush} opacity={0.38} />
-      <ellipse cx={81} cy={66} rx={7} ry={4} fill={C.blush} opacity={0.38} />
-      {eyes(e)}
-      {mouth(e)}
-    </>
-  );
+  (w, h) => {
+    const f = EXPRESSIONS[e];
+    return (
+      <>
+        <rect width={w} height={h} fill={C.skin} />
+        <rect y={h - 18} width={w} height={18} fill={C.skinShade} opacity={0.22} />
+        <ellipse cx={19} cy={66} rx={7} ry={4} fill={C.blush} opacity={f.blush * 0.55} />
+        <ellipse cx={81} cy={66} rx={7} ry={4} fill={C.blush} opacity={f.blush * 0.55} />
+        {brows(f)}
+        {eyes(f)}
+        {mouth(f)}
+      </>
+    );
+  };
 
 const headSide: Paint = (w, h) => (
   <>
@@ -72,6 +108,7 @@ const skinFlat: Paint = (w, h) => <rect width={w} height={h} fill={C.skin} />;
 // Kubus rambut (10.6 x 5 x 9.6): poni di depan, sisi belakang turun lebih panjang, bawahnya transparan.
 const hairFront: Paint = (w) => (
   <path
+    transform="translate(0 -6)"
     d={`M0 0 H${w} V26 Q${w - 6} 38 ${w - 14} 30 Q${w - 20} 24 ${w - 28} 34 Q${w - 36} 42 ${w - 44} 30 Q${w - 52} 22 ${w - 62} 34 Q${w - 72} 42 ${w - 82} 30 Q${w - 92} 24 ${w - 100} 34 Q${w - 104} 36 0 26 Z`}
     fill={C.hair}
   />
@@ -222,7 +259,7 @@ export const ganjarBlockSize = (height: number): { width: number; height: number
 
 export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   height = 640,
-  expression = "senyum",
+  expression = "netral",
   yaw = 24,
   spin = 0,
   walk = false,
