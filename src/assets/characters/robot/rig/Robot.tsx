@@ -1,9 +1,10 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { evalLook, type LookKey } from "../shared/look";
-import { RIG_VIEWBOX, RobotRig, evalFace, evalRobot, type FaceKey, type RobotExpression } from "./rig";
-import type { PlacedClip } from "./rig/clips";
-import { FLOOR_Y } from "./rig/geometry";
+import { evalLook, type LookKey } from "../../shared/look";
+import { evalRobot, type PlacedClip } from "./clips";
+import { evalFace, type FaceKey, type RobotExpression } from "./face";
+import { RIG_VIEWBOX, RobotRig } from "./RobotRig";
+import { FLOOR_Y } from "./geometry";
 
 export const ROBOT_EXPRESSIONS: readonly RobotExpression[] = [
   "normal",
@@ -15,8 +16,8 @@ export const ROBOT_EXPRESSIONS: readonly RobotExpression[] = [
 ];
 
 export type RobotProps = {
-  // Lebar kotak viewBox penuh (660 unit) dalam px.
-  readonly width?: number;
+  // Tinggi kotak viewBox penuh (560 unit) dalam px.
+  readonly height?: number;
   readonly expression?: RobotExpression;
   readonly face?: readonly FaceKey[];
   readonly clips?: readonly PlacedClip[];
@@ -25,17 +26,17 @@ export type RobotProps = {
   readonly style?: React.CSSProperties;
 };
 
-export const robotSize = (width: number): { width: number; height: number; floorGap: number } => {
-  const scale = width / RIG_VIEWBOX.w;
+export const robotSize = (height: number): { width: number; height: number; floorGap: number } => {
+  const scale = height / RIG_VIEWBOX.h;
   return {
-    width,
-    height: RIG_VIEWBOX.h * scale,
+    width: RIG_VIEWBOX.w * scale,
+    height,
     floorGap: (RIG_VIEWBOX.y + RIG_VIEWBOX.h - FLOOR_Y) * scale,
   };
 };
 
 export const Robot: React.FC<RobotProps> = ({
-  width = 340,
+  height = 340 * (RIG_VIEWBOX.h / RIG_VIEWBOX.w),
   expression = "normal",
   face,
   clips = [],
@@ -49,8 +50,8 @@ export const Robot: React.FC<RobotProps> = ({
   const state = evalFace(frame, fps, keys);
   return (
     <svg
-      width={width}
-      height={(width * RIG_VIEWBOX.h) / RIG_VIEWBOX.w}
+      width={(height * RIG_VIEWBOX.w) / RIG_VIEWBOX.h}
+      height={height}
       viewBox={`${RIG_VIEWBOX.x} ${RIG_VIEWBOX.y} ${RIG_VIEWBOX.w} ${RIG_VIEWBOX.h}`}
       style={{ overflow: "visible", display: "block", ...style }}
     >

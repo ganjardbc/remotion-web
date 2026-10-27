@@ -1,9 +1,9 @@
 import type React from "react";
 import { AbsoluteFill } from "remotion";
-import { GANJAR_VIEWBOX, GanjarRig } from "../../../assets/characters/ganjar/rig/GanjarRig";
-import { COLORS } from "../../../assets/characters/ganjar/rig/geometry";
-import { EXPRESSIONS, type GanjarExpression } from "../../../assets/characters/ganjar/rig/face";
-import { NEUTRAL_POSE } from "../../../assets/characters/ganjar/rig/pose";
+import { GANJAR_VIEWBOX, GanjarRig } from "../rig/GanjarRig";
+import { COLORS } from "../rig/geometry";
+import { EXPRESSIONS, type GanjarExpression } from "../rig/face";
+import { NEUTRAL_POSE } from "../rig/pose";
 
 export const GanjarStill: React.FC<{ readonly expression?: GanjarExpression }> = ({
   expression = "netral",

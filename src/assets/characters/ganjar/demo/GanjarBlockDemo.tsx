@@ -1,6 +1,6 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { GanjarBlock, type GanjarBlockExpression } from "../../../assets/characters/ganjar/block/GanjarBlock";
+import { GanjarBlock, type GanjarBlockExpression } from "../block/GanjarBlock";
 
 export const GANJAR_BLOCK_DEMO_FRAMES = 240;
 

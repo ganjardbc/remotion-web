@@ -6,3 +6,4 @@ export type { GanjarExpression, FaceKey, FaceState } from "./face";
 export { NEUTRAL_POSE } from "./pose";
 export type { GanjarPose, PoseDelta } from "./pose";
 export { COLORS, FLOOR_Y } from "./geometry";
+export { Ganjar, GANJAR_EXPRESSIONS, ganjarSize, type GanjarProps } from "./Ganjar";

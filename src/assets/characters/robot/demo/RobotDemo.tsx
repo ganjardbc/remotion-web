@@ -9,9 +9,9 @@ import {
   surprise,
   walk,
   type FaceKey,
-} from "../../../assets/characters/robot/rig";
-import type { PlacedClip } from "../../../assets/characters/robot/rig/clips";
-import { COLORS } from "../../../assets/characters/robot/rig/geometry";
+} from "../rig";
+import type { PlacedClip } from "../rig/clips";
+import { COLORS } from "../rig/geometry";
 
 // Satu timeline, detik -> frame di dalam komponen. Total 8 detik @30fps.
 const FPS = 30;

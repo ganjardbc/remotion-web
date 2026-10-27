@@ -7,7 +7,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { RobotStickman, Stickman, robotStickmanSize, stickmanSize } from "../../assets/characters";
+import { RobotStickman, GanjarStickman, robotStickmanSize, ganjarStickmanSize } from "../../assets/characters";
 import { ThemeProvider, useTheme } from "../../themes";
 import { Sfx, type SfxSet } from "./Sfx";
 import { Chair, DESK_TOP, Desk, Laptop, Mug, RoomBack, SEAT_X } from "./Room";
@@ -16,7 +16,7 @@ import { CTA, CTA_START, FPS, HOOK, HOOK_SECONDS, LINES, LINE_START, TOTAL_FRAME
 export { TOTAL_FRAMES };
 
 const GANJAR_HEIGHT = 760;
-// Meja memotong badan Stickman di sekitar perut: bagian bawah tersembunyi di balik meja.
+// Meja memotong badan GanjarStickman di sekitar perut: bagian bawah tersembunyi di balik meja.
 const GANJAR_TOP = DESK_TOP - 0.62 * GANJAR_HEIGHT;
 const ROBOT_HEIGHT = 300;
 const ROBOT_CENTER_X = 810;
@@ -284,7 +284,7 @@ const Stage: React.FC = () => {
   const shake = idx === 7 && frame - LINE_START[7] < 24 ? Math.sin(frame * 1.6) * 3 : 0;
 
   const r = robotStickmanSize(ROBOT_HEIGHT);
-  const s = stickmanSize(GANJAR_HEIGHT);
+  const s = ganjarStickmanSize(GANJAR_HEIGHT);
   const ganjarExpression = inCta ? "senang" : line?.ganjar ?? "senyum";
   const ganjarBounce = speaking("ganjar") ? Math.abs(Math.sin((frame / fps) * 12)) * 7 : 0;
   const ganjarShake = idx === 7 && frame - LINE_START[7] < 24 ? Math.sin(frame * 1.6) * 3 : 0;
@@ -292,7 +292,7 @@ const Stage: React.FC = () => {
   return (
     <>
       <Chair />
-      {/* potong di balik meja: kaki Stickman tidak boleh muncul di bawah panel depan */}
+      {/* potong di balik meja: kaki GanjarStickman tidak boleh muncul di bawah panel depan */}
       <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: DESK_TOP + 60, overflow: "hidden" }}>
         <div
           style={{
@@ -303,7 +303,7 @@ const Stage: React.FC = () => {
             transformOrigin: "50% 62%",
           }}
         >
-          <Stickman height={GANJAR_HEIGHT} expression={ganjarExpression} talking={speaking("ganjar")} gesture={inCta ? "lambai" : line?.handGanjar ?? "netral"} hair headphones={false} strokeWidth={5} />
+          <GanjarStickman height={GANJAR_HEIGHT} expression={ganjarExpression} talking={speaking("ganjar")} gesture={inCta ? "lambai" : line?.handGanjar ?? "netral"} hair headphones={false} strokeWidth={5} />
         </div>
       </div>
       <Desk />

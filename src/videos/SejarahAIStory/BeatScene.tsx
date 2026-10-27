@@ -5,6 +5,8 @@ import {
   Robot,
   armGesture,
   point,
+  GANJAR_VIEWBOX,
+  ROBOT_VIEWBOX,
   robotSize,
   startle,
   surprise,
@@ -26,7 +28,8 @@ const DESK_TOP = 830;
 
 const GANJAR_X = 1290;
 const GANJAR_WIDTH = 554;
-const GANJAR_SCALE = GANJAR_WIDTH / 840;
+const GANJAR_HEIGHT = GANJAR_WIDTH * (GANJAR_VIEWBOX.h / GANJAR_VIEWBOX.w);
+const GANJAR_SCALE = GANJAR_WIDTH / GANJAR_VIEWBOX.w;
 // Titik pada tubuh Ganjar (unit rig) yang sejajar dengan permukaan meja: dada bawah.
 const SEAT_RIG_Y = 650;
 const GANJAR_HEAD_TOP = DESK_TOP - (SEAT_RIG_Y - 5) * GANJAR_SCALE;
@@ -35,6 +38,7 @@ const ROBOT_X = 1785;
 // Laptop di meja, di sisi kanan Ganjar, agar tubuhnya tidak tertutup.
 const LAPTOP_X = 1480;
 const ROBOT_WIDTH = 300;
+const ROBOT_HEIGHT = ROBOT_WIDTH * (ROBOT_VIEWBOX.h / ROBOT_VIEWBOX.w);
 const ROBOT_HEAD_TOP = DESK_TOP - 485 * (ROBOT_WIDTH / 660);
 
 const BUBBLE_PANEL = { left: SPLIT + 24, right: W - 30 };
@@ -370,7 +374,7 @@ const Cast: React.FC<{ readonly lines: readonly TimedLine[]; readonly active: Ti
   lines,
   active,
 }) => {
-  const r = robotSize(ROBOT_WIDTH);
+  const r = robotSize(ROBOT_HEIGHT);
   const gk = buildGanjar(lines);
   const rk = buildRobot(lines);
   return (
@@ -384,7 +388,7 @@ const Cast: React.FC<{ readonly lines: readonly TimedLine[]; readonly active: Ti
           top: DESK_TOP - (SEAT_RIG_Y + 20) * GANJAR_SCALE,
         }}
       >
-        <Ganjar width={GANJAR_WIDTH} face={gk.face} clips={gk.clips} look={gk.look} talking={active?.who === "ganjar"} />
+        <Ganjar height={GANJAR_HEIGHT} face={gk.face} clips={gk.clips} look={gk.look} talking={active?.who === "ganjar"} />
       </Entering>
       <Entering
         kind="drop"
@@ -392,7 +396,7 @@ const Cast: React.FC<{ readonly lines: readonly TimedLine[]; readonly active: Ti
         style={{ position: "absolute", left: ROBOT_X - ROBOT_WIDTH / 2, bottom: H - DESK_TOP - r.floorGap - 4 }}
       >
         <div style={{ position: "relative" }}>
-          <Robot width={ROBOT_WIDTH} face={rk.face} clips={rk.clips} look={rk.look} />
+          <Robot height={ROBOT_HEIGHT} face={rk.face} clips={rk.clips} look={rk.look} />
         </div>
       </Entering>
     </>

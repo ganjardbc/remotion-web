@@ -1,6 +1,6 @@
 // Naskah dan waktu "Programmer Jadi Bodoh Karena Claude" (satir, 9:16). Ubah di sini, bukan di komponen.
 // Semua waktu dalam detik.
-import type { Gesture, RobotExpression, StickmanExpression } from "../../assets/characters";
+import type { Gesture, RobotExpression, GanjarStickmanExpression } from "../../assets/characters";
 
 export const FPS = 30;
 
@@ -11,7 +11,7 @@ export type Line = {
   // Tanda *...* menyorot kata.
   readonly text: string;
   readonly seconds: number;
-  readonly ganjar: StickmanExpression;
+  readonly ganjar: GanjarStickmanExpression;
   readonly robot: RobotExpression;
   // Gerak tangan tiap karakter selama kalimat ini.
   readonly handGanjar: Gesture;

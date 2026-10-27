@@ -1,15 +1,15 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { GESTURES, gestureArms, type ArmPose, type Gesture } from "./gestures";
+import { GESTURES, gestureArms, type ArmPose, type Gesture } from "../../shared/gestures";
 
 export { GESTURES, type ArmPose, type Gesture };
 
-// Stickman gaya gambar tangan (lihat design-references/stickman/hand-drawn-stick-man.jpg):
+// GanjarStickman gaya gambar tangan (lihat design-references/stickman/hand-drawn-stick-man.jpg):
 // tampak depan, kepala oval besar, badan seperti buah pir, garis tipis,
 // tangan berujung loop dan kaki berujung oval. Headphone, hoodie, dan celana pendek abu jadi ciri khas supaya tidak
 // sekadar meniru referensi. Semua gerak dari frame.
 
-export type StickmanExpression =
+export type GanjarStickmanExpression =
   | "senyum"
   | "senyumSantai"
   | "senang"
@@ -25,7 +25,7 @@ export type StickmanExpression =
   | "marah"
   | "mataTertutup";
 
-export const STICKMAN_EXPRESSIONS: readonly StickmanExpression[] = [
+export const GANJAR_STICKMAN_EXPRESSIONS: readonly GanjarStickmanExpression[] = [
   "senyum",
   "senyumSantai",
   "senang",
@@ -102,12 +102,12 @@ export const poseAt = (t: number, walk: boolean, wave: boolean, gesture?: Gestur
 };
 
 // Lebar mulut saat bicara per ekspresi (unit viewBox).
-const TALK_WIDTH: Partial<Record<StickmanExpression, number>> = { kaget: 6, marah: 9, kesal: 9, serius: 9, senang: 14, tertawa: 15, malu: 7 };
+const TALK_WIDTH: Partial<Record<GanjarStickmanExpression, number>> = { kaget: 6, marah: 9, kesal: 9, serius: 9, senang: 14, tertawa: 15, malu: 7 };
 
 // Bukaan mulut bicara 0..1 dari frame: dua gelombang supaya tidak terasa seperti metronom.
 export const talkAmount = (t: number): number => Math.min(1, 0.12 + Math.abs(Math.sin(t * 11) * 0.7 + Math.sin(t * 7.3) * 0.3));
 
-const Face: React.FC<{ readonly e: StickmanExpression; readonly ink: string; readonly w: number; readonly talk?: number }> = ({ e, ink, w, talk }) => {
+const Face: React.FC<{ readonly e: GanjarStickmanExpression; readonly ink: string; readonly w: number; readonly talk?: number }> = ({ e, ink, w, talk }) => {
   const { x, y } = HEAD;
   const mouthY = y + 30;
   const line = (d: string) => <path d={d} fill="none" stroke={ink} strokeWidth={w} strokeLinecap="round" strokeLinejoin="round" />;
@@ -267,10 +267,10 @@ const Face: React.FC<{ readonly e: StickmanExpression; readonly ink: string; rea
   }
 };
 
-export type StickmanProps = {
+export type GanjarStickmanProps = {
   // Tinggi kotak karakter dalam px.
   readonly height?: number;
-  readonly expression?: StickmanExpression;
+  readonly expression?: GanjarStickmanExpression;
   readonly walk?: boolean;
   readonly wave?: boolean;
   // Gerak tangan; menimpa `wave`. Lihat gestures.ts.
@@ -289,7 +289,7 @@ export type StickmanProps = {
   readonly style?: React.CSSProperties;
 };
 
-export const stickmanSize = (height: number): { width: number; height: number } => ({
+export const ganjarStickmanSize = (height: number): { width: number; height: number } => ({
   width: (height * VIEWBOX.w) / VIEWBOX.h,
   height,
 });
@@ -303,7 +303,7 @@ const POCKET = "M171 232 L229 232 L238 266 Q200 276 162 266 Z";
 export const TORSO =
   "M174 158 C169 195 153 235 159 262 C163 280 180 284 200 284 C220 284 237 280 241 262 C247 235 231 195 226 158";
 
-export const Stickman: React.FC<StickmanProps> = ({
+export const GanjarStickman: React.FC<GanjarStickmanProps> = ({
   height = 640,
   expression = "senyum",
   walk = false,
@@ -373,7 +373,7 @@ export const Stickman: React.FC<StickmanProps> = ({
 
   return (
     <svg
-      width={stickmanSize(height).width}
+      width={ganjarStickmanSize(height).width}
       height={height}
       viewBox={`0 0 ${VIEWBOX.w} ${VIEWBOX.h}`}
       style={{ overflow: "visible", display: "block", ...style }}

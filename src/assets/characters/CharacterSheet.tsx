@@ -1,8 +1,7 @@
 import type React from "react";
 import { AbsoluteFill } from "remotion";
-import { Duo } from "./Duo";
-import { Ganjar, GANJAR_EXPRESSIONS } from "./ganjar/Ganjar";
-import { ROBOT_EXPRESSIONS, Robot } from "./robot/Robot";
+import { Ganjar, GANJAR_EXPRESSIONS } from "./ganjar/rig/Ganjar";
+import { ROBOT_EXPRESSIONS, Robot } from "./robot/rig/Robot";
 
 const INK = "#17171b";
 const PALETTE = [INK, "#6b6b70", "#f5e9d8", "#fbd34d", "#f6932a", "#1d78f0"];
@@ -60,9 +59,6 @@ const Cell: React.FC<{
 export const CharacterSheet: React.FC = () => (
   <AbsoluteFill style={{ background: "#f8f6f1", padding: 48, flexDirection: "row", gap: 48 }}>
     <div style={{ width: 460, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
-      <div style={{ background: "#fbe28a", borderRadius: 12, padding: "24px 0 8px", display: "flex", justifyContent: "center" }}>
-        <Duo width={300} ganjar={{ expression: "senyumSantai" }} />
-      </div>
       <div>
         <h3 style={heading}>Palet Warna</h3>
         <div style={{ display: "flex", gap: 12 }}>
@@ -79,7 +75,7 @@ export const CharacterSheet: React.FC = () => (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14 }}>
           {GANJAR_EXPRESSIONS.map((e) => (
             <Cell key={e} label={LABEL[e]}>
-              <Ganjar bust expression={e} width={190} />
+              <Ganjar bust expression={e} height={(190 * 520) / 500} />
             </Cell>
           ))}
         </div>
@@ -90,7 +86,7 @@ export const CharacterSheet: React.FC = () => (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(6, 1fr)", gap: 14 }}>
           {ROBOT_EXPRESSIONS.map((e) => (
             <Cell key={e} label={LABEL[e]} dark>
-              <Robot expression={e} width={170} />
+              <Robot expression={e} height={(170 * 560) / 660} />
             </Cell>
           ))}
         </div>

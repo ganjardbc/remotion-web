@@ -1,7 +1,7 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { RobotStickman } from "../../../assets/characters/robot/stickman/RobotStickman";
-import type { RobotExpression } from "../../../assets/characters/robot/rig";
+import { RobotStickman } from "../stickman/RobotStickman";
+import type { RobotExpression } from "../rig";
 
 export const ROBOT_STICKMAN_DEMO_FRAMES = 300;
 

@@ -3,12 +3,12 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { eyeShape } from "../block/RobotBlock";
 import type { RobotExpression } from "../rig";
 import { COLORS as C } from "../rig/geometry";
-import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../stickman/Stickman";
+import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../ganjar/stickman/GanjarStickman";
 
-// Robot gaya stickman: garis tipis dan tampak depan seperti Stickman. Seperti robot aslinya,
+// Robot gaya stickman: garis tipis dan tampak depan seperti GanjarStickman. Seperti robot aslinya,
 // tidak ada leher atau badan terpisah: satu kotak oranye berlayar (kepala dan badan sekaligus)
 // dengan dua antena berujung biru di atas, lengan di sisi, dan kaki langsung di bawah kotak.
-// Tangan dan kaki krem berbentuk kotak membulat. Gerak memakai pose yang sama dengan Stickman.
+// Tangan dan kaki krem berbentuk kotak membulat. Gerak memakai pose yang sama dengan GanjarStickman.
 
 export const ROBOT_STICKMAN_EXPRESSIONS: readonly RobotExpression[] = ["normal", "senang", "kaget", "malu", "sedih", "marah"];
 
@@ -28,7 +28,7 @@ export type RobotStickmanProps = {
   readonly expression?: RobotExpression;
   readonly walk?: boolean;
   readonly wave?: boolean;
-  // Gerak tangan; menimpa `wave`. Lihat stickman/gestures.ts.
+  // Gerak tangan; menimpa `wave`. Lihat shared/gestures.ts.
   readonly gesture?: Gesture;
   readonly color?: string;
   // Tebal garis dalam unit viewBox (400 lebar).

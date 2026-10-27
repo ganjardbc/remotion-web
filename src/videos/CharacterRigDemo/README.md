@@ -1,23 +1,20 @@
 # CharacterRigDemo (prototipe, terisolasi)
 
-Demo untuk karakter di `src/assets/characters/` (ganjar, robot, stickman). Berkas demo dikelompokkan per karakter: `ganjar/`, `robot/`, `stickman/`, `duo/`. Entry sendiri: `index.ts`.
+Menu Studio untuk karakter di `src/assets/characters/` (ganjar, robot). Komposisi demo ada di `<karakter>/demo/` bersama asetnya; folder ini hanya berisi `Root.tsx` (daftar komposisi) dan entry sendiri `index.ts`.
 
 ```
 npx remotion studio src/videos/CharacterRigDemo/index.ts
 npx remotion render src/videos/CharacterRigDemo/index.ts RobotRig  out/CharacterRigDemo/robotrig.mp4
 npx remotion render src/videos/CharacterRigDemo/index.ts GanjarRig out/CharacterRigDemo/ganjarrig.mp4
-npx remotion render src/videos/CharacterRigDemo/index.ts DuoRig    out/CharacterRigDemo/duorig.mp4
 ```
 
 ## Menu di Studio
-Sidebar: folder `Characters`, lalu per karakter dan varian. ID komposisi tidak berubah.
+Sidebar: folder `Characters`, lalu per karakter dan varian. ID `Stickman*` berganti jadi `GanjarStickman*`.
 ```
 Characters
   CharacterSheet
-  Ganjar   > Rig-2D (GanjarStill, GanjarRig) | Block (GanjarBlockStill, GanjarBlock)
+  Ganjar   > Rig-2D (GanjarStill, GanjarRig) | Block (GanjarBlockStill, GanjarBlock) | Stickman (GanjarStickmanStill, GanjarStickmanHair, GanjarStickmanPlain, GanjarStickman)
   Robot    > Rig-2D (RobotRig) | Block (RobotBlockStill, RobotBlock) | Stickman (RobotStickmanStill, RobotStickman)
-  Stickman > StickmanStill, StickmanHair, StickmanPlain, Stickman
-  Duo      > DuoRig
 ```
 
 ## Arsitektur

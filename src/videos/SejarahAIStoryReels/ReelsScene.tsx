@@ -1,7 +1,7 @@
 import type React from "react";
 import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop } from "../../Backdrop";
-import { Ganjar, Robot, robotSize } from "../../assets/characters";
+import { Ganjar, GANJAR_VIEWBOX, Robot, ROBOT_VIEWBOX, robotSize } from "../../assets/characters";
 import { ThemeProvider, useTheme, type Theme } from "../../themes";
 import { buildGanjar, buildRobot, type GazeOptions } from "../SejarahAIStory/BeatScene";
 import { BEATS, timeBeat, type Beat, type TimedLine } from "../SejarahAIStory/config";
@@ -17,7 +17,8 @@ const DESK_TOP = 1760;
 
 const GANJAR_X = 400;
 const GANJAR_WIDTH = 600;
-const GANJAR_SCALE = GANJAR_WIDTH / 840;
+const GANJAR_HEIGHT = GANJAR_WIDTH * (GANJAR_VIEWBOX.h / GANJAR_VIEWBOX.w);
+const GANJAR_SCALE = GANJAR_WIDTH / GANJAR_VIEWBOX.w;
 // Titik rig yang sejajar dengan permukaan meja (dada bawah).
 const SEAT_RIG_Y = 650;
 const GANJAR_HEAD_TOP = DESK_TOP - (SEAT_RIG_Y - 5) * GANJAR_SCALE;
@@ -25,6 +26,7 @@ const GANJAR_HEAD_TOP = DESK_TOP - (SEAT_RIG_Y - 5) * GANJAR_SCALE;
 const LAPTOP_X = 580;
 const ROBOT_X = 920;
 const ROBOT_WIDTH = 340;
+const ROBOT_HEIGHT = ROBOT_WIDTH * (ROBOT_VIEWBOX.h / ROBOT_VIEWBOX.w);
 const ROBOT_HEAD_TOP = DESK_TOP - 485 * (ROBOT_WIDTH / 660);
 
 const PAD = 60;
@@ -80,7 +82,7 @@ const Cast: React.FC<{ readonly lines: readonly TimedLine[]; readonly active: Ti
   lines,
   active,
 }) => {
-  const r = robotSize(ROBOT_WIDTH);
+  const r = robotSize(ROBOT_HEIGHT);
   const gk = buildGanjar(lines, GAZE);
   const rk = buildRobot(lines);
   return (
@@ -94,14 +96,14 @@ const Cast: React.FC<{ readonly lines: readonly TimedLine[]; readonly active: Ti
           top: DESK_TOP - (SEAT_RIG_Y + 20) * GANJAR_SCALE,
         }}
       >
-        <Ganjar width={GANJAR_WIDTH} face={gk.face} clips={gk.clips} look={gk.look} talking={active?.who === "ganjar"} />
+        <Ganjar height={GANJAR_HEIGHT} face={gk.face} clips={gk.clips} look={gk.look} talking={active?.who === "ganjar"} />
       </Entering>
       <Entering
         kind="drop"
         delay={0.35}
         style={{ position: "absolute", left: ROBOT_X - ROBOT_WIDTH / 2, bottom: H - DESK_TOP - r.floorGap - 4 }}
       >
-        <Robot width={ROBOT_WIDTH} face={rk.face} clips={rk.clips} look={rk.look} />
+        <Robot height={ROBOT_HEIGHT} face={rk.face} clips={rk.clips} look={rk.look} />
       </Entering>
     </>
   );

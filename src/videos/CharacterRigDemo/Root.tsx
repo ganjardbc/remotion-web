@@ -1,14 +1,23 @@
 import type React from "react";
 import { Composition, Folder } from "remotion";
 import { CharacterSheet } from "../../assets/characters";
-import { DUO_DEMO_FRAMES, DuoDemo } from "./duo/DuoDemo";
-import { GANJAR_DEMO_FRAMES, GanjarDemo } from "./ganjar/GanjarDemo";
-import { GANJAR_BLOCK_DEMO_FRAMES, GanjarBlockDemo, GanjarBlockStill } from "./ganjar/GanjarBlockDemo";
-import { GanjarStill } from "./ganjar/GanjarStill";
-import { ROBOT_BLOCK_DEMO_FRAMES, RobotBlockDemo, RobotBlockStill } from "./robot/RobotBlockDemo";
-import { ROBOT_DEMO_FRAMES, RobotDemo } from "./robot/RobotDemo";
-import { ROBOT_STICKMAN_DEMO_FRAMES, RobotStickmanDemo, RobotStickmanStill } from "./robot/RobotStickmanDemo";
-import { STICKMAN_DEMO_FRAMES, StickmanDemo, StickmanExpressions, StickmanGestures, RobotStickmanGestures, StickmanHair, StickmanPlain, StickmanStill, StickmanTalking } from "./stickman/StickmanDemo";
+import { GANJAR_DEMO_FRAMES, GanjarDemo } from "../../assets/characters/ganjar/demo/GanjarDemo";
+import { GANJAR_BLOCK_DEMO_FRAMES, GanjarBlockDemo, GanjarBlockStill } from "../../assets/characters/ganjar/demo/GanjarBlockDemo";
+import { GanjarStill } from "../../assets/characters/ganjar/demo/GanjarStill";
+import {
+  GANJAR_STICKMAN_DEMO_FRAMES,
+  GanjarStickmanDemo,
+  GanjarStickmanExpressions,
+  GanjarStickmanGestures,
+  GanjarStickmanHair,
+  GanjarStickmanPlain,
+  GanjarStickmanStill,
+  GanjarStickmanTalking,
+  RobotStickmanGestures,
+} from "../../assets/characters/ganjar/demo/GanjarStickmanDemo";
+import { ROBOT_BLOCK_DEMO_FRAMES, RobotBlockDemo, RobotBlockStill } from "../../assets/characters/robot/demo/RobotBlockDemo";
+import { ROBOT_DEMO_FRAMES, RobotDemo } from "../../assets/characters/robot/demo/RobotDemo";
+import { ROBOT_STICKMAN_DEMO_FRAMES, RobotStickmanDemo, RobotStickmanStill } from "../../assets/characters/robot/demo/RobotStickmanDemo";
 
 // Semua demo berukuran vertikal 1080x1920, 30 fps. `frames` = 1 berarti gambar diam.
 const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readonly frames?: number }> = ({
@@ -17,7 +26,7 @@ const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readon
   frames = 1,
 }) => <Composition id={id} component={component} durationInFrames={frames} fps={30} width={1080} height={1920} />;
 
-// Menu Studio per karakter: Ganjar, Robot, Stickman, Duo; di dalamnya per varian.
+// Menu Studio per karakter: Ganjar, Robot; di dalamnya per varian.
 // Terdaftar di src/Root.tsx (folder Characters), atau lewat entry sendiri: index.ts.
 export const RigDemoRoot: React.FC = () => (
   <>
@@ -30,6 +39,15 @@ export const RigDemoRoot: React.FC = () => (
       <Folder name="Block">
         <Clip id="GanjarBlockStill" component={GanjarBlockStill} />
         <Clip id="GanjarBlock" component={GanjarBlockDemo} frames={GANJAR_BLOCK_DEMO_FRAMES} />
+      </Folder>
+      <Folder name="Stickman">
+        <Clip id="GanjarStickmanExpressions" component={GanjarStickmanExpressions} />
+        <Clip id="GanjarStickmanGestures" component={GanjarStickmanGestures} />
+        <Clip id="GanjarStickmanTalking" component={GanjarStickmanTalking} frames={60} />
+        <Clip id="GanjarStickmanStill" component={GanjarStickmanStill} />
+        <Clip id="GanjarStickmanHair" component={GanjarStickmanHair} />
+        <Clip id="GanjarStickmanPlain" component={GanjarStickmanPlain} />
+        <Clip id="GanjarStickman" component={GanjarStickmanDemo} frames={GANJAR_STICKMAN_DEMO_FRAMES} />
       </Folder>
     </Folder>
     <Folder name="Robot">
@@ -45,18 +63,6 @@ export const RigDemoRoot: React.FC = () => (
         <Clip id="RobotStickmanStill" component={RobotStickmanStill} />
         <Clip id="RobotStickman" component={RobotStickmanDemo} frames={ROBOT_STICKMAN_DEMO_FRAMES} />
       </Folder>
-    </Folder>
-    <Folder name="Stickman">
-      <Clip id="StickmanExpressions" component={StickmanExpressions} />
-      <Clip id="StickmanGestures" component={StickmanGestures} />
-      <Clip id="StickmanTalking" component={StickmanTalking} frames={60} />
-      <Clip id="StickmanStill" component={StickmanStill} />
-      <Clip id="StickmanHair" component={StickmanHair} />
-      <Clip id="StickmanPlain" component={StickmanPlain} />
-      <Clip id="Stickman" component={StickmanDemo} frames={STICKMAN_DEMO_FRAMES} />
-    </Folder>
-    <Folder name="Duo">
-      <Clip id="DuoRig" component={DuoDemo} frames={DUO_DEMO_FRAMES} />
     </Folder>
   </>
 );

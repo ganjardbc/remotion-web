@@ -1,9 +1,9 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { evalGanjar, headTurn, point, type PlacedClip } from "../../../assets/characters/ganjar/rig/clips";
-import { evalFace, type FaceKey } from "../../../assets/characters/ganjar/rig/face";
-import { GANJAR_VIEWBOX, GanjarRig } from "../../../assets/characters/ganjar/rig/GanjarRig";
-import { COLORS } from "../../../assets/characters/ganjar/rig/geometry";
+import { evalGanjar, headTurn, point, type PlacedClip } from "../rig/clips";
+import { evalFace, type FaceKey } from "../rig/face";
+import { GANJAR_VIEWBOX, GanjarRig } from "../rig/GanjarRig";
+import { COLORS } from "../rig/geometry";
 
 const FPS = 30;
 const at = (s: number): number => Math.round(s * FPS);

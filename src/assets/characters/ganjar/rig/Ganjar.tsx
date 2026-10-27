@@ -1,17 +1,10 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { evalLook, type LookKey } from "../shared/look";
-import {
-  EXPRESSIONS,
-  FLOOR_Y,
-  GANJAR_VIEWBOX,
-  GanjarRig,
-  evalFace,
-  evalGanjar,
-  type FaceKey,
-  type GanjarExpression,
-  type PlacedClip,
-} from "./rig";
+import { evalLook, type LookKey } from "../../shared/look";
+import { evalGanjar, type PlacedClip } from "./clips";
+import { EXPRESSIONS, evalFace, type FaceKey, type GanjarExpression } from "./face";
+import { GANJAR_VIEWBOX, GanjarRig } from "./GanjarRig";
+import { FLOOR_Y } from "./geometry";
 
 export const GANJAR_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarExpression[];
 
@@ -19,8 +12,8 @@ export const GANJAR_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarExp
 const BUST_BOX = { x: -250, y: -30, w: 500, h: 520 } as const;
 
 export type GanjarProps = {
-  // Lebar kotak viewBox penuh (840 unit) dalam px. Karakter sendiri sekitar setengahnya.
-  readonly width?: number;
+  // Tinggi kotak viewBox penuh (1250 unit) dalam px. Karakter sendiri sedikit lebih kecil.
+  readonly height?: number;
   readonly expression?: GanjarExpression;
   // Ganti ekspresi pada waktu tertentu (detik); menimpa `expression` setelah entri pertama.
   readonly face?: readonly FaceKey[];
@@ -35,17 +28,17 @@ export type GanjarProps = {
   readonly style?: React.CSSProperties;
 };
 
-export const ganjarSize = (width: number): { width: number; height: number; floorGap: number } => {
-  const scale = width / GANJAR_VIEWBOX.w;
+export const ganjarSize = (height: number): { width: number; height: number; floorGap: number } => {
+  const scale = height / GANJAR_VIEWBOX.h;
   return {
-    width,
-    height: GANJAR_VIEWBOX.h * scale,
+    width: GANJAR_VIEWBOX.w * scale,
+    height,
     floorGap: (GANJAR_VIEWBOX.y + GANJAR_VIEWBOX.h - FLOOR_Y) * scale,
   };
 };
 
 export const Ganjar: React.FC<GanjarProps> = ({
-  width = 340,
+  height = 340 * (GANJAR_VIEWBOX.h / GANJAR_VIEWBOX.w),
   expression = "netral",
   face,
   clips = [],
@@ -71,8 +64,8 @@ export const Ganjar: React.FC<GanjarProps> = ({
   };
   return (
     <svg
-      width={width}
-      height={(width * vb.h) / vb.w}
+      width={(height * vb.w) / vb.h}
+      height={height}
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
       style={{ overflow: "visible", display: "block", ...style }}
     >

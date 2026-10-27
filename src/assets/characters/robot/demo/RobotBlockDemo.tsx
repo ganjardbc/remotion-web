@@ -1,7 +1,7 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { RobotBlock } from "../../../assets/characters/robot/block/RobotBlock";
-import type { RobotExpression } from "../../../assets/characters/robot/rig";
+import { RobotBlock } from "../block/RobotBlock";
+import type { RobotExpression } from "../rig";
 
 export const ROBOT_BLOCK_DEMO_FRAMES = 300;
 
