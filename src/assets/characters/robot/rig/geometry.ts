@@ -19,7 +19,7 @@ export const BODY = { x: -171, y: -147, w: 342, h: 295, r: 26 } as const;
 export const SCREEN = { x: -124, y: -90, w: 248, h: 180, r: 14 } as const;
 export const EYE_X = 54;
 
-export const ARM = { w: 60, h: 184, r: 14, cx: 197, top: -84, pivotDy: 28 } as const;
+export const ARM = { w: 60, h: 154, r: 14, cx: 197, top: -54, pivotDy: 28 } as const;
 export const ANTENNA = { cx: 103, baseY: -140, stemTop: -190, tipTop: -230, w: 46, tipW: 48 } as const;
 export const LEG = {
   cx: 72,
