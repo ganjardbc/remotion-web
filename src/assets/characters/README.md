@@ -1,6 +1,6 @@
 # Karakter dasar
 
-Karakter project: **Ganjar** dan **Robot**, masing-masing dengan tiga varian (rig 2D SVG berlapis, balok 3D, stickman). Semua digerakkan murni oleh frame Remotion.
+Karakter project: **Ganjar**, **Robot**, dan **Claude Code**, masing-masing dengan tiga varian (rig 2D SVG berlapis, balok 3D, stickman). Semua digerakkan murni oleh frame Remotion.
 Referensi desain: `design-references/characters/` (`ganjar-svg-approved.png`, `ganjar-robot-character-sheet.png`).
 
 ```tsx
@@ -26,7 +26,7 @@ src/assets/characters/
   index.ts            barrel semua karakter
   CharacterSheet.tsx  halaman referensi semua ekspresi (komposisi CharacterSheet)
   shared/             look.ts (arah pandang), motion.ts (kf, envelope), blockKit.tsx (kubus 3D), gestures.ts (gerak tangan stickman)
-  <karakter>/         ganjar, robot
+  <karakter>/         ganjar, robot, claudecode
     index.ts          ekspor publik karakter
     expressions.ts    daftar dan tipe ekspresi semua varian
     palette.ts        warna karakter
@@ -65,3 +65,13 @@ Bentuk digambar dua lapis (garis lalu isi) supaya tepi luarnya satu siluet bersi
 ## Robot Stickman
 
 `RobotStickman`: robot gaya stickman (garis tipis, tampak depan). Seperti robot aslinya: tidak ada leher atau badan terpisah, hanya satu kotak oranye berlayar (kepala dan badan sekaligus), dua antena, lengan di sisi, kaki di bawah, tangan dan kaki krem berbentuk kotak membulat. Memakai pose `GanjarStickman`. Props: `height`, `expression` (`normal`, `senang`, `kaget`, `malu`, `sedih`, `marah`, `bingung`, `mikir`, `kesal`, `serius`, `mataTertutup`), `walk`, `wave`, `color`, `strokeWidth`. Komposisi: `RobotStickman` dan `RobotStickmanStill`.
+
+## Claude Code
+
+Maskot Claude Code dari `design-references/characters/claude-code.svg`: satu kotak oranye `#D97757` (kepala dan badan), mata hitam tegak, lengan kotak di sisi, empat kaki pendek. Proporsi memakai unit grid logo (24x24), tanpa outline.
+
+- `ClaudeCode` (rig 2D): memakai pose, clip (`armGesture`, `surprise`, `walk`), dan ekspresi yang sama dengan `Robot` (antena diabaikan). Props: `height`, `expression`, `face`, `clips`, `look`. Komposisi: `ClaudeCodeStill`, `ClaudeCodeRig`.
+- `ClaudeCodeBlock`: kubus CSS 3D, props seperti `RobotBlock` (`height`, `expression`, `yaw`, `spin`, `walk`, `wave`). Komposisi: `ClaudeCodeBlockStill`, `ClaudeCodeBlock`.
+- `ClaudeCodeStickman`: garis tipis tampak depan, props seperti `RobotStickman` (termasuk `gesture`). Komposisi: `ClaudeCodeStickmanStill`, `ClaudeCodeStickman`.
+
+Bentuk mata semua varian ada di `claudecode/rig/eyes.tsx` (unit grid, 11 ekspresi `RobotExpression`).
