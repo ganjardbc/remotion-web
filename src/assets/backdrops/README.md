@@ -7,8 +7,11 @@ Latar berjangkar untuk karakter. Impor dari `src/assets/backdrops` (barrel), buk
 | `workspace` | Ruang kerja: dinding, jendela, jam, kursi, meja, laptop, gelas | `deskTop`, `seatX`, `floorY`, ... |
 | `plain` | Kosong: dinding gradasi, lantai, kolam cahaya | `floorY`, `spotX` |
 | `outdoor` | Luar ruang: langit, dua lapis gedung (jendela menyala di malam), jalan | `width`, `horizonY`, `floorY` |
+| `sketch` | Gaya sketsa (kertas, garis tangan tipis) untuk stickman: `PlainSketch`, `OutdoorSketch` | sama dengan `plain` / `outdoor` |
 
-Semua latar punya `time` (`"siang" | "sore" | "malam"` atau angka 0..1) dan `palette` sendiri. Interpolasi waktu, langit (`Sky`), `characterFilter`, dan `ContactShadow` ada di `shared/` dan dipakai bersama. Karakter berdiri di `floorY` latar yang dipilih; `ContactShadow` di titik yang sama menyatukan keduanya. Demo di Studio (folder Latar): `BackdropsMatrix` (semua latar × semua waktu) dan `BackdropCycle` (peralihan di satu latar).
+Gaya latar mengikuti tipe karakter: rig 2D memakai `plain`/`outdoor`/`workspace` (bidang warna datar), stickman memakai `sketch` (garis tipis di atas kertas). `sketch` memakai jangkar yang sama dengan `plain`/`outdoor`, jadi mengganti gaya tidak menggeser karakter. Garis sketsa tetap gelap di semua waktu; malam = kertas ungu temaram, bukan hitam, supaya garis dan wajah stickman tetap terbaca. Gaya untuk block (3D) belum ada.
+
+Semua latar punya `time` (`"siang" | "sore" | "malam"` atau angka 0..1) dan `palette` sendiri. Interpolasi waktu, langit (`Sky`), `characterFilter`, dan `ContactShadow` ada di `shared/` dan dipakai bersama. Karakter berdiri di `floorY` latar yang dipilih; `ContactShadow` di titik yang sama menyatukan keduanya. Demo di Studio (folder Latar): `BackdropsMatrix` (semua latar × gaya × waktu), `BackdropCycle` dan `BackdropCycleSketsa` (peralihan di satu latar).
 
 Jangkar selalu dalam piksel kanvas dan tidak diambil dari `useVideoConfig()`, supaya latar tetap benar saat ditanam dan diperkecil di dalam komposisi lain (seperti di `BackdropsMatrix`).
 

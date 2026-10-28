@@ -23,7 +23,7 @@ export type OutdoorProps = {
 
 // Deretan gedung dari angka tetap (tanpa Math.random), supaya render sama di setiap frame.
 // [lebar, tinggi] dalam piksel; digambar dari kiri ke kanan tanpa celah, dipotong di tepi kanvas.
-const BUILDINGS: readonly (readonly [number, number])[] = [
+export const OUTDOOR_BUILDINGS: readonly (readonly [number, number])[] = [
   [96, 250],
   [74, 360],
   [118, 210],
@@ -80,7 +80,7 @@ export const OutdoorBack: React.FC<OutdoorProps> = ({ anchors: a = PORTRAIT_OUTD
   const { width } = a;
   // Lapisan jauh: gedung yang sama, digeser dan lebih tinggi; hanya siluet. Lapisan utama: jendela menyala di malam.
   const layout = (offset: number, scale: number, color: string, windows: boolean): readonly React.ReactNode[] =>
-    BUILDINGS.reduce<{ readonly x: number; readonly items: readonly React.ReactNode[] }>(
+    OUTDOOR_BUILDINGS.reduce<{ readonly x: number; readonly items: readonly React.ReactNode[] }>(
       (acc, [w, h], i) => ({
         x: acc.x + w,
         items: [...acc.items, <Building key={i} index={i} x={acc.x + offset} w={w} h={h * scale} base={a.horizonY} color={color} p={p} windows={windows} />],
