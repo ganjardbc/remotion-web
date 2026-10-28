@@ -40,7 +40,7 @@ export const HookScene: React.FC = () => {
 // ---------- 2. Relate ----------
 
 const USES: readonly { readonly icon: IconName; readonly label: string; readonly at: number }[] = [
-  { icon: "layout", label: "Merancang fitur", at: 5.2 },
+  { icon: "layoutTemplate", label: "Merancang fitur", at: 5.2 },
   { icon: "code", label: "Menulis kode", at: 7.0 },
   { icon: "fileText", label: "Merapikan teks", at: 8.6 },
 ];
