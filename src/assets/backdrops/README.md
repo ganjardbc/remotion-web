@@ -7,11 +7,12 @@ Latar berjangkar untuk karakter. Impor dari `src/assets/backdrops` (barrel), buk
 | `workspace` | Ruang kerja: dinding, jendela, jam, kursi, meja, laptop, gelas | `deskTop`, `seatX`, `floorY`, ... |
 | `plain` | Kosong: dinding gradasi, lantai, kolam cahaya | `floorY`, `spotX` |
 | `outdoor` | Luar ruang: langit, dua lapis gedung (jendela menyala di malam), jalan | `width`, `horizonY`, `floorY` |
+| `block` | Gaya balok (3D) untuk karakter block: `PlainBlock` (lantai petak, dinding gradasi), `OutdoorBlock` (gedung kubus dengan jendela, pohon balok, lantai petak) | sama dengan `plain` / `outdoor` |
 | `sketch` | Gaya sketsa (kertas, garis tangan tipis) untuk stickman: `PlainSketch`, `OutdoorSketch` | sama dengan `plain` / `outdoor` |
 
-Gaya latar mengikuti tipe karakter: rig 2D memakai `plain`/`outdoor`/`workspace` (bidang warna datar), stickman memakai `sketch` (garis tipis di atas kertas). `sketch` memakai jangkar yang sama dengan `plain`/`outdoor`, jadi mengganti gaya tidak menggeser karakter. Garis sketsa tetap gelap di semua waktu; malam = kertas ungu temaram, bukan hitam, supaya garis dan wajah stickman tetap terbaca. Gaya untuk block (3D) belum ada.
+Gaya latar mengikuti tipe karakter: rig 2D memakai `plain`/`outdoor`/`workspace` (bidang warna datar), stickman memakai `sketch` (garis tipis di atas kertas). `sketch` memakai jangkar yang sama dengan `plain`/`outdoor`, jadi mengganti gaya tidak menggeser karakter. Garis sketsa tetap gelap di semua waktu; malam = kertas ungu temaram, bukan hitam, supaya garis dan wajah stickman tetap terbaca. `block` memakai kamera 3D CSS dengan titik hilang di tinggi cakrawala: lantai petak mendatar di `floorY`, gedung dan pohon berdiri di atasnya pada kedalaman berbeda, dan karakter block berdiri di z = 0. Jangkar dan palet diambil dari `plain` / `outdoor`.
 
-Semua latar punya `time` (`"siang" | "sore" | "malam"` atau angka 0..1) dan `palette` sendiri. Interpolasi waktu, langit (`Sky`), `characterFilter`, dan `ContactShadow` ada di `shared/` dan dipakai bersama. Karakter berdiri di `floorY` latar yang dipilih; `ContactShadow` di titik yang sama menyatukan keduanya. Demo di Studio (folder Latar): `BackdropsMatrix` (semua latar × gaya × waktu), `BackdropCycle` dan `BackdropCycleSketsa` (peralihan di satu latar).
+Semua latar punya `time` (`"siang" | "sore" | "malam"` atau angka 0..1) dan `palette` sendiri. Interpolasi waktu, langit (`Sky`), `characterFilter`, dan `ContactShadow` ada di `shared/` dan dipakai bersama. Karakter berdiri di `floorY` latar yang dipilih; `ContactShadow` di titik yang sama menyatukan keduanya. Demo di Studio (folder Latar): `BackdropsMatrix` (semua latar × gaya × waktu), `BackdropCycle`, `BackdropCycleSketsa`, dan `BackdropCycleBalok` (peralihan di satu latar).
 
 Jangkar selalu dalam piksel kanvas dan tidak diambil dari `useVideoConfig()`, supaya latar tetap benar saat ditanam dan diperkecil di dalam komposisi lain (seperti di `BackdropsMatrix`).
 
@@ -39,7 +40,7 @@ import { Chair, Desk, Laptop, Mug, PORTRAIT_ANCHORS, RoomBack } from "../../asse
 - Karakter ikut waktu: bungkus karakter dengan `style={{ filter: characterFilter(time) }}` (kecerahan, saturasi, sepia; warna dasar dan ekspresi tetap terbaca). Garis stickman tetap gelap di semua waktu, karena muka putihnya hanya diredupkan.
 - Demo di Studio (folder Latar): `WorkspaceTimes` (tiga waktu berdampingan) dan `WorkspaceCycle` (peralihan siang ke malam). `WorkspaceScene` = adegan lengkap dengan Ganjar duduk.
 - Mengetik: `gesture="mengetik"` pada `GanjarStickman` dan `RobotStickman` (kedua tangan mengetuk bergantian di depan perut atau tepi layar). Demo: `WorkspaceTyping`. Block belum mendukungnya (jatuh ke pose dasar).
-- Belum ada: varian gaya block dan stickman untuk latar, dan aktivitas lain (minum).
+- Belum ada: aktivitas lain (minum).
 
 ## plain dan outdoor
 
