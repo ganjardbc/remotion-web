@@ -7,7 +7,7 @@ import { RIG_VIEWBOX, RobotRig } from "./RobotRig";
 import { FLOOR_Y } from "./geometry";
 
 export const ROBOT_EXPRESSIONS: readonly RobotExpression[] = [
-  "normal",
+  "netral",
   "senang",
   "kaget",
   "malu",

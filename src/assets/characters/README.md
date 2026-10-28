@@ -11,6 +11,8 @@ import { Ganjar, GanjarStickman, Robot } from "../assets/characters";
 <GanjarStickman height={900} expression="senyum" gesture="lambai" />
 ```
 
+- Kosakata ekspresi bersama (`EXPRESSIONS`, `shared/expressions.ts`): `netral, senang, sedih, kaget, bingung, mikir, kesal, marah, serius, malu, mataTertutup`. Semua varian semua karakter menerimanya; `contract.ts` membuat kompilasi gagal bila ada yang kurang. `normal` (keluarga Robot) masih diterima sebagai alias lama `netral`. Ekspresi lain (`senyum`, `senyumSantai`, `tertawa`) khusus varian tertentu.
+- Props bersama (`shared/props.ts`, dicek di `contract.ts`): semua varian menerima `height`, `expression`, `face` (ekspresi berwaktu), `style`. Block dan stickman juga menerima `walk`, `wave`, `gesture`; rig 2D digerakkan lewat `clips` dan `look`. Block tidak punya siku, jadi `gesture` di block hanya `lambai`, `angkatTangan`, `tunjuk`, `sorak`, `menyerah`; gerak lain jatuh ke pose dasar. Di block, `face` berpindah langsung tanpa transisi (rig 2D menghaluskan).
 - `height` = tinggi karakter dalam px, sama untuk semua varian. Untuk rig 2D itu tinggi kotak viewBox penuh. Pakai `ganjarSize`, `robotSize`, `ganjarStickmanSize`, `robotStickmanSize`, dan seterusnya untuk ukuran.
 - `face`: kunci ekspresi berwaktu (detik). Tanpa `face`, `expression` dipakai statis.
 - `clips`: gerak badan (`headTurn`, `point`, `startle` untuk Ganjar; `armGesture`, `surprise`, `walk` untuk Robot), tiap clip dengan `start` dan `dur` dalam frame.

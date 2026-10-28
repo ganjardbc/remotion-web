@@ -10,7 +10,10 @@ export type GanjarExpression =
   | "kesal"
   | "mikir"
   | "mataTertutup"
-  | "netral";
+  | "netral"
+  | "sedih"
+  | "marah"
+  | "malu";
 
 export type BrowState = {
   // px, negatif = naik
@@ -72,6 +75,18 @@ export const EXPRESSIONS: Record<GanjarExpression, FaceState> = {
   mataTertutup: {
     browL: { y: -6, rot: -3 }, browR: { y: -6, rot: -3 }, eyeOpen: 0, eyeArc: 1,
     smile: 1, mouthOpen: 0.85, mouthWidth: 74, lookX: 0, lookY: 0, blush: 0.9,
+  },
+  sedih: {
+    browL: { y: -3, rot: -13 }, browR: { y: -3, rot: -13 }, eyeOpen: 0.85, eyeArc: -1,
+    smile: -0.7, mouthOpen: 0, mouthWidth: 34, lookX: 0, lookY: 5, blush: 0.1,
+  },
+  marah: {
+    browL: { y: 9, rot: 22 }, browR: { y: 9, rot: 22 }, eyeOpen: 0.75, eyeArc: -1,
+    smile: -1, mouthOpen: 0.3, mouthWidth: 52, lookX: 0, lookY: 0, blush: 0.35,
+  },
+  malu: {
+    browL: { y: -4, rot: -5 }, browR: { y: -4, rot: -5 }, eyeOpen: 0.7, eyeArc: -1,
+    smile: 0.4, mouthOpen: 0, mouthWidth: 30, lookX: -8, lookY: 6, blush: 1,
   },
 };
 

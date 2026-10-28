@@ -1,5 +1,6 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { GESTURES, gestureArms, type ArmPose, type Gesture } from "../../shared/gestures";
 
 export { GESTURES, type ArmPose, type Gesture };
@@ -267,14 +268,7 @@ const Face: React.FC<{ readonly e: GanjarStickmanExpression; readonly ink: strin
   }
 };
 
-export type GanjarStickmanProps = {
-  // Tinggi kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: GanjarStickmanExpression;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  // Gerak tangan; menimpa `wave`. Lihat gestures.ts.
-  readonly gesture?: Gesture;
+export type GanjarStickmanProps = PropDrivenProps<GanjarStickmanExpression> & {
   // Mulut membuka dan menutup (bicara), menimpa bentuk mulut ekspresi.
   readonly talking?: boolean;
   // Pakai headphone atau tidak.
@@ -286,7 +280,6 @@ export type GanjarStickmanProps = {
   readonly color?: string;
   // Tebal garis dalam unit viewBox (400 lebar).
   readonly strokeWidth?: number;
-  readonly style?: React.CSSProperties;
 };
 
 export const ganjarStickmanSize = (height: number): { width: number; height: number } => ({
@@ -305,7 +298,8 @@ export const TORSO =
 
 export const GanjarStickman: React.FC<GanjarStickmanProps> = ({
   height = 640,
-  expression = "senyum",
+  expression: expressionProp = "senyum",
+  face,
   walk = false,
   wave = false,
   gesture,
@@ -319,6 +313,7 @@ export const GanjarStickman: React.FC<GanjarStickmanProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const expression = expressionAt(face, expressionProp, frame, fps);
   const pose = poseAt(frame / fps, walk, wave, gesture);
   const stroke = { fill: "#fff", stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round" } as const;
   const open = { ...stroke, fill: "none" } as const;

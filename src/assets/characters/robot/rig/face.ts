@@ -1,6 +1,8 @@
 // Ekspresi layar dipisah dari gerak badan: bisa bicara/kaget sambil jalan.
 export type RobotExpression =
+  // `normal` = alias lama dari `netral`.
   | "normal"
+  | "netral"
   | "senang"
   | "kaget"
   | "malu"
@@ -51,7 +53,7 @@ export const evalFace = (frame: number, fps: number, keys: readonly FaceKey[]): 
   }
   // Kedip berkala, deterministik.
   const b = frame % BLINK_PERIOD;
-  if (expression === "normal" && b >= BLINK_PERIOD - BLINK_LEN) {
+  if ((expression === "normal" || expression === "netral") && b >= BLINK_PERIOD - BLINK_LEN) {
     const m = b - (BLINK_PERIOD - BLINK_LEN);
     open = Math.min(open, Math.abs(m - (BLINK_LEN - 1) / 2) / ((BLINK_LEN - 1) / 2) * 0.9 + 0.1);
   }

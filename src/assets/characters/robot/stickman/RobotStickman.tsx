@@ -1,10 +1,11 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import { eyeShape } from "../block/RobotBlock";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import type { RobotExpression } from "../rig/face";
 import { ROBOT_EXPRESSIONS } from "../rig/Robot";
 import { COLORS as C } from "../rig/geometry";
-import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../ganjar/stickman/GanjarStickman";
+import { HAND, poseAt, reach, type ArmPose, type LegPose } from "../../ganjar/stickman/GanjarStickman";
 
 // Robot gaya stickman: garis tipis dan tampak depan seperti GanjarStickman. Seperti robot aslinya,
 // tidak ada leher atau badan terpisah: satu kotak oranye berlayar (kepala dan badan sekaligus)
@@ -23,18 +24,10 @@ const SHOULDER = { dx: 78, y: 112 } as const;
 const MITT = { w: 17, h: 24, r: 6 } as const;
 const FOOT = { w: 34, h: 14, r: 6 } as const;
 
-export type RobotStickmanProps = {
-  // Tinggi kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: RobotExpression;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  // Gerak tangan; menimpa `wave`. Lihat shared/gestures.ts.
-  readonly gesture?: Gesture;
+export type RobotStickmanProps = PropDrivenProps<RobotExpression> & {
   readonly color?: string;
   // Tebal garis dalam unit viewBox (400 lebar).
   readonly strokeWidth?: number;
-  readonly style?: React.CSSProperties;
 };
 
 export const robotStickmanSize = (height: number): { width: number; height: number } => ({
@@ -44,7 +37,8 @@ export const robotStickmanSize = (height: number): { width: number; height: numb
 
 export const RobotStickman: React.FC<RobotStickmanProps> = ({
   height = 640,
-  expression = "normal",
+  expression: expressionProp = "netral",
+  face,
   walk = false,
   wave = false,
   gesture,
@@ -54,6 +48,7 @@ export const RobotStickman: React.FC<RobotStickmanProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const expression = expressionAt(face, expressionProp, frame, fps);
   const pose = poseAt(frame / fps, walk, wave, gesture, true);
   const line = { stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round" } as const;
   const open = { ...line, fill: "none" } as const;

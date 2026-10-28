@@ -1,7 +1,8 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import type { RobotExpression } from "../../robot/rig/face";
-import { HAND, poseAt, reach, type ArmPose, type Gesture, type LegPose } from "../../ganjar/stickman/GanjarStickman";
+import { HAND, poseAt, reach, type ArmPose, type LegPose } from "../../ganjar/stickman/GanjarStickman";
 import { CLAUDE_CODE_EXPRESSIONS } from "../rig/ClaudeCode";
 import { eyeShape } from "../rig/eyes";
 import { COLORS as C } from "../rig/geometry";
@@ -23,18 +24,10 @@ const FOOT = { w: 22, h: 10, r: 3 } as const;
 // Pangkal kaki dari tengah: luar dan dalam.
 const HIPS = [-67.4, -37.4, 37.4, 67.4] as const;
 
-export type ClaudeCodeStickmanProps = {
-  // Tinggi kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: RobotExpression;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  // Gerak tangan; menimpa `wave`. Lihat shared/gestures.ts.
-  readonly gesture?: Gesture;
+export type ClaudeCodeStickmanProps = PropDrivenProps<RobotExpression> & {
   readonly color?: string;
   // Tebal garis dalam unit viewBox (400 lebar).
   readonly strokeWidth?: number;
-  readonly style?: React.CSSProperties;
 };
 
 export const claudeCodeStickmanSize = (height: number): { width: number; height: number } => ({
@@ -44,7 +37,8 @@ export const claudeCodeStickmanSize = (height: number): { width: number; height:
 
 export const ClaudeCodeStickman: React.FC<ClaudeCodeStickmanProps> = ({
   height = 640,
-  expression = "normal",
+  expression: expressionProp = "netral",
+  face,
   walk = false,
   wave = false,
   gesture,
@@ -54,6 +48,7 @@ export const ClaudeCodeStickman: React.FC<ClaudeCodeStickmanProps> = ({
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const expression = expressionAt(face, expressionProp, frame, fps);
   const pose = poseAt(frame / fps, walk, wave, gesture, true);
   const line = { stroke: color, strokeWidth, strokeLinecap: "round", strokeLinejoin: "round" } as const;
   const open = { ...line, fill: "none" } as const;

@@ -1,5 +1,7 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { blockArms } from "../../shared/gestures";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, Joint, type Faces, type Paint } from "../../shared/blockKit";
 import type { RobotExpression } from "../../robot/rig/face";
 import { CLAUDE_CODE_EXPRESSIONS } from "../rig/ClaudeCode";
@@ -36,17 +38,11 @@ const bodyFront =
 
 const SOLID: Faces = { front: flat, back: flat, left: flat, right: flat, top, bottom: dark };
 
-export type ClaudeCodeBlockProps = {
-  // Tinggi seluruh kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: RobotExpression;
+export type ClaudeCodeBlockProps = PropDrivenProps<RobotExpression> & {
   // Sudut putar badan (derajat). 0 = menghadap kamera.
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  readonly style?: React.CSSProperties;
 };
 
 export const claudeCodeBlockSize = (height: number): { width: number; height: number } => ({
@@ -56,7 +52,9 @@ export const claudeCodeBlockSize = (height: number): { width: number; height: nu
 
 export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   height = 640,
-  expression = "normal",
+  expression: expressionProp = "netral",
+  face,
+  gesture,
   yaw = 24,
   spin = 0,
   walk = false,
@@ -66,6 +64,8 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const expression = expressionAt(face, expressionProp, frame, fps);
+  const arms = blockArms(gesture, t, true);
   const u = height / 17;
   const { width } = claudeCodeBlockSize(height);
 
@@ -77,8 +77,8 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
 
   // Lengan: kiri keluar = rotateZ positif, kanan keluar = negatif. Ayun jalan lewat rotateY (maju mundur).
-  const armPlus = wave ? `rotateZ(-${150 + flap}deg)` : `rotateY(${swing}deg) rotateZ(${-(1 + idle)}deg)`;
-  const armMinus = `rotateY(${-swing}deg) rotateZ(${1 + idle}deg)`;
+  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1] - 90}deg)` : wave ? `rotateZ(-${150 + flap}deg)` : `rotateY(${swing}deg) rotateZ(${-(1 + idle)}deg)`;
+  const armMinus = arms[0] !== null ? `rotateZ(${arms[0] - 90}deg)` : `rotateY(${-swing}deg) rotateZ(${1 + idle}deg)`;
   const shoulderY = (ARM.y + ARM.h / 2 - (BODY.y + BODY.h)) * u;
 
   return (

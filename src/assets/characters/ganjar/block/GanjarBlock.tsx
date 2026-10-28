@@ -1,5 +1,7 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { blockArms } from "../../shared/gestures";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
 import { EXPRESSIONS, type FaceState, type GanjarExpression } from "../rig/face";
 
@@ -231,17 +233,11 @@ const TORSO: Faces = { front: torsoFront, back: torsoBack, left: shirtBase, righ
 const ARM: Faces = { front: armSide, back: armSide, left: armSide, right: armSide, top: shirtTopFlat, bottom: skinBottom };
 const LEG: Faces = { front: legFront, back: legBase, left: legSide, right: flip(legSide), top: pantsTop, bottom: soleBottom };
 
-export type GanjarBlockProps = {
-  // Tinggi seluruh kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: GanjarBlockExpression;
+export type GanjarBlockProps = PropDrivenProps<GanjarBlockExpression> & {
   // Sudut putar badan (derajat). 0 = menghadap kamera.
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  readonly style?: React.CSSProperties;
 };
 
 export const ganjarBlockSize = (height: number): { width: number; height: number } => ({
@@ -251,7 +247,9 @@ export const ganjarBlockSize = (height: number): { width: number; height: number
 
 export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   height = 640,
-  expression = "netral",
+  expression: expressionProp = "netral",
+  face,
+  gesture,
   yaw = 24,
   spin = 0,
   walk = false,
@@ -261,6 +259,8 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const expression = expressionAt(face, expressionProp, frame, fps);
+  const arms = blockArms(gesture, t, false);
   const u = height / 34;
   const { width } = ganjarBlockSize(height);
 
@@ -273,8 +273,8 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   const nod = Math.sin(t * 1.3 + 1) * 3;
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
 
-  const armPlus = wave ? `rotateX(0deg) rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${4 + idle * 1.5}deg)`;
-  const armMinus = `rotateX(${swing}deg) rotateZ(${-4 - idle * 1.5}deg)`;
+  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1]}deg)` : wave ? `rotateX(0deg) rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${4 + idle * 1.5}deg)`;
+  const armMinus = arms[0] !== null ? `rotateZ(${arms[0]}deg)` : `rotateX(${swing}deg) rotateZ(${-4 - idle * 1.5}deg)`;
 
   return (
     <div

@@ -1,5 +1,7 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
+import { blockArms } from "../../shared/gestures";
+import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
 import type { RobotExpression } from "../rig/face";
 import { ROBOT_EXPRESSIONS } from "../rig/Robot";
@@ -122,17 +124,11 @@ const ARM: Faces = { front: creamBand, back: creamBand, left: creamBand, right: 
 const LEG: Faces = { front: legSide, back: legSide, left: legSide, right: legSide, top: orangeFlat, bottom: orangeDarkFlat };
 const FOOT: Faces = { front: creamBand, back: creamBand, left: creamBand, right: creamBand, top: creamFlat, bottom: creamBand };
 
-export type RobotBlockProps = {
-  // Tinggi seluruh kotak karakter dalam px.
-  readonly height?: number;
-  readonly expression?: RobotExpression;
+export type RobotBlockProps = PropDrivenProps<RobotExpression> & {
   // Sudut putar badan (derajat). 0 = menghadap kamera.
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
-  readonly walk?: boolean;
-  readonly wave?: boolean;
-  readonly style?: React.CSSProperties;
 };
 
 export const robotBlockSize = (height: number): { width: number; height: number } => ({
@@ -142,7 +138,9 @@ export const robotBlockSize = (height: number): { width: number; height: number 
 
 export const RobotBlock: React.FC<RobotBlockProps> = ({
   height = 640,
-  expression = "normal",
+  expression: expressionProp = "netral",
+  face,
+  gesture,
   yaw = 24,
   spin = 0,
   walk = false,
@@ -152,6 +150,8 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
+  const expression = expressionAt(face, expressionProp, frame, fps);
+  const arms = blockArms(gesture, t, true);
   const u = height / 23;
   const { width } = robotBlockSize(height);
 
@@ -163,8 +163,8 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
   const wobble = (k: number) => Math.sin(t * 3.1 + k) * (walk ? 9 : 4);
 
-  const armPlus = wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${-(1 + idle)}deg)`;
-  const armMinus = `rotateX(${swing}deg) rotateZ(${1 + idle}deg)`;
+  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1]}deg)` : wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${-(1 + idle)}deg)`;
+  const armMinus = arms[0] !== null ? `rotateZ(${arms[0]}deg)` : `rotateX(${swing}deg) rotateZ(${1 + idle}deg)`;
 
   return (
     <div style={{ position: "relative", width, height, perspective: u * 70, perspectiveOrigin: "50% 45%", ...style }}>

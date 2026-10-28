@@ -28,6 +28,7 @@ const EYE_STROKE = {
 const Eye: React.FC<{ readonly kind: RobotExpression; readonly side: -1 | 1 }> = ({ kind, side }) => {
   switch (kind) {
     case "normal":
+    case "netral":
       return <rect x={-25} y={-27} width={50} height={54} rx={9} fill={C.blueLight} />;
     case "senang":
       return <path d="M-22 10 Q0 -22 22 10" {...EYE_STROKE} />;

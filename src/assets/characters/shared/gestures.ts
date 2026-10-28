@@ -83,3 +83,15 @@ export const gestureArms = (g: Gesture, t: number, robot: boolean): GestureArms 
       return both({ shoulder: 50, elbow: 279, front: true });
   }
 };
+
+// Block tidak punya siku, jadi hanya gerak yang bisa ditiru dengan satu sudut lengan lurus yang didukung.
+// Hasil: sudut angkat lengan keluar dari posisi tergantung (derajat); null = pose dasar block.
+// Indeks 0 = lengan kiri layar, 1 = kanan layar. Gerak lain (angkatBahu, facepalm, mikir, garukKepala, tepuk, pinggang) = pose dasar.
+const BLOCK_GESTURES: ReadonlySet<Gesture> = new Set(["lambai", "angkatTangan", "tunjuk", "sorak", "menyerah"]);
+
+export const blockArms = (g: Gesture | undefined, t: number, robot: boolean): readonly [number | null, number | null] => {
+  if (!g || !BLOCK_GESTURES.has(g)) return [null, null];
+  const [l, r] = gestureArms(g, t, robot);
+  const angle = (a: ArmPose | null): number | null => (a ? Math.max(0, Math.min(175, a.shoulder + a.elbow * 0.5)) : null);
+  return [angle(l), angle(r)];
+};
