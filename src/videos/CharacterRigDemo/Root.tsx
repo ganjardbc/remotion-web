@@ -1,6 +1,8 @@
 import type React from "react";
 import { Composition, Folder } from "remotion";
 import { BackdropCycle, BackdropsMatrix } from "../../assets/backdrops";
+import { SHOT_REEL_FRAMES, ShotReel, WORKSPACE_TOUR_FRAMES, WorkspaceTour } from "../../assets/camera";
+import { LAPTOP_BEHIND_FRAMES, LaptopBehindDemo, SCREENS_DEMO_FRAMES, ScreensDemo } from "../../assets/screens";
 import { WorkspaceCycle, WorkspaceTimes, WorkspaceTyping } from "../../assets/backdrops/workspace";
 import { CharacterSheet } from "../../assets/characters";
 import { GANJAR_DEMO_FRAMES, GanjarDemo } from "../../assets/characters/ganjar/demo/GanjarDemo";
@@ -44,6 +46,14 @@ const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readon
 export const RigDemoRoot: React.FC = () => (
   <>
     <Composition id="CharacterSheet" component={CharacterSheet} durationInFrames={90} fps={30} width={1920} height={1080} />
+    <Folder name="Kamera">
+      <Composition id="WorkspaceTour" component={WorkspaceTour} durationInFrames={WORKSPACE_TOUR_FRAMES} fps={30} width={1920} height={1080} />
+      <Composition id="ShotReel" component={ShotReel} durationInFrames={SHOT_REEL_FRAMES} fps={30} width={1920} height={1080} />
+    </Folder>
+    <Folder name="Layar">
+      <Composition id="ScreensDemo" component={ScreensDemo} durationInFrames={SCREENS_DEMO_FRAMES} fps={30} width={1920} height={1080} />
+      <Composition id="LaptopBehindDemo" component={LaptopBehindDemo} durationInFrames={LAPTOP_BEHIND_FRAMES} fps={30} width={1920} height={1080} />
+    </Folder>
     <Folder name="Latar">
       <Composition id="BackdropsMatrix" component={BackdropsMatrix} durationInFrames={90} fps={30} width={1920} height={1080} />
       <Composition id="BackdropCycle" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} />
