@@ -17,7 +17,7 @@ export type WorkspaceProps = {
 const resolve = (palette: WorkspacePalette | undefined, time: TimeOfDay | number | undefined): WorkspacePalette =>
   palette ?? workspacePalette(time ?? "siang");
 
-const Clock: React.FC<{ readonly x: number; readonly y: number; readonly p: WorkspacePalette }> = ({ x, y, p }) => {
+export const Clock: React.FC<{ readonly x: number; readonly y: number; readonly p: WorkspacePalette }> = ({ x, y, p }) => {
   const r = 46;
   // 02:47 dini hari. Jarum menit bergeser pelan supaya hidup.
   const frame = useCurrentFrame();
@@ -35,7 +35,7 @@ const Clock: React.FC<{ readonly x: number; readonly y: number; readonly p: Work
   );
 };
 
-const Window: React.FC<{ readonly a: WorkspaceAnchors; readonly p: WorkspacePalette }> = ({ a, p }) => {
+export const Window: React.FC<{ readonly a: WorkspaceAnchors; readonly p: WorkspacePalette }> = ({ a, p }) => {
   // Kotak langit = jendela dikurangi padding 14 di tiap sisi.
   const inner = a.window.w - 28;
   return (

@@ -3,10 +3,10 @@ import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from "remo
 import { Ganjar, GanjarBlock, GanjarStickman, ganjarBlockSize, ganjarSize, ganjarStickmanSize } from "../characters";
 import { OutdoorBack, outdoorPalette, PORTRAIT_OUTDOOR_ANCHORS } from "./outdoor";
 import { PlainBack, plainPalette, PORTRAIT_PLAIN_ANCHORS } from "./plain";
-import { OutdoorBlock, PlainBlock } from "./block";
+import { DeskBlock, OutdoorBlock, PlainBlock, RoomBackBlock } from "./block";
 import { OutdoorSketch, PlainSketch } from "./sketch";
 import { ContactShadow, characterFilter, type TimeOfDay } from "./shared";
-import { WorkspaceScene } from "./workspace";
+import { PORTRAIT_ANCHORS, WorkspaceScene } from "./workspace";
 
 export type BackdropKind = "kosong" | "luarRuang" | "ruangKerja";
 // rig = bidang warna datar untuk karakter rig 2D; sketsa = kertas dan garis tipis untuk stickman;
@@ -23,7 +23,24 @@ export const BackdropScene: React.FC<{ readonly kind: BackdropKind; readonly tim
   time,
   style = "rig",
 }) => {
-  if (kind === "ruangKerja") return <WorkspaceScene time={time} />;
+  if (kind === "ruangKerja") {
+    if (style !== "balok") return <WorkspaceScene time={time} />;
+    // Ganjar block berdiri di belakang meja; pinggulnya sejajar permukaan meja, jadi meja menutup kakinya.
+    const h = 700;
+    const w = ganjarBlockSize(h).width;
+    return (
+      <AbsoluteFill>
+        <RoomBackBlock time={time} />
+        {/* potong di balik meja: kaki tidak boleh muncul di bawah panel depan */}
+        <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: PORTRAIT_ANCHORS.deskTop + 60, overflow: "hidden" }}>
+          <div style={{ position: "absolute", left: PORTRAIT_ANCHORS.seatX - w / 2, top: PORTRAIT_ANCHORS.deskTop + 20 - (22 / 34) * h, filter: characterFilter(time) }}>
+            <GanjarBlock height={h} expression="senang" />
+          </div>
+        </div>
+        <DeskBlock time={time} />
+      </AbsoluteFill>
+    );
+  }
   const floorY = kind === "kosong" ? PORTRAIT_PLAIN_ANCHORS.floorY : PORTRAIT_OUTDOOR_ANCHORS.floorY;
   const shadow = kind === "kosong" ? plainPalette(time).shadowOpacity : outdoorPalette(time).shadowOpacity;
   const sketch = style === "sketsa";
@@ -67,6 +84,7 @@ const GROUPS: readonly { readonly kind: BackdropKind; readonly style: BackdropSt
   { kind: "luarRuang", style: "rig", label: "Luar ruang (rig)" },
   { kind: "kosong", style: "sketsa", label: "Kosong (sketsa)" },
   { kind: "luarRuang", style: "sketsa", label: "Luar ruang (sketsa)" },
+  { kind: "ruangKerja", style: "balok", label: "Ruang kerja (balok)" },
   { kind: "kosong", style: "balok", label: "Kosong (balok)" },
   { kind: "luarRuang", style: "balok", label: "Luar ruang (balok)" },
 ];

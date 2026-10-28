@@ -9,29 +9,35 @@ import { blendTimes, mixHex, Sky, type TimeOfDay } from "../shared";
 // Jangkar dan palet sama dengan `plain` / `outdoor`, jadi mengganti gaya tidak menggeser karakter.
 // Kamera: titik hilang di tinggi cakrawala; lantai di y = floorY, karakter berdiri di z = 0.
 
-const PERSPECTIVE = 1400;
-const FLOOR_NEAR = 900;
+export const PERSPECTIVE = 1400;
+export const FLOOR_NEAR = 900;
 const FLOOR_FAR = 9000;
 const TILE = 220;
 // Latar kosong tidak punya cakrawala sendiri: dinding dianggap setinggi ini di atas lantai.
 const PLAIN_HORIZON_GAP = 520;
 
 // Panggung 3D: setiap anak ditempatkan dengan translate3d (x, y, z) dalam piksel kanvas.
-const Stage: React.FC<{ readonly originY: number; readonly children: React.ReactNode }> = ({ originY, children }) => (
+export const Stage: React.FC<{ readonly originY: number; readonly children: React.ReactNode }> = ({ originY, children }) => (
   <div style={{ position: "absolute", inset: 0, perspective: PERSPECTIVE, perspectiveOrigin: `50% ${originY}px` }}>
     <div style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d" }}>{children}</div>
   </div>
 );
 
 // Lantai petak dua warna, mendatar di y = floorY, membentang dari dekat kamera (z = +FLOOR_NEAR) sampai jauh.
-const Floor: React.FC<{ readonly floorY: number; readonly width: number; readonly a: string; readonly b: string }> = ({ floorY, width, a, b }) => (
+export const Floor: React.FC<{ readonly floorY: number; readonly width: number; readonly a: string; readonly b: string; readonly depth?: number }> = ({
+  floorY,
+  width,
+  a,
+  b,
+  depth = FLOOR_FAR,
+}) => (
   <div
     style={{
       position: "absolute",
       left: width / 2 - 4500,
-      top: floorY - FLOOR_FAR,
+      top: floorY - depth,
       width: 9000,
-      height: FLOOR_FAR,
+      height: depth,
       transformOrigin: "50% 100%",
       transform: `translateZ(${FLOOR_NEAR}px) rotateX(90deg)`,
       background: `repeating-conic-gradient(${a} 0 25%, ${b} 0 50%) 0 0 / ${TILE}px ${TILE}px`,
@@ -75,7 +81,7 @@ const TREE_TIMES: Record<TimeOfDay, TreePalette> = {
 };
 const TRUNK = "#8A5A33";
 
-const solid = (color: string): Paint => (w, h) => <rect width={w} height={h} fill={color} />;
+export const solid = (color: string): Paint => (w, h) => <rect width={w} height={h} fill={color} />;
 
 // Muka depan gedung: warna dasar dan kisi jendela (gambar dalam piksel, dikali 10 oleh kubus).
 const buildingFront =
