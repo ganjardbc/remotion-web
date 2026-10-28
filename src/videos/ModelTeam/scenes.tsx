@@ -177,7 +177,7 @@ export const HaikuScene: React.FC = () => (
     id="haiku"
     name="Haiku"
     role="Operator"
-    icon="refresh"
+    icon="refreshCw"
     uses={[
       { label: "Klasifikasi", at: 3.3 },
       { label: "Ringkasan singkat", at: 4.2 },
