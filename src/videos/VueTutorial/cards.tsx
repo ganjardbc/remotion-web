@@ -90,3 +90,27 @@ export const ChapterBadge: React.FC<{ readonly index: number; readonly title: st
     </div>
   );
 };
+
+// Halaman contoh untuk komponen dengan props: satu komponen tombol dipakai tiga kali dengan label berbeda,
+// muncul satu per satu pada detik `at` (waktu lokal).
+export const ButtonsApp: React.FC<{ readonly labels: readonly { readonly text: string; readonly at: number }[]; readonly scale?: number }> = ({ labels, scale = 1 }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const t = frame / fps;
+  const colors = [SCREEN.vueGreen, "#3d7bf0", "#e5484d"];
+  return (
+    <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 26 * scale, background: "#f6f8fb", fontFamily: FONT }}>
+      <div style={{ fontSize: 52 * scale, fontWeight: 800, color: SCREEN.vueDark }}>CounterButton</div>
+      <div style={{ display: "flex", gap: 22 * scale }}>
+        {labels.map((l, i) => {
+          const k = interpolate(t - l.at, [0, 0.25], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+          return (
+            <div key={l.text} style={{ fontSize: 40 * scale, fontWeight: 700, color: "#fff", background: colors[i % colors.length], padding: `${14 * scale}px ${34 * scale}px`, borderRadius: 14 * scale, opacity: k, transform: `scale(${0.7 + 0.3 * k})` }}>
+              {l.text}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};

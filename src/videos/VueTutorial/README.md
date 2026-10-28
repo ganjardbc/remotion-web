@@ -25,7 +25,7 @@ npx remotion still src/index.ts VueTutorial out.png --frame=945
 ## Transisi, efek suara, dan musik
 
 - Transisi antar scene (`VueTutorialVideo.tsx`): `TransitionSeries` dengan campuran fade, slide, dan wipe, masing-masing `TRANSITION_FRAMES` (12) frame. Transisi saling menimpa scene, jadi total video = jumlah durasi scene - 11 x 12 frame (5268 frame) dan scene mulai di `SCENE_STARTS`.
-- Efek suara (`VueSfx.tsx`): dibuat otomatis dari data scene: pop untuk tiap dialog, ketikan selama Ganjar `mengetik`, whoosh di tiap sisipan dan transisi, ditambah `cues` per scene (ding, klik, scratch saat error, dan sebagainya). Berkas dari `public/sfx/free` dan `public/sfx/synth`.
+- Efek suara (`VueSfx.tsx`): dibuat otomatis dari data scene: pop untuk tiap dialog, ketikan hanya selama isi sisipan benar-benar mengetik (jendela `typing` pada tiap sisipan, dihitung dari baris `cmd` terminal dan panjang kode di editor), whoosh di tiap sisipan dan transisi, ditambah `cues` per scene (ding, klik, scratch saat error, dan sebagainya). Berkas dari `public/sfx/free` dan `public/sfx/synth`.
 - Musik latar: `public/music/vue_bed.mp3`, loop lo-fi 16 birama (±44 dtk) yang dibuat murni dari sintesis lewat `scripts/make-vue-bed.py` (numpy + ffmpeg), jadi bebas lisensi. Volumenya turun halus di sekitar dialog (ducking), dengan fade in dan fade out di ujung video. Ubah `MUSIC_HIGH` dan `MUSIC_LOW` di `VueSfx.tsx` untuk mengatur kerasnya.
 
 Untuk mengganti musik: timpa `vue_bed.mp3`, atau ubah dan jalankan ulang skrip.

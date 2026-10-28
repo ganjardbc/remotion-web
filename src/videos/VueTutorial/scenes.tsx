@@ -2,7 +2,7 @@ import type React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import type { Shot } from "../../assets/camera";
 import { BrowserMock, CodeEditor, CounterApp, FileTree, LaptopFromBehind, Terminal, type TermLine, type TreeNode } from "../../assets/screens";
-import { ErrorPage, InfoCard, TitleCard } from "./cards";
+import { ButtonsApp, ErrorPage, InfoCard, TitleCard } from "./cards";
 import type { SceneSpec } from "./SceneRenderer";
 import { CAM } from "./world";
 
@@ -16,7 +16,43 @@ const Behind: React.FC<{ readonly lines: readonly TermLine[]; readonly from?: nu
   return <LaptopFromBehind yaw={interpolate(frame, [0, durationInFrames - 1], [from, to])} screen={<Terminal lines={lines} fontSize={32} />} />;
 };
 
+// Jendela ketikan (detik, waktu sisipan) dari isi sisipan: baris `cmd` terminal, atau kode yang diketik editor.
+const termTyping = (lines: readonly TermLine[]): { at: number; dur: number }[] => lines.filter((l) => l.kind === "cmd").map((l) => ({ at: l.at, dur: l.text.length / (l.speed ?? 22) }));
+const codeTyping = (code: string, cps: number, start: number): { at: number; dur: number }[] => [{ at: start, dur: code.length / cps }];
+
 const shot = (from: number, dur: number, start: Shot["start"], extra: Partial<Shot> = {}): Shot => ({ from, dur, start, ...extra });
+
+const NODE_CHECK: readonly TermLine[] = [
+  { at: 0.6, kind: "cmd", text: "node -v", speed: 8 },
+  { at: 1.9, kind: "out", text: "v20.11.0" },
+  { at: 3.0, kind: "cmd", text: "npm -v", speed: 8 },
+  { at: 4.2, kind: "out", text: "10.2.4" },
+  { at: 5.4, kind: "ok", text: "✔ Siap lanjut!" },
+];
+
+const CREATE_CMD: readonly TermLine[] = [
+  { at: 0.5, kind: "cmd", text: "npm create vue@latest", speed: 9 },
+  { at: 3.0, kind: "dim", text: "Need to install create-vue@latest" },
+  { at: 3.3, kind: "out", text: "Ok to proceed? (y) y" },
+];
+
+const CREATE_PROMPTS: readonly TermLine[] = [
+  { at: 0.3, kind: "dim", text: "Vue.js - The Progressive JavaScript Framework" },
+  { at: 2.6, kind: "ok", text: "✔ Project name: my-vue-app" },
+  { at: 3.6, kind: "ok", text: "✔ Add TypeScript? No" },
+  { at: 4.6, kind: "ok", text: "✔ Add Vue Router? Yes" },
+  { at: 5.6, kind: "ok", text: "✔ Add Pinia? No" },
+  { at: 6.4, kind: "dim", text: "Scaffolding project in ./my-vue-app..." },
+  { at: 7.2, kind: "out", text: "Done. Now run:" },
+  { at: 7.8, kind: "cmd", text: "cd my-vue-app", speed: 20 },
+  { at: 8.5, kind: "cmd", text: "npm install", speed: 20 },
+];
+
+const DEV_SERVER: readonly TermLine[] = [
+  { at: 0.3, kind: "cmd", text: "npm run dev", speed: 12 },
+  { at: 1.5, kind: "out", text: "  VITE v5.0.0  ready in 312 ms" },
+  { at: 2.0, kind: "ok", text: "  ➜  Local:   http://localhost:5173/" },
+];
 
 const CODE_SFC = `<script setup>
 import { ref } from 'vue'
@@ -83,17 +119,17 @@ export const SCENES: readonly SceneSpec[] = [
       shot(10.5, 1.5, CAM.robotMedium),
     ],
     actors: {
-      ganjarFace: [{ at: 0, expression: "senyum" }, { at: 1, expression: "bingung" }, { at: 4.5, expression: "mikir" }, { at: 8, expression: "senang" }],
-      ganjarGesture: [{ from: 4.2, value: "garukKepala" }, { from: 7.4, value: "netral" }],
-      robotFace: [{ at: 0, expression: "netral" }, { at: 7.4, expression: "senang" }],
-      robotGesture: [{ from: 7.4, value: "lambai" }, { from: 9.6, value: "netral" }],
+      ganjarFace: [{ at: 0, expression: "senyum" }, { at: 1, expression: "bingung" }, { at: 4.8, expression: "mikir" }, { at: 8, expression: "senang" }],
+      ganjarGesture: [{ from: 4.8, value: "garukKepala" }, { from: 7.6, value: "netral" }],
+      robotFace: [{ at: 0, expression: "netral" }, { at: 7.6, expression: "senang" }],
+      robotGesture: [{ from: 7.6, value: "lambai" }, { from: 9.8, value: "netral" }],
     },
     lines: [
-      { who: "ganjar", from: 0.5, dur: 3.5, text: "Aduh... React, Angular, Svelte. Framework JavaScript banyak banget!" },
-      { who: "ganjar", from: 4.2, dur: 2.8, text: "Aku harus mulai dari mana, ya?" },
-      { who: "robot", from: 7.4, dur: 4.3, text: "Tenang, Ganjar. Mulai aja dari Vue." },
+      { who: "ganjar", from: 0.4, dur: 4.2, text: "Aduh... React, Angular, Svelte. Framework JavaScript banyak banget!" },
+      { who: "ganjar", from: 4.8, dur: 2.6, text: "Aku harus mulai dari mana, ya?" },
+      { who: "robot", from: 7.6, dur: 4.2, text: "Tenang, Ganjar. Mulai aja dari Vue." },
     ],
-    cues: [{ at: 4.3, event: "boing", volume: 0.4 }],
+    cues: [{ at: 4.8, event: "boing", volume: 0.4 }],
     inserts: [],
   },
   // 2. Apa itu Vue
@@ -114,14 +150,14 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "ganjar", from: 10.6, dur: 3, text: "Jadi nggak perlu belajar semuanya sekaligus?" },
       { who: "robot", from: 13.6, dur: 1.3, text: "Betul!" },
     ],
-    cues: [{ at: 1.8, event: "ding", volume: 0.3 }, { at: 5.8, event: "ding", volume: 0.3 }, { at: 9.8, event: "ding", volume: 0.3 }],
+    cues: [{ at: 1.8, event: "ding", volume: 0.3 }, { at: 6.6, event: "ding", volume: 0.3 }, { at: 8.2, event: "ding", volume: 0.3 }],
     inserts: [
       {
         from: 1,
         dur: 13,
         layout: "split",
         camera: CAM.twoShot,
-        content: <InfoCard title="Vue JS" items={[{ text: "Progresif: dipakai bertahap", at: 0.8 }, { text: "Mudah dipelajari", at: 4.8 }, { text: "Reaktif: tampilan ikut data", at: 8.8 }]} fontSize={40} />,
+        content: <InfoCard title="Vue JS" items={[{ text: "Framework progresif", at: 0.8 }, { text: "Mudah dipelajari", at: 5.6 }, { text: "Bisa dipakai bertahap", at: 7.2 }]} fontSize={40} />,
       },
     ],
   },
@@ -134,7 +170,7 @@ export const SCENES: readonly SceneSpec[] = [
     shots: [shot(0, 3, CAM.twoShot), shot(3, 4, CAM.ganjarMedium), shot(7, 4, CAM.robotMedium), shot(11, 4, CAM.ganjarMedium, { end: CAM.laptop })],
     actors: {
       ganjarFace: [{ at: 0, expression: "senyum" }, { at: 4, expression: "mikir" }, { at: 7.2, expression: "senang" }],
-      ganjarGesture: [{ from: 2.5, value: "mengetik" }, { from: 11, value: "netral" }],
+      ganjarGesture: [{ from: 7.8, value: "mengetik" }, { from: 11.4, value: "netral" }],
       robotFace: [{ at: 0, expression: "netral" }],
       robotGesture: [{ from: 0.4, value: "tunjuk" }, { from: 3.8, value: "netral" }],
     },
@@ -144,25 +180,8 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "robot", from: 7.2, dur: 2.6, text: "Betul. Ketik node -v." },
       { who: "robot", from: 11.2, dur: 3.6, text: "Kalau muncul nomor versi, kita siap lanjut." },
     ],
-    cues: [{ at: 7.9, event: "ding", volume: 0.35 }],
-    inserts: [
-      {
-        from: 2.5,
-        dur: 8.5,
-        layout: "full",
-        content: (
-          <Behind
-            lines={[
-              { at: 0.6, kind: "cmd", text: "node -v", speed: 8 },
-              { at: 1.9, kind: "out", text: "v20.11.0" },
-              { at: 3.0, kind: "cmd", text: "npm -v", speed: 8 },
-              { at: 4.2, kind: "out", text: "10.2.4" },
-              { at: 5.4, kind: "ok", text: "✔ Siap lanjut!" },
-            ]}
-          />
-        ),
-      },
-    ],
+    cues: [{ at: 12.8, event: "ding", volume: 0.35 }],
+    inserts: [{ from: 7.4, dur: 7.4, layout: "full", typing: termTyping(NODE_CHECK), content: <Behind lines={NODE_CHECK} /> }],
   },
   // 4. Install
   {
@@ -178,7 +197,7 @@ export const SCENES: readonly SceneSpec[] = [
     ],
     actors: {
       ganjarFace: [{ at: 0, expression: "senyum" }, { at: 3.6, expression: "mikir" }, { at: 19.5, expression: "senang" }, { at: 22.4, expression: "senyumSantai" }],
-      ganjarGesture: [{ from: 1, value: "mengetik" }, { from: 9.5, value: "netral" }],
+      ganjarGesture: [{ from: 6.8, value: "mengetik" }, { from: 9.6, value: "netral" }, { from: 17.6, value: "mengetik" }, { from: 19.5, value: "netral" }],
       robotFace: [{ at: 0, expression: "netral" }, { at: 22.4, expression: "senang" }],
       robotGesture: [{ from: 6.4, value: "tunjuk" }, { from: 13, value: "netral" }],
     },
@@ -190,42 +209,10 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "ganjar", from: 19.5, dur: 2.6, text: "Gampang juga!" },
       { who: "robot", from: 22.4, dur: 2.4, text: "Lanjut install dependensinya." },
     ],
-    cues: [{ at: 9.8, event: "pop_claude", volume: 0.3 }, { at: 10.9, event: "pop_claude", volume: 0.3 }, { at: 11.9, event: "pop_claude", volume: 0.3 }, { at: 12.9, event: "pop_claude", volume: 0.3 }],
+    cues: [{ at: 12.5, event: "pop_claude", volume: 0.3 }, { at: 13.5, event: "pop_claude", volume: 0.3 }, { at: 14.5, event: "pop_claude", volume: 0.3 }, { at: 15.5, event: "pop_claude", volume: 0.3 }],
     inserts: [
-      {
-        from: 1,
-        dur: 8,
-        layout: "full",
-        content: (
-          <Behind
-            lines={[
-              { at: 0.5, kind: "cmd", text: "npm create vue@latest", speed: 9 },
-              { at: 3.6, kind: "dim", text: "Need to install create-vue@latest" },
-              { at: 4.8, kind: "out", text: "Ok to proceed? (y) y" },
-            ]}
-          />
-        ),
-      },
-      {
-        from: 9.5,
-        dur: 10,
-        layout: "full",
-        content: (
-          <Terminal
-            fontSize={42}
-            lines={[
-              { at: 0.3, kind: "ok", text: "✔ Project name: my-vue-app" },
-              { at: 1.4, kind: "ok", text: "✔ Add TypeScript? No" },
-              { at: 2.4, kind: "ok", text: "✔ Add Vue Router? Yes" },
-              { at: 3.4, kind: "ok", text: "✔ Add Pinia? No" },
-              { at: 4.4, kind: "dim", text: "Scaffolding project in ./my-vue-app..." },
-              { at: 5.4, kind: "out", text: "Done. Now run:" },
-              { at: 6.2, kind: "cmd", text: "cd my-vue-app", speed: 14 },
-              { at: 7.6, kind: "cmd", text: "npm install", speed: 12 },
-            ]}
-          />
-        ),
-      },
+      { from: 6.4, dur: 3.5, layout: "full", typing: termTyping(CREATE_CMD), content: <Behind lines={CREATE_CMD} /> },
+      { from: 9.9, dur: 9.6, layout: "full", typing: termTyping(CREATE_PROMPTS), content: <Terminal fontSize={42} lines={CREATE_PROMPTS} /> },
     ],
   },
   // 5. Struktur proyek
@@ -267,21 +254,7 @@ export const SCENES: readonly SceneSpec[] = [
     ],
     cues: [{ at: 2.8, event: "ding", volume: 0.4 }],
     inserts: [
-      {
-        from: 0.8,
-        dur: 3.4,
-        layout: "full",
-        content: (
-          <Terminal
-            fontSize={44}
-            lines={[
-              { at: 0.3, kind: "cmd", text: "npm run dev", speed: 12 },
-              { at: 1.5, kind: "out", text: "  VITE v5.0.0  ready in 312 ms" },
-              { at: 2.0, kind: "ok", text: "  ➜  Local:   http://localhost:5173/" },
-            ]}
-          />
-        ),
-      },
+      { from: 0.8, dur: 3.4, layout: "full", typing: termTyping(DEV_SERVER), content: <Terminal fontSize={44} lines={DEV_SERVER} /> },
       { from: 4.6, dur: 5.4, layout: "full", content: <BrowserMock fontSize={34}><CounterApp scale={1.3} /></BrowserMock> },
     ],
   },
@@ -311,6 +284,7 @@ export const SCENES: readonly SceneSpec[] = [
         dur: 18.5,
         layout: "split",
         camera: CAM.twoShot,
+        typing: codeTyping(CODE_SFC, 34, 0.3),
         content: <CodeEditor code={CODE_SFC} fontSize={30} typeCps={34} typeStart={0.3} highlights={[{ from: 1, to: 5, at: 4.5, until: 8.5 }, { from: 7, to: 9, at: 8.5, until: 12.5 }, { from: 11, to: 13, at: 12.5, until: 16.5 }]} />,
       },
     ],
@@ -332,7 +306,7 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "robot", from: 0.4, dur: 3.6, text: "Sekarang bikin tombol penghitung." },
       { who: "robot", from: 4.4, dur: 4.4, text: "ref membuat data jadi reaktif." },
       { who: "robot", from: 9.2, dur: 4, text: "Setiap diklik, tampilannya ikut berubah." },
-      { who: "ganjar", from: 13.6, dur: 2.6, text: "Coba kuklik!" },
+      { who: "ganjar", from: 13.6, dur: 2.6, text: "Coba aku klik!" },
       { who: "ganjar", from: 19, dur: 2.4, text: "Wah, bertambah terus!" },
       { who: "robot", from: 21.8, dur: 3, text: "Itulah reaktivitas." },
     ],
@@ -343,6 +317,7 @@ export const SCENES: readonly SceneSpec[] = [
         dur: 12,
         layout: "split",
         camera: CAM.twoShot,
+        typing: codeTyping(CODE_COUNTER, 22, 0.3),
         content: <CodeEditor code={CODE_COUNTER} fontSize={30} typeCps={22} typeStart={0.3} highlights={[{ from: 4, to: 4, at: 5.2, until: 8.8 }, { from: 8, to: 8, at: 8.8, until: 12 }]} />,
       },
       { from: 14, dur: 9, layout: "full", content: <BrowserMock fontSize={34}><CounterApp clicks={[1.2, 2.4, 3.4, 4.8, 5.8, 7.2]} scale={1.4} /></BrowserMock> },
@@ -366,13 +341,14 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "ganjar", from: 9.4, dur: 3, text: "Jadi bisa dipakai berulang?" },
       { who: "robot", from: 12.6, dur: 3.4, text: "Betul. Satu komponen, banyak tombol." },
     ],
-    cues: [{ at: 5.5, event: "pop_claude", volume: 0.3 }, { at: 9, event: "pop_claude", volume: 0.3 }, { at: 13, event: "pop_ganjar", volume: 0.35 }, { at: 14, event: "pop_ganjar", volume: 0.35 }, { at: 15, event: "pop_ganjar", volume: 0.35 }],
+    cues: [{ at: 5.5, event: "pop_claude", volume: 0.3 }, { at: 9, event: "pop_claude", volume: 0.3 }, { at: 12.6, event: "pop_ganjar", volume: 0.35 }, { at: 13.6, event: "pop_ganjar", volume: 0.35 }, { at: 14.6, event: "pop_ganjar", volume: 0.35 }],
     inserts: [
       {
         from: 0.5,
         dur: 10.5,
         layout: "split",
         camera: CAM.twoShot,
+        typing: codeTyping(CODE_PROPS, 26, 0.3),
         content: <CodeEditor file="CounterButton.vue" code={CODE_PROPS} fontSize={30} typeCps={26} typeStart={0.3} highlights={[{ from: 2, to: 5, at: 5, until: 8.5 }, { from: 9, to: 9, at: 8.5, until: 10.5 }]} />,
       },
       {
@@ -380,8 +356,12 @@ export const SCENES: readonly SceneSpec[] = [
         dur: 5.5,
         layout: "pip",
         corner: "topRight",
-        pip: { width: 620, height: 440 },
-        content: <BrowserMock fontSize={20}><CounterApp clicks={[1, 2, 3]} scale={0.5} /></BrowserMock>,
+        pip: { width: 560, height: 380 },
+        content: (
+          <BrowserMock fontSize={20}>
+            <ButtonsApp labels={[{ text: "Simpan", at: 0.6 }, { text: "Batal", at: 1.6 }, { text: "Hapus", at: 2.6 }]} scale={0.6} />
+          </BrowserMock>
+        ),
       },
     ],
   },
@@ -399,11 +379,11 @@ export const SCENES: readonly SceneSpec[] = [
       robotGesture: [{ from: 3, value: "tunjuk" }, { from: 6.4, value: "angkatTangan" }, { from: 9, value: "netral" }],
     },
     lines: [
-      { who: "ganjar", from: 0.3, dur: 2.4, text: "Lho, kok layarnya merah?!" },
+      { who: "ganjar", from: 0.5, dur: 2.4, text: "Lho, kok layarnya merah?!" },
       { who: "robot", from: 3, dur: 3.4, text: "Tenang. Cuma typo: cout, bukan count." },
       { who: "ganjar", from: 6.8, dur: 2.6, text: "Duh, salah ketik!" },
     ],
-    cues: [{ at: 0.3, event: "scratch", volume: 0.55 }, { at: 6.4, event: "ding", volume: 0.45 }, { at: 7.1, event: "pop_ganjar", volume: 0.4 }, { at: 7.9, event: "pop_ganjar", volume: 0.4 }],
+    cues: [{ at: 0.5, event: "scratch", volume: 0.55 }, { at: 6.4, event: "ding", volume: 0.45 }, { at: 7.1, event: "pop_ganjar", volume: 0.4 }, { at: 7.9, event: "pop_ganjar", volume: 0.4 }],
     inserts: [
       {
         from: 0.2,

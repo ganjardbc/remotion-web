@@ -35,7 +35,8 @@ const Hand: React.FC<{ readonly cx: number; readonly cy: number; readonly side: 
         <rect key={f.x} x={f.x - 13} y={-10 - f.len} width={26} height={f.len + 20} rx={13} fill="#fff" {...stroke} />
       ))}
       <rect x={-58} y={-10} width={116} height={124} rx={44} fill="#fff" {...stroke} />
-      <ellipse cx={side * 72} cy={44} rx={17} ry={32} transform={`rotate(${side * 28} ${side * 72} 44)`} fill="#fff" {...stroke} />
+      {/* jempol di sisi dalam (menghadap tangan satunya), bukan di sisi luar */}
+      <ellipse cx={-side * 72} cy={44} rx={17} ry={32} transform={`rotate(${-side * 28} ${-side * 72} 44)`} fill="#fff" {...stroke} />
     </g>
   );
 };

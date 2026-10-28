@@ -42,6 +42,8 @@ export const CodeEditor: React.FC<{
   const t = frame / fps;
   const shown = typeCps === undefined ? code : code.slice(0, Math.max(0, Math.floor((t - typeStart) * typeCps)));
   const lines = shown.split("\n");
+  // Kursor di ujung teks: tetap menyala selama mengetik, berkedip setelah selesai (hanya bila editor mengetik).
+  const caretOn = typeCps !== undefined && (shown.length < code.length || Math.floor(frame / 15) % 2 === 0);
   const lh = fontSize * 1.55;
   return (
     <div style={{ width: "100%", height: "100%", background: SCREEN.bg, fontFamily: MONO, overflow: "hidden", display: "flex", flexDirection: "column" }}>
@@ -63,7 +65,10 @@ export const CodeEditor: React.FC<{
         {lines.map((l, i) => (
           <div key={i} style={{ position: "relative", display: "flex", height: lh, fontSize, lineHeight: `${lh}px`, whiteSpace: "pre" }}>
             <div style={{ width: fontSize * 2.4, textAlign: "right", paddingRight: fontSize * 0.7, color: SCREEN.line, flexShrink: 0 }}>{i + 1}</div>
-            <div style={{ color: SCREEN.text }}>{highlightLine(l)}</div>
+            <div style={{ color: SCREEN.text }}>
+              {highlightLine(l)}
+              {typeCps !== undefined && i === lines.length - 1 && <span style={{ background: SCREEN.text, opacity: caretOn ? 0.9 : 0 }}> </span>}
+            </div>
           </div>
         ))}
       </div>

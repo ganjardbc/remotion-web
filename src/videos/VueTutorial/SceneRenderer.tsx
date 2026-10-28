@@ -19,6 +19,8 @@ export type Insert = {
   readonly corner?: Corner;
   readonly pip?: { readonly width: number; readonly height: number };
   readonly inset?: number;
+  // Saat isi sisipan benar-benar mengetik (detik, waktu sisipan): dasar efek suara ketikan.
+  readonly typing?: readonly { readonly at: number; readonly dur: number }[];
 };
 
 export type SceneSpec = {

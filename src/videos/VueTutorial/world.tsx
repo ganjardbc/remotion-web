@@ -67,7 +67,7 @@ export const VueWorld: React.FC<{ readonly time: number; readonly actors: Actors
         </div>
       }
       onDesk={
-        <div style={{ position: "absolute", left: ROBOT_X - r.width / 2, top: ROBOT_TOP, filter: characterFilter(time) }}>
+        <div style={{ position: "absolute", left: ROBOT_X - r.width / 2, top: ROBOT_TOP - (speaking(lines, "robot", t) ? Math.abs(Math.sin(t * 12)) * 7 : 0), filter: characterFilter(time) }}>
           <RobotStickman height={ROBOT_H} face={actors.robotFace} gesture={pick(actors.robotGesture, t, "netral")} />
         </div>
       }

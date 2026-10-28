@@ -32,19 +32,17 @@ const buildCues = (): readonly Cue[] => {
     // Whoosh di awal tiap transisi antar scene.
     if (i > 0) cues.push({ event: "whoosh", at: base, volume: 0.35 });
     for (const l of s.lines) cues.push({ event: l.who === "robot" ? "pop_claude" : "pop_ganjar", at: f(l.from), volume: 0.5 });
-    // Ketikan selama Ganjar mengetik: dari kunci "mengetik" sampai kunci gerak berikutnya (atau akhir scene).
-    (s.actors.ganjarGesture ?? []).forEach((k, j, all) => {
-      if (k.value !== "mengetik") return;
-      const end = all[j + 1]?.from ?? s.seconds;
-      cues.push({ event: "typing", at: f(k.from), volume: 0.3, frames: Math.round((end - k.from) * FPS) });
-    });
-    for (const ins of s.inserts) cues.push({ event: "whoosh", at: f(ins.from), volume: 0.22 });
+    for (const ins of s.inserts) {
+      cues.push({ event: "whoosh", at: f(ins.from), volume: 0.22 });
+      // Ketikan hanya selama isi sisipan benar-benar mengetik (perintah terminal, kode di editor), bukan sepanjang sisipan.
+      for (const w of ins.typing ?? []) cues.push({ event: "typing", at: f(ins.from + w.at), volume: 0.32, frames: Math.max(6, Math.round(w.dur * FPS)) });
+    }
     for (const c of s.cues ?? []) cues.push({ event: c.event, at: f(c.at), volume: c.volume ?? 0.4 });
   });
   return cues;
 };
 
-const CUES = buildCues();
+export const CUES = buildCues();
 
 // Jendela dialog dalam frame global, untuk menurunkan volume musik saat ada yang bicara.
 const SPEECH: readonly (readonly [number, number])[] = SCENES.flatMap((s, i) =>
