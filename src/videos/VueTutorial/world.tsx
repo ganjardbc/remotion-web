@@ -46,7 +46,20 @@ export type Actors = {
   readonly robotGesture?: Keyed<Gesture>;
 };
 
-export type Line = { readonly who: "ganjar" | "robot"; readonly from: number; readonly dur: number; readonly text: string };
+export type Line = {
+  readonly who: "ganjar" | "robot";
+  readonly from: number;
+  readonly dur: number;
+  // Teks yang tampil di caption.
+  readonly text: string;
+  // Tag audio ElevenLabs (tanpa kurung siku), mis. "sighs", "excited": hanya dikirim ke TTS, tidak tampil di caption.
+  readonly tag?: string;
+  // Teks yang diucapkan bila berbeda dari caption (mis. ejaan lafal).
+  readonly spoken?: string;
+  // Diisi voiceover.ts bila voice over untuk baris ini sudah ada: id baris dan berkas (relatif ke public/).
+  readonly id?: string;
+  readonly vo?: string;
+};
 
 export const speaking = (lines: readonly Line[], who: Line["who"], t: number): boolean => lines.some((l) => l.who === who && t >= l.from && t < l.from + l.dur - 0.25);
 

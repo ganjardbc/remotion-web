@@ -4,6 +4,7 @@ import type { Shot } from "../../assets/camera";
 import { BrowserMock, CodeEditor, CounterApp, FileTree, LaptopFromBehind, Terminal, type TermLine, type TreeNode } from "../../assets/screens";
 import { ButtonsApp, ErrorPage, InfoCard, TitleCard } from "./cards";
 import type { SceneSpec } from "./SceneRenderer";
+import { fitLines } from "./voiceover";
 import { CAM } from "./world";
 
 // 12 scene video "Cara Install & Menggunakan Vue JS" (±3 menit). Setiap scene = data: dialog, ekspresi, bidikan kamera,
@@ -104,7 +105,7 @@ const TREE: readonly TreeNode[] = [
   { name: "vite.config.js", depth: 0, kind: "file", at: 3.0 },
 ];
 
-export const SCENES: readonly SceneSpec[] = [
+export const BASE_SCENES: readonly SceneSpec[] = [
   // 1. Hook
   {
     id: "hook",
@@ -125,7 +126,7 @@ export const SCENES: readonly SceneSpec[] = [
       robotGesture: [{ from: 7.6, value: "lambai" }, { from: 9.8, value: "netral" }],
     },
     lines: [
-      { who: "ganjar", from: 0.4, dur: 4.2, text: "Aduh... React, Angular, Svelte. Framework JavaScript banyak banget!" },
+      { who: "ganjar", from: 0.4, dur: 4.2, text: "Aduh... React, Angular, Svelte. Framework JavaScript banyak banget!", tag: "sighs" },
       { who: "ganjar", from: 4.8, dur: 2.6, text: "Aku harus mulai dari mana, ya?" },
       { who: "robot", from: 7.6, dur: 4.2, text: "Tenang, Ganjar. Mulai aja dari Vue." },
     ],
@@ -250,7 +251,7 @@ export const SCENES: readonly SceneSpec[] = [
     lines: [
       { who: "robot", from: 0.4, dur: 3, text: "Jalankan dengan npm run dev." },
       { who: "ganjar", from: 3.6, dur: 2.4, text: "Buka localhost:5173!" },
-      { who: "ganjar", from: 7, dur: 2.6, text: "Muncul! Hello Vue!" },
+      { who: "ganjar", from: 7, dur: 2.6, text: "Muncul! Hello Vue!", tag: "excited" },
     ],
     cues: [{ at: 2.8, event: "ding", volume: 0.4 }],
     inserts: [
@@ -307,7 +308,7 @@ export const SCENES: readonly SceneSpec[] = [
       { who: "robot", from: 4.4, dur: 4.4, text: "ref membuat data jadi reaktif." },
       { who: "robot", from: 9.2, dur: 4, text: "Setiap diklik, tampilannya ikut berubah." },
       { who: "ganjar", from: 13.6, dur: 2.6, text: "Coba aku klik!" },
-      { who: "ganjar", from: 19, dur: 2.4, text: "Wah, bertambah terus!" },
+      { who: "ganjar", from: 19, dur: 2.4, text: "Wah, bertambah terus!", tag: "excited" },
       { who: "robot", from: 21.8, dur: 3, text: "Itulah reaktivitas." },
     ],
     cues: [{ at: 5.7, event: "pop_claude", volume: 0.3 }, { at: 9.3, event: "pop_claude", volume: 0.3 }, { at: 15.2, event: "pop_ganjar", volume: 0.4 }, { at: 16.4, event: "pop_ganjar", volume: 0.4 }, { at: 17.4, event: "pop_ganjar", volume: 0.4 }, { at: 18.8, event: "pop_ganjar", volume: 0.4 }, { at: 19.8, event: "pop_ganjar", volume: 0.4 }, { at: 21.2, event: "ding", volume: 0.4 }],
@@ -379,9 +380,9 @@ export const SCENES: readonly SceneSpec[] = [
       robotGesture: [{ from: 3, value: "tunjuk" }, { from: 6.4, value: "angkatTangan" }, { from: 9, value: "netral" }],
     },
     lines: [
-      { who: "ganjar", from: 0.5, dur: 2.4, text: "Lho, kok layarnya merah?!" },
+      { who: "ganjar", from: 0.5, dur: 2.4, text: "Lho, kok layarnya merah?!", tag: "surprised" },
       { who: "robot", from: 3, dur: 3.4, text: "Tenang. Cuma typo: cout, bukan count." },
-      { who: "ganjar", from: 6.8, dur: 2.6, text: "Duh, salah ketik!" },
+      { who: "ganjar", from: 6.8, dur: 2.6, text: "Duh, salah ketik!", tag: "sighs" },
     ],
     cues: [{ at: 0.5, event: "scratch", volume: 0.55 }, { at: 6.4, event: "ding", volume: 0.45 }, { at: 7.1, event: "pop_ganjar", volume: 0.4 }, { at: 7.9, event: "pop_ganjar", volume: 0.4 }],
     inserts: [
@@ -446,13 +447,16 @@ export const SCENES: readonly SceneSpec[] = [
       robotGesture: [{ from: 3.6, value: "lambai" }],
     },
     lines: [
-      { who: "ganjar", from: 0.4, dur: 3, text: "Terima kasih sudah menonton!" },
+      { who: "ganjar", from: 0.4, dur: 3, text: "Terima kasih sudah menonton!", tag: "warmly" },
       { who: "robot", from: 3.6, dur: 3.8, text: "Sampai jumpa di tutorial berikutnya." },
     ],
     cues: [{ at: 5.2, event: "ding", volume: 0.4 }],
     inserts: [{ from: 5, dur: 3, layout: "full", content: <TitleCard title="Sampai jumpa!" subtitle="Tutorial Vue JS berikutnya segera hadir" /> }],
   },
 ];
+
+// Scene dengan baris dialog yang sudah dimuat ke audio asli (bila ada); dipakai seluruh video.
+export const SCENES: readonly SceneSpec[] = BASE_SCENES.map((s) => ({ ...s, lines: fitLines(s.id, s.lines) }));
 
 export const SCENE_FRAMES = SCENES.map((s) => Math.round(s.seconds * 30));
 

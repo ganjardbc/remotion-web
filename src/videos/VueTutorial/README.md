@@ -29,3 +29,17 @@ npx remotion still src/index.ts VueTutorial out.png --frame=945
 - Musik latar: `public/music/vue_bed.mp3`, loop lo-fi 16 birama (±44 dtk) yang dibuat murni dari sintesis lewat `scripts/make-vue-bed.py` (numpy + ffmpeg), jadi bebas lisensi. Volumenya turun halus di sekitar dialog (ducking), dengan fade in dan fade out di ujung video. Ubah `MUSIC_HIGH` dan `MUSIC_LOW` di `VueSfx.tsx` untuk mengatur kerasnya.
 
 Untuk mengganti musik: timpa `vue_bed.mp3`, atau ubah dan jalankan ulang skrip.
+
+## Voice over (ElevenLabs)
+
+Suara: **Ari Eko** untuk Ganjar, **Nilasari** untuk Claude, model `eleven_v4` (lihat `voiceover.ts`). Timing: muat per scene. Durasi dialog diganti durasi audio asli; baris tidak mulai sebelum waktu tulisan tangannya (jangkar ke sisipan dan gerak) dan digeser maju bila baris sebelumnya belum selesai. Selama berkas belum ada, video memakai durasi tulisan tangan dan pop SFX.
+
+Alur (generate dikerjakan Claude lewat konektor ElevenLabs di sesi, bukan lewat `npm`; hasil akhir hanya berkas mp3, jadi render tidak butuh ElevenLabs):
+
+1. `node scripts/vo-lines.mjs` menampilkan 44 baris, hash, dan statusnya (`baru`, `berubah`, `ok`); `--pending` mengeluarkan JSON baris yang perlu di-generate. Hash = sha1(suara | model | teks TTS), jadi baris yang tidak berubah tidak di-generate ulang dan kredit tidak terbuang.
+2. Claude men-generate tiap baris berurutan (satu variasi, ada jeda bila kena batas permintaan 429) dengan `creative_generate_speech`; baris Ganjar yang diberi `tag` (mis. `sighs`, `excited`) mengirim `[tag] teks`, caption tetap tanpa tag.
+3. Mengunduh `content_url` hasilnya (URL bertanda tangan, berlaku 2 jam) ke `out/vo-raw/<id>.mp3` (folder `out` tidak ikut git).
+4. `python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash>` memotong senyap awal dan akhir, menyamakan kenyaringan (-16 LUFS), menyimpan ke `public/voice/<id>.mp3`, dan mencatat durasi di `voiceover.json`.
+5. Jalankan audit durasi (dialog tidak boleh lewat akhir scene) dan render pemeriksaan. Bila ada baris melewati akhir scene, perpanjang `seconds` scene atau ringkas teksnya.
+
+Ubah teks satu baris di `scenes.tsx` lalu jalankan `vo-lines.mjs`: hanya baris itu yang berstatus `berubah`. Teks yang berbeda untuk ucapan dan caption: isi `spoken`. Mengganti suara atau model mengubah hash semua baris, jadi semua perlu di-generate ulang.

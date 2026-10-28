@@ -31,7 +31,8 @@ const buildCues = (): readonly Cue[] => {
     const f = (sec: number): number => base + Math.round(sec * FPS);
     // Whoosh di awal tiap transisi antar scene.
     if (i > 0) cues.push({ event: "whoosh", at: base, volume: 0.35 });
-    for (const l of s.lines) cues.push({ event: l.who === "robot" ? "pop_claude" : "pop_ganjar", at: f(l.from), volume: 0.5 });
+    // Pop dialog hanya bila baris belum punya voice over (suara asli menggantikannya).
+    for (const l of s.lines) if (!l.vo) cues.push({ event: l.who === "robot" ? "pop_claude" : "pop_ganjar", at: f(l.from), volume: 0.5 });
     for (const ins of s.inserts) {
       cues.push({ event: "whoosh", at: f(ins.from), volume: 0.22 });
       // Ketikan hanya selama isi sisipan benar-benar mengetik (perintah terminal, kode di editor), bukan sepanjang sisipan.
@@ -61,9 +62,20 @@ export const musicVolume = (f: number): number => {
   return duck * fade;
 };
 
+// Voice over: satu klip per baris, dimulai pada frame awal baris (waktu sudah dimuat ke durasi audio asli).
+const VOICES = SCENES.flatMap((s, i) => s.lines.filter((l) => l.vo).map((l) => ({ id: l.id ?? "", file: l.vo ?? "", at: SCENE_STARTS[i] + Math.round(l.from * FPS) })));
+
 export const VueSfx: React.FC = () => (
   <>
-    <Audio src={staticFile("music/vue_bed.mp3")} loop loopVolumeCurveBehavior="extend" volume={musicVolume} />
+    {VOICES.map((v) => (
+      <Audio key={v.id} src={staticFile(v.file)} from={v.at} volume={1} />
+    ))}
+    <Audio
+      src={staticFile("music/vue_bed.mp3")}
+      loop
+      loopVolumeCurveBehavior="extend"
+      volume={musicVolume}
+    />
     {CUES.map((c, i) => (
       <Audio key={i} src={staticFile(`sfx/${FILES[c.event]}`)} from={c.at} volume={c.volume} {...(c.frames ? { durationInFrames: c.frames, loop: true } : {})} />
     ))}
