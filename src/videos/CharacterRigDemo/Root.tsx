@@ -47,8 +47,6 @@ export const RigDemoRoot: React.FC = () => (
     <Folder name="Latar">
       <Composition id="BackdropsMatrix" component={BackdropsMatrix} durationInFrames={90} fps={30} width={1920} height={1080} />
       <Composition id="BackdropCycle" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} />
-      <Composition id="BackdropCycleBalok" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} defaultProps={{ style: "balok" as const }} />
-      <Composition id="WorkspaceBlockCycle" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} defaultProps={{ kind: "ruangKerja" as const, style: "balok" as const }} />
       <Composition id="BackdropCycleSketsa" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} defaultProps={{ style: "sketsa" as const }} />
       <Composition id="WorkspaceTimes" component={WorkspaceTimes} durationInFrames={90} fps={30} width={1920} height={1080} />
       <Composition id="WorkspaceTyping" component={WorkspaceTyping} durationInFrames={90} fps={30} width={1080} height={1920} />
