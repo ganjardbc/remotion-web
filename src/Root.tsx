@@ -31,6 +31,7 @@ import {
 } from "./videos/SejarahAIV2/SejarahAIV2Video";
 import { TokenTipsVideo } from "./videos/TokenTips/TokenTipsVideo";
 import { ClaudeMdVideo } from "./videos/ClaudeMd/ClaudeMdVideo";
+import { VUE_TUTORIAL_FRAMES, VueTutorialVideo } from "./videos/VueTutorial/VueTutorialVideo";
 import { SejarahAIStoryVideo } from "./videos/SejarahAIStory/SejarahAIStoryVideo";
 import { TOTAL_FRAMES as SEJARAH_AI_STORY_FRAMES } from "./videos/SejarahAIStory/config";
 import { SejarahAIStoryReelsVideo } from "./videos/SejarahAIStoryReels/SejarahAIStoryReelsVideo";
@@ -64,6 +65,7 @@ export const RemotionRoot: React.FC = () => {
         height={1920}
         defaultProps={{ theme: "gh" }}
       />
+      <Composition id="VueTutorial" component={VueTutorialVideo} durationInFrames={VUE_TUTORIAL_FRAMES} fps={30} width={1920} height={1080} />
       <Composition
         id="SejarahAIStory"
         component={SejarahAIStoryVideo}
