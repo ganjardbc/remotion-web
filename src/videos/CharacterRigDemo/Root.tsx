@@ -1,5 +1,6 @@
 import type React from "react";
 import { Composition, Folder } from "remotion";
+import { WorkspaceCycle, WorkspaceTimes } from "../../assets/backdrops/workspace";
 import { CharacterSheet } from "../../assets/characters";
 import { GANJAR_DEMO_FRAMES, GanjarDemo } from "../../assets/characters/ganjar/demo/GanjarDemo";
 import { GANJAR_BLOCK_DEMO_FRAMES, GanjarBlockDemo, GanjarBlockStill } from "../../assets/characters/ganjar/demo/GanjarBlockDemo";
@@ -42,6 +43,10 @@ const Clip: React.FC<{ readonly id: string; readonly component: React.FC; readon
 export const RigDemoRoot: React.FC = () => (
   <>
     <Composition id="CharacterSheet" component={CharacterSheet} durationInFrames={90} fps={30} width={1920} height={1080} />
+    <Folder name="Latar">
+      <Composition id="WorkspaceTimes" component={WorkspaceTimes} durationInFrames={90} fps={30} width={1920} height={1080} />
+      <Composition id="WorkspaceCycle" component={WorkspaceCycle} durationInFrames={150} fps={30} width={1080} height={1920} />
+    </Folder>
     <Folder name="Ganjar">
       <Folder name="Rig-2D">
         <Clip id="GanjarStill" component={GanjarStill} />
