@@ -1,0 +1,49 @@
+{
+  "lines": {
+    "closing": {
+      "hash": "e4b77bf3ee62",
+      "file": "voiceover/closing.mp3",
+      "duration": 5.15
+    },
+    "cta": {
+      "hash": "60cf44300a05",
+      "file": "voiceover/cta.mp3",
+      "duration": 7.29
+    },
+    "haiku": {
+      "hash": "03ec71d44011",
+      "file": "voiceover/haiku.mp3",
+      "duration": 7.29
+    },
+    "hook": {
+      "hash": "f70ce08b534f",
+      "file": "voiceover/hook.mp3",
+      "duration": 5.25
+    },
+    "key": {
+      "hash": "9d6ccbfba9b7",
+      "file": "voiceover/key.mp3",
+      "duration": 9.94
+    },
+    "opus": {
+      "hash": "22343929b3e2",
+      "file": "voiceover/opus.mp3",
+      "duration": 7.43
+    },
+    "relate": {
+      "hash": "9675fa593d7e",
+      "file": "voiceover/relate.mp3",
+      "duration": 13.79
+    },
+    "sonnet": {
+      "hash": "3c97b731b675",
+      "file": "voiceover/sonnet.mp3",
+      "duration": 8.96
+    },
+    "team": {
+      "hash": "161bed1518dc",
+      "file": "voiceover/team.mp3",
+      "duration": 4.83
+    }
+  }
+}
