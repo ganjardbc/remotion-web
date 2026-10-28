@@ -1,6 +1,8 @@
+import type { SkyPalette } from "../shared";
+
 // Warna dan tampilan ruang kerja. Satu palet per waktu hari; perabot (meja, kursi, laptop) ikut karena
 // warnanya bagian palet. Semua warna hex 6 digit (#RRGGBB) supaya bisa diinterpolasi antar waktu.
-export type WorkspacePalette = {
+export type WorkspacePalette = SkyPalette & {
   readonly wall: string;
   readonly wallShade: string;
   readonly baseboard: string;
@@ -13,18 +15,8 @@ export type WorkspacePalette = {
   readonly chairAccent: string;
   readonly laptop: string;
   readonly laptopEdge: string;
-  // Jendela: langit atas ke bawah, bingkai, awan, benda langit (matahari atau bulan), bintang.
-  readonly sky: string;
-  readonly skyLow: string;
+  // Bingkai jendela.
   readonly frame: string;
-  readonly cloud: string;
-  readonly cloudOpacity: number;
-  readonly celestial: string;
-  // Posisi pusat benda langit di dalam jendela, 0..1 dari kiri atas.
-  readonly celestialX: number;
-  readonly celestialY: number;
-  readonly celestialSize: number;
-  readonly stars: number;
   // Sorot cahaya jendela ke dalam ruangan.
   readonly beamColor: string;
   readonly beam: number;
@@ -33,10 +25,6 @@ export type WorkspacePalette = {
   readonly clockInk: string;
   readonly clockAccent: string;
   readonly laptopLogo: string;
-  // Penyesuaian karakter agar terlihat berada di waktu yang sama (lihat `characterFilter`).
-  readonly charBrightness: number;
-  readonly charSaturate: number;
-  readonly charSepia: number;
 };
 
 export const WORKSPACE_DAY: WorkspacePalette = {
@@ -68,9 +56,6 @@ export const WORKSPACE_DAY: WorkspacePalette = {
   clockInk: "#14141F",
   clockAccent: "#E5484D",
   laptopLogo: "#4F46E5",
-  charBrightness: 1,
-  charSaturate: 1,
-  charSepia: 0,
 };
 
 export const WORKSPACE_SORE: WorkspacePalette = {
@@ -102,9 +87,6 @@ export const WORKSPACE_SORE: WorkspacePalette = {
   clockInk: "#14141F",
   clockAccent: "#E5484D",
   laptopLogo: "#4F46E5",
-  charBrightness: 0.97,
-  charSaturate: 1.1,
-  charSepia: 0.18,
 };
 
 export const WORKSPACE_MALAM: WorkspacePalette = {
@@ -136,7 +118,4 @@ export const WORKSPACE_MALAM: WorkspacePalette = {
   clockInk: "#14141F",
   clockAccent: "#E5484D",
   laptopLogo: "#4F46E5",
-  charBrightness: 0.84,
-  charSaturate: 0.85,
-  charSepia: 0,
 };

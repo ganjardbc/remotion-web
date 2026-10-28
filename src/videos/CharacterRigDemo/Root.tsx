@@ -1,6 +1,7 @@
 import type React from "react";
 import { Composition, Folder } from "remotion";
-import { WorkspaceCycle, WorkspaceTimes } from "../../assets/backdrops/workspace";
+import { BackdropCycle, BackdropsMatrix } from "../../assets/backdrops";
+import { WorkspaceCycle, WorkspaceTimes, WorkspaceTyping } from "../../assets/backdrops/workspace";
 import { CharacterSheet } from "../../assets/characters";
 import { GANJAR_DEMO_FRAMES, GanjarDemo } from "../../assets/characters/ganjar/demo/GanjarDemo";
 import { GANJAR_BLOCK_DEMO_FRAMES, GanjarBlockDemo, GanjarBlockStill } from "../../assets/characters/ganjar/demo/GanjarBlockDemo";
@@ -44,7 +45,10 @@ export const RigDemoRoot: React.FC = () => (
   <>
     <Composition id="CharacterSheet" component={CharacterSheet} durationInFrames={90} fps={30} width={1920} height={1080} />
     <Folder name="Latar">
+      <Composition id="BackdropsMatrix" component={BackdropsMatrix} durationInFrames={90} fps={30} width={1920} height={1080} />
+      <Composition id="BackdropCycle" component={BackdropCycle} durationInFrames={150} fps={30} width={1080} height={1920} />
       <Composition id="WorkspaceTimes" component={WorkspaceTimes} durationInFrames={90} fps={30} width={1920} height={1080} />
+      <Composition id="WorkspaceTyping" component={WorkspaceTyping} durationInFrames={90} fps={30} width={1080} height={1920} />
       <Composition id="WorkspaceCycle" component={WorkspaceCycle} durationInFrames={150} fps={30} width={1080} height={1920} />
     </Folder>
     <Folder name="Ganjar">

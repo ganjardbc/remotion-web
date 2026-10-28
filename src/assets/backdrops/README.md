@@ -1,6 +1,18 @@
 # Latar belakang
 
-Latar berjangkar untuk karakter. Impor dari `src/assets/backdrops/<latar>`, bukan dari file di dalamnya.
+Latar berjangkar untuk karakter. Impor dari `src/assets/backdrops` (barrel), bukan dari file di dalam subfolder.
+
+| Latar | Isi | Jangkar |
+|---|---|---|
+| `workspace` | Ruang kerja: dinding, jendela, jam, kursi, meja, laptop, gelas | `deskTop`, `seatX`, `floorY`, ... |
+| `plain` | Kosong: dinding gradasi, lantai, kolam cahaya | `floorY`, `spotX` |
+| `outdoor` | Luar ruang: langit, dua lapis gedung (jendela menyala di malam), jalan | `width`, `horizonY`, `floorY` |
+
+Semua latar punya `time` (`"siang" | "sore" | "malam"` atau angka 0..1) dan `palette` sendiri. Interpolasi waktu, langit (`Sky`), `characterFilter`, dan `ContactShadow` ada di `shared/` dan dipakai bersama. Karakter berdiri di `floorY` latar yang dipilih; `ContactShadow` di titik yang sama menyatukan keduanya. Demo di Studio (folder Latar): `BackdropsMatrix` (semua latar × semua waktu) dan `BackdropCycle` (peralihan di satu latar).
+
+Jangkar selalu dalam piksel kanvas dan tidak diambil dari `useVideoConfig()`, supaya latar tetap benar saat ditanam dan diperkecil di dalam komposisi lain (seperti di `BackdropsMatrix`).
+
+## workspace (ruang kerja)
 
 ## workspace (ruang kerja)
 
@@ -23,4 +35,18 @@ import { Chair, Desk, Laptop, Mug, PORTRAIT_ANCHORS, RoomBack } from "../../asse
 - Waktu hari: `time` pada tiap komponen, `"siang" | "sore" | "malam"` atau angka 0..1 (siang 0, sore 0.5, malam 1; angka di antaranya beralih halus). Palet per waktu: `WORKSPACE_DAY`, `WORKSPACE_SORE`, `WORKSPACE_MALAM`; `workspacePalette(time)` mengembalikan palet hasil interpolasi. Palet juga mengatur langit di jendela (matahari terbit ke terbenam, bulan, bintang), awan, dan sorot cahaya.
 - Karakter ikut waktu: bungkus karakter dengan `style={{ filter: characterFilter(time) }}` (kecerahan, saturasi, sepia; warna dasar dan ekspresi tetap terbaca). Garis stickman tetap gelap di semua waktu, karena muka putihnya hanya diredupkan.
 - Demo di Studio (folder Latar): `WorkspaceTimes` (tiga waktu berdampingan) dan `WorkspaceCycle` (peralihan siang ke malam). `WorkspaceScene` = adegan lengkap dengan Ganjar duduk.
-- Belum ada: varian gaya block dan stickman, latar lain (luar ruang, kosong), dan `activity` karakter (mengetik, minum).
+- Mengetik: `gesture="mengetik"` pada `GanjarStickman` dan `RobotStickman` (kedua tangan mengetuk bergantian di depan perut atau tepi layar). Demo: `WorkspaceTyping`. Block belum mendukungnya (jatuh ke pose dasar).
+- Belum ada: varian gaya block dan stickman untuk latar, dan aktivitas lain (minum).
+
+## plain dan outdoor
+
+```tsx
+import { ContactShadow, OutdoorBack, PORTRAIT_OUTDOOR_ANCHORS, characterFilter } from "../../assets/backdrops";
+
+<OutdoorBack time="sore" />
+<ContactShadow x={540} y={PORTRAIT_OUTDOOR_ANCHORS.floorY} width={420} />
+{/* karakter berdiri di floorY, dibungkus style={{ filter: characterFilter("sore") }} */}
+```
+
+- `PlainBack` / `OutdoorBack` digambar paling belakang. Anchors bawaan untuk kanvas 1080x1920; kanvas lain membuat objek jangkar sendiri.
+- Gedung `outdoor` dari daftar angka tetap (bukan acak), jadi render sama di tiap frame; awan bergeser pelan dari frame.

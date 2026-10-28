@@ -2,6 +2,7 @@ import type React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { PORTRAIT_ANCHORS, type WorkspaceAnchors } from "./anchors";
 import type { WorkspacePalette } from "./palette";
+import { Sky } from "../shared";
 import { workspacePalette, type TimeOfDay } from "./time";
 
 // Ruang kerja berjangkar. Urutan gambar (belakang ke depan): RoomBack, Chair, karakter duduk, Desk, Laptop, Mug.
@@ -34,30 +35,13 @@ const Clock: React.FC<{ readonly x: number; readonly y: number; readonly p: Work
   );
 };
 
-// Posisi bintang di dalam jendela (0..1), kelap-kelip pelan; terlihat hanya bila `stars` > 0.
-const STARS: readonly (readonly [number, number, number])[] = [
-  [0.14, 0.12, 0],
-  [0.34, 0.3, 1.3],
-  [0.52, 0.1, 2.1],
-  [0.2, 0.5, 0.7],
-  [0.62, 0.42, 1.8],
-  [0.86, 0.5, 2.9],
-  [0.42, 0.62, 0.4],
-];
-
 const Window: React.FC<{ readonly a: WorkspaceAnchors; readonly p: WorkspacePalette }> = ({ a, p }) => {
-  const frame = useCurrentFrame();
-  const size = a.window.w * p.celestialSize;
+  // Kotak langit = jendela dikurangi padding 14 di tiap sisi.
+  const inner = a.window.w - 28;
   return (
     <div style={{ position: "absolute", left: a.window.x, top: a.window.y, width: a.window.w, height: a.window.h, borderRadius: 18, backgroundColor: p.frame, boxShadow: "0 8px 24px rgba(20,20,31,0.12)", padding: 14 }}>
-      <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 8, background: `linear-gradient(${p.sky}, ${p.skyLow})`, overflow: "hidden" }}>
-        {p.stars > 0.01 &&
-          STARS.map(([x, y, phase]) => (
-            <div key={`${x}-${y}`} style={{ position: "absolute", left: `${x * 100}%`, top: `${y * 100}%`, width: 5, height: 5, borderRadius: "50%", backgroundColor: "#FFFFFF", opacity: p.stars * (0.55 + 0.45 * Math.sin(frame / 20 + phase)) }} />
-          ))}
-        <div style={{ position: "absolute", left: `${p.celestialX * 100}%`, top: `${p.celestialY * 100}%`, width: size, height: size, marginLeft: -size / 2, marginTop: -size / 2, borderRadius: "50%", backgroundColor: p.celestial, boxShadow: `0 0 ${size * 0.6}px ${p.celestial}` }} />
-        <div style={{ position: "absolute", left: 28, top: 40, width: 90, height: 30, borderRadius: 20, backgroundColor: p.cloud, opacity: p.cloudOpacity }} />
-        <div style={{ position: "absolute", left: 120, top: 80, width: 70, height: 24, borderRadius: 20, backgroundColor: p.cloud, opacity: p.cloudOpacity * 0.9 }} />
+      <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 8, overflow: "hidden" }}>
+        <Sky p={p} width={inner} />
         <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 10, marginLeft: -5, backgroundColor: p.frame }} />
         <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 10, marginTop: -5, backgroundColor: p.frame }} />
       </div>
