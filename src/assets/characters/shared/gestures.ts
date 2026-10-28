@@ -16,7 +16,8 @@ export type Gesture =
   | "mikir"
   | "garukKepala"
   | "tepuk"
-  | "pinggang";
+  | "pinggang"
+  | "mengetik";
 
 export const GESTURES: readonly Gesture[] = [
   "netral",
@@ -31,6 +32,7 @@ export const GESTURES: readonly Gesture[] = [
   "garukKepala",
   "tepuk",
   "pinggang",
+  "mengetik",
 ];
 
 // null = pakai pose dasar (diam atau ayun jalan) untuk lengan itu.
@@ -81,6 +83,16 @@ export const gestureArms = (g: Gesture, t: number, robot: boolean): GestureArms 
     }
     case "pinggang":
       return both({ shoulder: 50, elbow: 279, front: true });
+    case "mengetik": {
+      // Lengan atas turun, lengan bawah menekuk ke tengah di depan perut; tiap tangan mengetuk bergantian
+      // dengan dua gelombang berbeda supaya tidak seperti metronom.
+      const tap = (phase: number): number => Math.max(0, Math.sin(t * TAU * 3.1 + phase)) * 9 + Math.sin(t * TAU * 1.7 + phase * 2) * 2;
+      const base = robot ? { shoulder: -12, elbow: 282 } : { shoulder: 30, elbow: -118 };
+      return [
+        { shoulder: base.shoulder, elbow: base.elbow + tap(0), front: true },
+        { shoulder: base.shoulder, elbow: base.elbow + tap(2.4), front: true },
+      ];
+    }
   }
 };
 

@@ -1,7 +1,7 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { RobotStickman } from "../../robot/stickman/RobotStickman";
-import { GESTURES, GANJAR_STICKMAN_EXPRESSIONS, GanjarStickman, type GanjarStickmanExpression } from "../stickman/GanjarStickman";
+import { RobotStickman, robotStickmanSize } from "../../robot/stickman/RobotStickman";
+import { GESTURES, GANJAR_STICKMAN_EXPRESSIONS, GanjarStickman, ganjarStickmanSize, type GanjarStickmanExpression } from "../stickman/GanjarStickman";
 
 export const GANJAR_STICKMAN_DEMO_FRAMES = GANJAR_STICKMAN_EXPRESSIONS.length * 30;
 
@@ -56,17 +56,27 @@ export const GanjarStickmanPlain: React.FC<{ readonly expression?: GanjarStickma
 );
 
 // Lembar semua gerak tangan, badan atas saja. `robot` = RobotStickman. `frame` tetap 0 (pose diam).
-export const GanjarStickmanGestures: React.FC<{ readonly robot?: boolean }> = ({ robot = false }) => (
-  <AbsoluteFill style={{ background: "#ffffff", padding: 20, display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridAutoRows: 430, gap: 14, alignContent: "center" }}>
-    {GESTURES.map((g) => (
-      <div key={g} style={{ position: "relative", overflow: "hidden", background: "#ece9e3", borderRadius: 14 }}>
-        <div style={{ position: "absolute", left: robot ? -76 : -64, top: robot ? 50 : 10 }}>
-          {robot ? <RobotStickman height={330} gesture={g} /> : <GanjarStickman height={480} gesture={g} hair headphones={false} />}
+// Tiga kolom; tinggi sel dihitung dari jumlah gerak supaya semua baris muat di kanvas 1920.
+const SHEET = { width: 1080, height: 1920, pad: 20, gap: 14, cols: 3 } as const;
+const CELL_W = (SHEET.width - SHEET.pad * 2 - SHEET.gap * (SHEET.cols - 1)) / SHEET.cols;
+const ROWS = Math.ceil(GESTURES.length / SHEET.cols);
+const CELL_H = Math.floor((SHEET.height - SHEET.pad * 2 - SHEET.gap * (ROWS - 1)) / ROWS);
+
+export const GanjarStickmanGestures: React.FC<{ readonly robot?: boolean }> = ({ robot = false }) => {
+  const figureH = robot ? CELL_H * 0.77 : CELL_H * 1.12;
+  const figureW = (robot ? robotStickmanSize(figureH) : ganjarStickmanSize(figureH)).width;
+  return (
+    <AbsoluteFill style={{ background: "#ffffff", padding: SHEET.pad, display: "grid", gridTemplateColumns: `repeat(${SHEET.cols}, 1fr)`, gridAutoRows: CELL_H, gap: SHEET.gap, alignContent: "center" }}>
+      {GESTURES.map((g) => (
+        <div key={g} style={{ position: "relative", overflow: "hidden", background: "#ece9e3", borderRadius: 14 }}>
+          <div style={{ position: "absolute", left: (CELL_W - figureW) / 2, top: robot ? CELL_H * 0.12 : CELL_H * 0.02 }}>
+            {robot ? <RobotStickman height={figureH} gesture={g} /> : <GanjarStickman height={figureH} gesture={g} hair headphones={false} />}
+          </div>
+          <div style={{ position: "absolute", left: 14, bottom: 10, fontFamily: "monospace", fontWeight: 700, fontSize: 24, color: "#17171b" }}>{g}</div>
         </div>
-        <div style={{ position: "absolute", left: 14, bottom: 10, fontFamily: "monospace", fontWeight: 700, fontSize: 24, color: "#17171b" }}>{g}</div>
-      </div>
-    ))}
-  </AbsoluteFill>
-);
+      ))}
+    </AbsoluteFill>
+  );
+};
 
 export const RobotStickmanGestures: React.FC = () => <GanjarStickmanGestures robot />;
