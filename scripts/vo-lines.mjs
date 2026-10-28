@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Daftar baris voice over video VueTutorial dan statusnya terhadap src/videos/VueTutorial/voiceover.json.
-//   node scripts/vo-lines.mjs            tabel semua baris (id, suara, hash, status)
-//   node scripts/vo-lines.mjs --pending  JSON baris yang perlu di-generate (belum ada atau teks/suara/model berubah)
+// Daftar baris voice over satu video dan statusnya terhadap src/videos/<Video>/voiceover.json.
+//   node scripts/vo-lines.mjs [--video VueTutorial]            tabel semua baris (id, suara, hash, status)
+//   node scripts/vo-lines.mjs [--video VueTutorial] --pending  JSON baris yang perlu di-generate (belum ada atau teks/suara/model berubah)
 // Hash = sha1(voiceId | model | teksTTS), 12 huruf pertama. Dipakai Claude untuk memutuskan baris mana yang di-generate
 // ulang, supaya kredit tidak terbuang, dan oleh vo-process.py untuk mencatat hasilnya.
 import { build } from "esbuild";
@@ -11,12 +11,15 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
+const vi = process.argv.indexOf("--video");
+const video = vi > 0 ? process.argv[vi + 1] : "VueTutorial";
+const dir = join(root, "src/videos", video);
 const tmp = join(root, "node_modules", ".vo-tmp");
 mkdirSync(tmp, { recursive: true });
 const out = join(tmp, "lines.mjs");
 
 await build({
-  entryPoints: [join(root, "src/videos/VueTutorial/scenes.tsx")],
+  entryPoints: [join(dir, "scenes.tsx")],
   bundle: true,
   platform: "node",
   format: "esm",
@@ -30,7 +33,7 @@ const vo = await import(pathToFileURL((await bundleVo()).path).href);
 
 async function bundleVo() {
   const p = join(tmp, "vo.mjs");
-  await build({ entryPoints: [join(root, "src/videos/VueTutorial/voiceover.ts")], bundle: true, platform: "node", format: "esm", outfile: p, external: ["remotion", "react"], loader: { ".json": "json", ".mp3": "empty" }, logLevel: "error" });
+  await build({ entryPoints: [join(dir, "voiceover.ts")], bundle: true, platform: "node", format: "esm", outfile: p, external: ["remotion", "react"], loader: { ".json": "json", ".mp3": "empty" }, logLevel: "error" });
   return { path: p };
 }
 

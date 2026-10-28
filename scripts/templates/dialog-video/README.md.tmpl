@@ -1,0 +1,23 @@
+# __NAME__
+
+"__TITLE__": 1920x1080, 30 fps. Dibuat dengan `node scripts/new-video.mjs __NAME__ "__TITLE__"` dari pola VueTutorial. Komposisi `__NAME__` di `src/Root.tsx`.
+
+## Struktur
+
+- `scenes.tsx`: data scene (`BASE_SCENES`). Tiap scene = `SceneSpec`: `seconds`, `time`, `shots`, `actors`, `lines`, `inserts`, `cues`. Contoh lengkap: `src/videos/VueTutorial/scenes.tsx`.
+- `SceneRenderer.tsx`, `world.tsx`, `cards.tsx`, `sfxTypes.ts`: salinan dari VueTutorial (dunia ruang kerja, Ganjar dan Claude, kartu info). Boleh diubah untuk video ini; `cards.tsx` masih berwarna hijau Vue.
+- `__NAME__Video.tsx`: `TransitionSeries` dari semua scene. `__NAME__Sfx.tsx`: efek suara otomatis dari data scene dan musik latar dengan ducking.
+- `voiceover.ts`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`: voice over ElevenLabs.
+
+## Langkah berikutnya
+
+1. Tulis scene di `scenes.tsx`. Periksa satu frame: `npx remotion still src/index.ts __NAME__ out.png --frame=60`.
+2. Musik: `__NAME__Sfx.tsx` memakai `public/music/vue_bed.mp3`. Ganti `MUSIC_FILE` bila punya musik sendiri (lihat `scripts/make-vue-bed.py`).
+3. Voice over: `node scripts/vo-lines.mjs --video __NAME__` menampilkan baris dan statusnya (`--pending` = JSON yang perlu di-generate). Generate tiap baris lewat ElevenLabs API (`ELEVENLABS_API_KEY` di `.env.local`) ke `out/vo-raw/<id>.mp3`, lalu:
+
+   ```bash
+   python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash> --video __NAME__
+   ```
+
+   Hasilnya masuk ke `voiceover/` di folder ini dan `voiceover-files.ts` dibuat ulang otomatis. Suara dan model ada di `voiceover.ts`; mengubahnya mengubah hash semua baris.
+4. Audit: baris yang audionya lebih panjang dari slot menggeser baris berikutnya; pastikan dialog tidak melewati akhir scene (perpanjang `seconds` atau ringkas teks), lalu render.

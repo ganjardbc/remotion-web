@@ -1,0 +1,95 @@
+import { Terminal, type TermLine } from "../../assets/screens";
+import type { Shot } from "../../assets/camera";
+import { InfoCard, TitleCard } from "./cards";
+import type { SceneSpec } from "./SceneRenderer";
+import { fitLines } from "./voiceover";
+import { CAM } from "./world";
+
+// Video "__TITLE__": isi BASE_SCENES dengan scene-scene video ini. Tiap scene = data (dialog, ekspresi, bidikan
+// kamera, sisipan layar); waktu di dalam scene dalam detik, di dalam sisipan dihitung dari awal sisipan.
+// Contoh lengkap semua jenis bidikan, sisipan, dan efek: src/videos/VueTutorial/scenes.tsx.
+
+const shot = (from: number, dur: number, start: Shot["start"], extra: Partial<Shot> = {}): Shot => ({ from, dur, start, ...extra });
+
+// Jendela ketikan (detik, waktu sisipan) dari baris `cmd` terminal: dasar efek suara ketikan.
+const termTyping = (lines: readonly TermLine[]): { at: number; dur: number }[] => lines.filter((l) => l.kind === "cmd").map((l) => ({ at: l.at, dur: l.text.length / (l.speed ?? 22) }));
+
+const DEMO: readonly TermLine[] = [
+  { at: 0.5, kind: "cmd", text: "npm run dev", speed: 12 },
+  { at: 1.8, kind: "ok", text: "  ➜  Local:   http://localhost:5173/" },
+];
+
+export const BASE_SCENES: readonly SceneSpec[] = [
+  // 1. Pembuka
+  {
+    id: "hook",
+    title: "Pembuka",
+    seconds: 8,
+    time: 0,
+    shots: [shot(0, 3, CAM.wide), shot(3, 3, CAM.ganjarMedium), shot(6, 2, CAM.robotMedium)],
+    actors: {
+      ganjarFace: [{ at: 0, expression: "senyum" }, { at: 3, expression: "bingung" }],
+      robotFace: [{ at: 0, expression: "netral" }, { at: 5.2, expression: "senang" }],
+      robotGesture: [{ from: 5.2, value: "lambai" }, { from: 7.4, value: "netral" }],
+    },
+    lines: [
+      { who: "ganjar", from: 0.4, dur: 3.6, text: "Tulis dialog pembuka di sini.", tag: "excited" },
+      { who: "robot", from: 5.2, dur: 2.6, text: "Claude menjawab di sini." },
+    ],
+    cues: [],
+    inserts: [],
+  },
+  // 2. Isi
+  {
+    id: "isi",
+    title: "Isi",
+    seconds: 12,
+    time: 0,
+    shots: [shot(0, 12, CAM.twoShot, { end: { ...CAM.twoShot, zoom: 1.5 } })],
+    actors: {
+      ganjarFace: [{ at: 0, expression: "senyum" }],
+      robotFace: [{ at: 0, expression: "netral" }],
+      robotGesture: [{ from: 0.4, value: "tunjuk" }, { from: 5, value: "netral" }],
+    },
+    lines: [
+      { who: "robot", from: 0.4, dur: 4.6, text: "Jelaskan poin utama di sini." },
+      { who: "ganjar", from: 5.4, dur: 3, text: "Lalu bagaimana caranya?" },
+    ],
+    cues: [{ at: 1.8, event: "ding", volume: 0.3 }],
+    inserts: [
+      { from: 1, dur: 4, layout: "split", camera: CAM.twoShot, content: <InfoCard title="Poin utama" items={[{ text: "Poin pertama", at: 0.8 }, { text: "Poin kedua", at: 2 }]} fontSize={40} /> },
+      { from: 8.6, dur: 3.2, layout: "full", typing: termTyping(DEMO), content: <Terminal lines={DEMO} fontSize={32} /> },
+    ],
+  },
+  // 3. Penutup
+  {
+    id: "outro",
+    title: "Sampai Jumpa",
+    seconds: 8,
+    time: [0.8, 1],
+    shots: [shot(0, 4, CAM.twoShot, { end: CAM.wide }), shot(4, 4, CAM.wide)],
+    actors: {
+      ganjarFace: [{ at: 0, expression: "senang" }, { at: 3, expression: "tertawa" }],
+      ganjarGesture: [{ from: 0.4, value: "lambai" }],
+      robotFace: [{ at: 0, expression: "senang" }],
+      robotGesture: [{ from: 3.6, value: "lambai" }],
+    },
+    lines: [
+      { who: "ganjar", from: 0.4, dur: 3, text: "Terima kasih sudah menonton!", tag: "warmly" },
+      { who: "robot", from: 3.6, dur: 3.8, text: "Sampai jumpa di video berikutnya." },
+    ],
+    cues: [{ at: 5.2, event: "ding", volume: 0.4 }],
+    inserts: [{ from: 5, dur: 3, layout: "full", content: <TitleCard title="Sampai jumpa!" subtitle="__TITLE__" /> }],
+  },
+];
+
+// Scene dengan baris dialog yang sudah dimuat ke audio asli (bila ada); dipakai seluruh video.
+export const SCENES: readonly SceneSpec[] = BASE_SCENES.map((s) => ({ ...s, lines: fitLines(s.id, s.lines) }));
+
+export const SCENE_FRAMES = SCENES.map((s) => Math.round(s.seconds * 30));
+
+// Antar scene ada transisi yang saling menimpa selama TRANSITION_FRAMES, jadi total video lebih pendek sebesar
+// (jumlah scene - 1) x TRANSITION_FRAMES, dan scene mulai lebih awal.
+export const TRANSITION_FRAMES = 12;
+export const SCENE_STARTS: readonly number[] = SCENE_FRAMES.map((_, i) => SCENE_FRAMES.slice(0, i).reduce((a, b) => a + b, 0) - i * TRANSITION_FRAMES);
+export const __UPPER___FRAMES = SCENE_FRAMES.reduce((a, b) => a + b, 0) - (SCENES.length - 1) * TRANSITION_FRAMES;

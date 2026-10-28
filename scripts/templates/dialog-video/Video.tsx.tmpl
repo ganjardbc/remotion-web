@@ -1,0 +1,39 @@
+import type React from "react";
+import { AbsoluteFill } from "remotion";
+import { linearTiming, TransitionSeries, type TransitionPresentation } from "@remotion/transitions";
+import { fade } from "@remotion/transitions/fade";
+import { slide } from "@remotion/transitions/slide";
+import { wipe } from "@remotion/transitions/wipe";
+import { SceneRenderer } from "./SceneRenderer";
+import { SCENES, SCENE_FRAMES, TRANSITION_FRAMES, __UPPER___FRAMES } from "./scenes";
+import { __NAME__Sfx } from "./__NAME__Sfx";
+
+export { __UPPER___FRAMES };
+
+// Transisi di batas scene i dan i+1; daftar ini diulang bila scene lebih banyak.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const TRANSITIONS: readonly TransitionPresentation<any>[] = [
+  slide({ direction: "from-right" }),
+  fade(),
+  wipe({ direction: "from-left" }),
+  fade(),
+  slide({ direction: "from-left" }),
+  fade(),
+];
+
+// "__TITLE__": 1920x1080, 30 fps. Scene di scenes.tsx, efek suara dan musik di __NAME__Sfx.tsx.
+export const __NAME__Video: React.FC = () => (
+  <AbsoluteFill style={{ background: "#000" }}>
+    <TransitionSeries>
+      {SCENES.flatMap((spec, i) => [
+        <TransitionSeries.Sequence key={spec.id} durationInFrames={SCENE_FRAMES[i]}>
+          <SceneRenderer spec={spec} index={i} />
+        </TransitionSeries.Sequence>,
+        ...(i < SCENES.length - 1
+          ? [<TransitionSeries.Transition key={`t${i}`} presentation={TRANSITIONS[i % TRANSITIONS.length]} timing={linearTiming({ durationInFrames: TRANSITION_FRAMES })} />]
+          : []),
+      ])}
+    </TransitionSeries>
+    <__NAME__Sfx />
+  </AbsoluteFill>
+);
