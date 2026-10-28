@@ -1,6 +1,7 @@
 import type React from "react";
 import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop } from "../../Backdrop";
+import { DeskPlant, GlowLaptop } from "../../assets/backdrops/workspace";
 import { Ganjar, GANJAR_VIEWBOX, Robot, ROBOT_VIEWBOX, robotSize } from "../../assets/characters";
 import { ThemeProvider, useTheme, type Theme } from "../../themes";
 import { buildGanjar, buildRobot, type GazeOptions } from "../SejarahAIStory/BeatScene";
@@ -148,8 +149,6 @@ const Workspace: React.FC = () => {
 // Meja di depan karakter; badan meja gelap supaya footer GH terbaca.
 const Desk: React.FC = () => {
   const t = useTheme();
-  const frame = useCurrentFrame();
-  const glow = 0.75 + Math.sin(frame / 18) * 0.25;
   const TOP_H = 30;
   return (
     <>
@@ -166,65 +165,8 @@ const Desk: React.FC = () => {
         }}
       />
       <div style={{ position: "absolute", left: 0, top: DESK_TOP + TOP_H, width: W, height: 36, background: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0))" }} />
-      {/* tanaman kecil di kiri */}
-      <div style={{ position: "absolute", left: 40, top: DESK_TOP - 120, width: 80, height: 120 }}>
-        {[-26, 0, 26].map((rot, i) => (
-          <div
-            key={rot}
-            style={{
-              position: "absolute",
-              left: 26,
-              top: i === 1 ? 0 : 18,
-              width: 28,
-              height: 70,
-              borderRadius: "50% 50% 50% 50% / 70% 70% 30% 30%",
-              background: i === 1 ? "#3E9B5A" : "#2F7F49",
-              transform: `rotate(${rot}deg)`,
-              transformOrigin: "50% 100%",
-            }}
-          />
-        ))}
-        <div
-          style={{
-            position: "absolute",
-            left: 12,
-            top: 74,
-            width: 56,
-            height: 48,
-            borderRadius: "4px 4px 12px 12px",
-            background: t.colors.accent,
-            border: `5px solid ${t.colors.primaryDeep}`,
-          }}
-        />
-      </div>
-      {/* laptop kecil tampak dari belakang */}
-      <div style={{ position: "absolute", left: LAPTOP_X - 110, top: DESK_TOP - 11, width: 220, height: 12, borderRadius: "4px 4px 8px 8px", background: "#16171b" }} />
-      <div
-        style={{
-          position: "absolute",
-          left: LAPTOP_X - 96,
-          top: DESK_TOP - 148,
-          width: 192,
-          height: 138,
-          borderRadius: 10,
-          background: "#2b2d33",
-          border: "4px solid #16171b",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: 96 - 4 - 18,
-            top: 69 - 4 - 18,
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            background: t.colors.accent,
-            opacity: glow,
-            boxShadow: `0 0 18px ${t.colors.accent}`,
-          }}
-        />
-      </div>
+      <DeskPlant x={40} deskTop={DESK_TOP} pot={t.colors.accent} potEdge={t.colors.primaryDeep} />
+      <GlowLaptop x={LAPTOP_X} deskTop={DESK_TOP} accent={t.colors.accent} />
     </>
   );
 };

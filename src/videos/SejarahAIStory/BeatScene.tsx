@@ -16,6 +16,7 @@ import {
   type RobotClip,
   type RobotFaceKey,
 } from "../../assets/characters";
+import { DeskPlant, GlowLaptop } from "../../assets/backdrops/workspace";
 import { BEATS, FPS, timeBeat, type Beat, type TimedLine } from "./config";
 import { ERAS, EraProvider, FONTS, useEra, type Era } from "./design";
 import { VISUALS } from "./visuals";
@@ -169,8 +170,6 @@ const WOOD = {
 // Meja, laptop, dan tanaman; digambar di depan karakter agar tubuh bagian bawah tertutup.
 const Desk: React.FC = () => {
   const e = useEra();
-  const frame = useCurrentFrame();
-  const glow = 0.75 + Math.sin(frame / 18) * 0.25;
   const X0 = SPLIT;
   const WIDTH = W - SPLIT;
   const TOP_H = 36;
@@ -205,75 +204,8 @@ const Desk: React.FC = () => {
           borderRadius: "10px 0 0 0",
         }}
       />
-      {/* tanaman kecil */}
-      <div style={{ position: "absolute", left: X0 + 568, top: DESK_TOP - 120, width: 80, height: 120 }}>
-        {[-26, 0, 26].map((rot, i) => (
-          <div
-            key={rot}
-            style={{
-              position: "absolute",
-              left: 40 - 14,
-              top: i === 1 ? 0 : 18,
-              width: 28,
-              height: 70,
-              borderRadius: "50% 50% 50% 50% / 70% 70% 30% 30%",
-              background: i === 1 ? "#3E9B5A" : "#2F7F49",
-              transform: `rotate(${rot}deg)`,
-              transformOrigin: "50% 100%",
-            }}
-          />
-        ))}
-        <div
-          style={{
-            position: "absolute",
-            left: 12,
-            top: 74,
-            width: 56,
-            height: 48,
-            borderRadius: "4px 4px 12px 12px",
-            background: e.accent,
-            border: `5px solid ${WOOD.drawerEdge}`,
-          }}
-        />
-      </div>
-      {/* laptop kecil di sisi kanan Ganjar, tampak dari belakang (punggung layar menghadap penonton) */}
-      <div
-        style={{
-          position: "absolute",
-          left: LAPTOP_X - 110,
-          top: DESK_TOP - 11,
-          width: 220,
-          height: 12,
-          borderRadius: "3px 3px 6px 6px",
-          background: "#16171b",
-        }}
-      />
-      <div
-        style={{
-          position: "absolute",
-          left: LAPTOP_X - 96,
-          top: DESK_TOP - 148,
-          width: 192,
-          height: 138,
-          borderRadius: 10,
-          background: "#2b2d33",
-          border: "4px solid #16171b",
-        }}
-      >
-        <div
-          style={{
-            position: "absolute",
-            left: 96 - 4 - 18,
-            top: 69 - 4 - 18,
-            width: 36,
-            height: 36,
-            borderRadius: "50%",
-            background: e.accent,
-            opacity: glow,
-            boxShadow: `0 0 18px ${e.accent}`,
-          }}
-        />
-      </div>
+      <DeskPlant x={X0 + 568} deskTop={DESK_TOP} pot={e.accent} potEdge={WOOD.drawerEdge} />
+      <GlowLaptop x={LAPTOP_X} deskTop={DESK_TOP} accent={e.accent} baseRadius="3px 3px 6px 6px" />
     </>
   );
 };

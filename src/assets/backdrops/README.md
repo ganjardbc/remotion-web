@@ -40,6 +40,7 @@ import { Chair, Desk, Laptop, Mug, PORTRAIT_ANCHORS, RoomBack } from "../../asse
 - Karakter ikut waktu: bungkus karakter dengan `style={{ filter: characterFilter(time) }}` (kecerahan, saturasi, sepia; warna dasar dan ekspresi tetap terbaca). Garis stickman tetap gelap di semua waktu, karena muka putihnya hanya diredupkan.
 - Demo di Studio (folder Latar): `WorkspaceTimes` (tiga waktu berdampingan) dan `WorkspaceCycle` (peralihan siang ke malam). `WorkspaceScene` = adegan lengkap dengan Ganjar duduk.
 - Mengetik: `gesture="mengetik"` pada `GanjarStickman` dan `RobotStickman` (kedua tangan mengetuk bergantian di depan perut atau tepi layar). Demo: `WorkspaceTyping`. Block belum mendukungnya (jatuh ke pose dasar).
+- Perabot meja bersama: `GlowLaptop` (laptop kecil tampak dari belakang dengan logo berdenyut) dan `DeskPlant` (tanaman di pot berwarna), keduanya bertumpu pada `deskTop` dan berwarna dari luar. Dipakai `SejarahAIStory` (warna era) dan `SejarahAIStoryReels` (warna tema), render keduanya identik byte-per-byte dengan sebelum diekstrak. Meja, kursi, dan dinding kedua video itu tetap di file masing-masing karena warnanya mengikuti era atau tema video.
 - Belum ada: aktivitas lain (minum).
 
 ## plain dan outdoor
