@@ -1,8 +1,9 @@
 import manifest from "./voiceover.json";
+import { VO_FILES } from "./voiceover-files";
 import type { Line } from "./world";
 
 // Voice over ElevenLabs untuk video Vue. Teks tiap baris dikirim ke TTS lewat Claude (konektor ElevenLabs), hasilnya
-// diolah scripts/vo-process.py ke public/voice/<id>.mp3 dan dicatat di voiceover.json. Selama berkas belum ada,
+// diolah scripts/vo-process.py ke voiceover/<id>.mp3 (di folder video ini) dan dicatat di voiceover.json. Selama berkas belum ada,
 // video memakai durasi dialog tulisan tangan dan pop SFX; setelah ada, durasi dan waktu mulai mengikuti audio asli.
 
 export const VO_MODEL = "eleven_v4";
@@ -39,6 +40,6 @@ export const fitLines = (sceneId: string, lines: readonly Line[]): readonly Line
       return { ...l, id, from };
     }
     cursor = from + e.duration + GAP;
-    return { ...l, id, from, dur: e.duration + TAIL, vo: e.file };
+    return { ...l, id, from, dur: e.duration + TAIL, vo: VO_FILES[id] };
   });
 };

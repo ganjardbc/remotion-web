@@ -1,1 +1,224 @@
-{ "lines": {} }
+{
+  "lines": {
+    "apa-itu-vue-01": {
+      "hash": "2066fb7de1bb",
+      "file": "voiceover/apa-itu-vue-01.mp3",
+      "duration": 4.96
+    },
+    "apa-itu-vue-02": {
+      "hash": "9c94062e62c3",
+      "file": "voiceover/apa-itu-vue-02.mp3",
+      "duration": 3.18
+    },
+    "apa-itu-vue-03": {
+      "hash": "847ddd9cb7f8",
+      "file": "voiceover/apa-itu-vue-03.mp3",
+      "duration": 2.7
+    },
+    "apa-itu-vue-04": {
+      "hash": "e850c494cb1d",
+      "file": "voiceover/apa-itu-vue-04.mp3",
+      "duration": 0.9
+    },
+    "dev-server-01": {
+      "hash": "2e7f99f8a75f",
+      "file": "voiceover/dev-server-01.mp3",
+      "duration": 3.84
+    },
+    "dev-server-02": {
+      "hash": "a103a966c801",
+      "file": "voiceover/dev-server-02.mp3",
+      "duration": 3.36
+    },
+    "dev-server-03": {
+      "hash": "7b341b0d1279",
+      "file": "voiceover/dev-server-03.mp3",
+      "duration": 2.07
+    },
+    "error-01": {
+      "hash": "01d0f05fe512",
+      "file": "voiceover/error-01.mp3",
+      "duration": 1.73
+    },
+    "error-02": {
+      "hash": "2b0a45ca6db4",
+      "file": "voiceover/error-02.mp3",
+      "duration": 4.52
+    },
+    "error-03": {
+      "hash": "52fe5cfdadbb",
+      "file": "voiceover/error-03.mp3",
+      "duration": 2.24
+    },
+    "hook-01": {
+      "hash": "ea6803d2a9da",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 6.93
+    },
+    "hook-02": {
+      "hash": "b42387727cc4",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 2.12
+    },
+    "hook-03": {
+      "hash": "772216fa2f87",
+      "file": "voiceover/hook-03.mp3",
+      "duration": 3.04
+    },
+    "install-01": {
+      "hash": "40ae638ba91a",
+      "file": "voiceover/install-01.mp3",
+      "duration": 2.44
+    },
+    "install-02": {
+      "hash": "d9dbdaa82bf6",
+      "file": "voiceover/install-02.mp3",
+      "duration": 1.18
+    },
+    "install-03": {
+      "hash": "a9f5f279f275",
+      "file": "voiceover/install-03.mp3",
+      "duration": 5.19
+    },
+    "install-04": {
+      "hash": "b85cd6af0113",
+      "file": "voiceover/install-04.mp3",
+      "duration": 5.33
+    },
+    "install-05": {
+      "hash": "7b5eb509cf76",
+      "file": "voiceover/install-05.mp3",
+      "duration": 1.2
+    },
+    "install-06": {
+      "hash": "905607a7b143",
+      "file": "voiceover/install-06.mp3",
+      "duration": 2.15
+    },
+    "outro-01": {
+      "hash": "6d5d2889975e",
+      "file": "voiceover/outro-01.mp3",
+      "duration": 1.58
+    },
+    "outro-02": {
+      "hash": "9b2e95e8347c",
+      "file": "voiceover/outro-02.mp3",
+      "duration": 2.3
+    },
+    "prasyarat-01": {
+      "hash": "0892989f1254",
+      "file": "voiceover/prasyarat-01.mp3",
+      "duration": 4.26
+    },
+    "prasyarat-02": {
+      "hash": "9b747c81ace6",
+      "file": "voiceover/prasyarat-02.mp3",
+      "duration": 1.54
+    },
+    "prasyarat-03": {
+      "hash": "05516f86ed61",
+      "file": "voiceover/prasyarat-03.mp3",
+      "duration": 3.19
+    },
+    "prasyarat-04": {
+      "hash": "22dcbb4cf049",
+      "file": "voiceover/prasyarat-04.mp3",
+      "duration": 3.19
+    },
+    "props-01": {
+      "hash": "86753ef9cb63",
+      "file": "voiceover/props-01.mp3",
+      "duration": 3.35
+    },
+    "props-02": {
+      "hash": "a6279eb2d670",
+      "file": "voiceover/props-02.mp3",
+      "duration": 2.8
+    },
+    "props-03": {
+      "hash": "8d01ec5a283f",
+      "file": "voiceover/props-03.mp3",
+      "duration": 1.85
+    },
+    "props-04": {
+      "hash": "3c7c9fd5f658",
+      "file": "voiceover/props-04.mp3",
+      "duration": 3.6
+    },
+    "rangkuman-01": {
+      "hash": "13c58be297a6",
+      "file": "voiceover/rangkuman-01.mp3",
+      "duration": 7.53
+    },
+    "reaktivitas-01": {
+      "hash": "3a80639baa57",
+      "file": "voiceover/reaktivitas-01.mp3",
+      "duration": 2.47
+    },
+    "reaktivitas-02": {
+      "hash": "519cdcd8ed3e",
+      "file": "voiceover/reaktivitas-02.mp3",
+      "duration": 2.85
+    },
+    "reaktivitas-03": {
+      "hash": "d893b31a548d",
+      "file": "voiceover/reaktivitas-03.mp3",
+      "duration": 2.94
+    },
+    "reaktivitas-04": {
+      "hash": "81e5d57b15a7",
+      "file": "voiceover/reaktivitas-04.mp3",
+      "duration": 1.18
+    },
+    "reaktivitas-05": {
+      "hash": "4b18f5a000fc",
+      "file": "voiceover/reaktivitas-05.mp3",
+      "duration": 1.97
+    },
+    "reaktivitas-06": {
+      "hash": "337ce5f79316",
+      "file": "voiceover/reaktivitas-06.mp3",
+      "duration": 1.89
+    },
+    "sfc-01": {
+      "hash": "965e525db849",
+      "file": "voiceover/sfc-01.mp3",
+      "duration": 6.14
+    },
+    "sfc-02": {
+      "hash": "afd0f39fe430",
+      "file": "voiceover/sfc-02.mp3",
+      "duration": 1.68
+    },
+    "sfc-03": {
+      "hash": "85ea4dcf9081",
+      "file": "voiceover/sfc-03.mp3",
+      "duration": 1.74
+    },
+    "sfc-04": {
+      "hash": "c7f3e7c4a8fc",
+      "file": "voiceover/sfc-04.mp3",
+      "duration": 2.8
+    },
+    "sfc-05": {
+      "hash": "f63aa75ab70d",
+      "file": "voiceover/sfc-05.mp3",
+      "duration": 1.45
+    },
+    "struktur-01": {
+      "hash": "aaf7585059ac",
+      "file": "voiceover/struktur-01.mp3",
+      "duration": 1.65
+    },
+    "struktur-02": {
+      "hash": "1a000529f28b",
+      "file": "voiceover/struktur-02.mp3",
+      "duration": 3.61
+    },
+    "struktur-03": {
+      "hash": "6fefb0653403",
+      "file": "voiceover/struktur-03.mp3",
+      "duration": 3.2
+    }
+  }
+}

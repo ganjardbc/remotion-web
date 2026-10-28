@@ -39,7 +39,7 @@ Alur (generate dikerjakan Claude lewat konektor ElevenLabs di sesi, bukan lewat 
 1. `node scripts/vo-lines.mjs` menampilkan 44 baris, hash, dan statusnya (`baru`, `berubah`, `ok`); `--pending` mengeluarkan JSON baris yang perlu di-generate. Hash = sha1(suara | model | teks TTS), jadi baris yang tidak berubah tidak di-generate ulang dan kredit tidak terbuang.
 2. Claude men-generate tiap baris berurutan (satu variasi, ada jeda bila kena batas permintaan 429) dengan `creative_generate_speech`; baris Ganjar yang diberi `tag` (mis. `sighs`, `excited`) mengirim `[tag] teks`, caption tetap tanpa tag.
 3. Mengunduh `content_url` hasilnya (URL bertanda tangan, berlaku 2 jam) ke `out/vo-raw/<id>.mp3` (folder `out` tidak ikut git).
-4. `python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash>` memotong senyap awal dan akhir, menyamakan kenyaringan (-16 LUFS), menyimpan ke `public/voice/<id>.mp3`, dan mencatat durasi di `voiceover.json`.
+4. `python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash>` memotong senyap awal dan akhir, menyamakan kenyaringan (-16 LUFS), menyimpan ke `voiceover/<id>.mp3` di folder video ini (bukan `public/`), mencatat durasi di `voiceover.json`, dan membuat ulang `voiceover-files.ts` (impor tiap mp3 supaya ikut dibundel Remotion). Untuk video lain tambahkan `--video <NamaFolder>`.
 5. Jalankan audit durasi (dialog tidak boleh lewat akhir scene) dan render pemeriksaan. Bila ada baris melewati akhir scene, perpanjang `seconds` scene atau ringkas teksnya.
 
 Ubah teks satu baris di `scenes.tsx` lalu jalankan `vo-lines.mjs`: hanya baris itu yang berstatus `berubah`. Teks yang berbeda untuk ucapan dan caption: isi `spoken`. Mengganti suara atau model mengubah hash semua baris, jadi semua perlu di-generate ulang.

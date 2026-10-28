@@ -22,7 +22,7 @@ await build({
   format: "esm",
   outfile: out,
   external: ["remotion", "react", "react/*", "@remotion/*"],
-  loader: { ".tsx": "tsx", ".json": "json" },
+  loader: { ".tsx": "tsx", ".json": "json", ".mp3": "empty" },
   logLevel: "error",
 });
 const scenes = await import(pathToFileURL(out).href);
@@ -30,7 +30,7 @@ const vo = await import(pathToFileURL((await bundleVo()).path).href);
 
 async function bundleVo() {
   const p = join(tmp, "vo.mjs");
-  await build({ entryPoints: [join(root, "src/videos/VueTutorial/voiceover.ts")], bundle: true, platform: "node", format: "esm", outfile: p, external: ["remotion", "react"], loader: { ".json": "json" }, logLevel: "error" });
+  await build({ entryPoints: [join(root, "src/videos/VueTutorial/voiceover.ts")], bundle: true, platform: "node", format: "esm", outfile: p, external: ["remotion", "react"], loader: { ".json": "json", ".mp3": "empty" }, logLevel: "error" });
   return { path: p };
 }
 

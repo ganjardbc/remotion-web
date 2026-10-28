@@ -68,7 +68,7 @@ const VOICES = SCENES.flatMap((s, i) => s.lines.filter((l) => l.vo).map((l) => (
 export const VueSfx: React.FC = () => (
   <>
     {VOICES.map((v) => (
-      <Audio key={v.id} src={staticFile(v.file)} from={v.at} volume={1} />
+      <Audio key={v.id} src={v.file} from={v.at} volume={1} />
     ))}
     <Audio
       src={staticFile("music/vue_bed.mp3")}
