@@ -1,5 +1,7 @@
 # VueTutorial
 
+Membuat video baru berpola ini: `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"` (menyalin berkas umum dari folder ini, menulis `scenes.tsx` contoh 3 scene, menyiapkan voiceover kosong, dan mendaftarkan komposisi di `src/Root.tsx`). Template ada di `scripts/templates/dialog-video`.
+
 "Cara Install & Menggunakan Framework Vue JS": 12 scene, 1920x1080, 30 fps, ±3 menit (5400 frame). Contoh video panjang dengan banyak bidikan kamera 2D. Komposisi `VueTutorial` di `src/Root.tsx`.
 
 ## Struktur
@@ -36,7 +38,7 @@ Suara: **Ari Eko** untuk Ganjar, **Nilasari** untuk Claude, model `eleven_v4` (l
 
 Alur (generate dikerjakan Claude lewat konektor ElevenLabs di sesi, bukan lewat `npm`; hasil akhir hanya berkas mp3, jadi render tidak butuh ElevenLabs):
 
-1. `node scripts/vo-lines.mjs` menampilkan 44 baris, hash, dan statusnya (`baru`, `berubah`, `ok`); `--pending` mengeluarkan JSON baris yang perlu di-generate. Hash = sha1(suara | model | teks TTS), jadi baris yang tidak berubah tidak di-generate ulang dan kredit tidak terbuang.
+1. `node scripts/vo-lines.mjs [--video <Folder>]` menampilkan 44 baris, hash, dan statusnya (`baru`, `berubah`, `ok`); `--pending` mengeluarkan JSON baris yang perlu di-generate. Hash = sha1(suara | model | teks TTS), jadi baris yang tidak berubah tidak di-generate ulang dan kredit tidak terbuang.
 2. Claude men-generate tiap baris berurutan (satu variasi, ada jeda bila kena batas permintaan 429) dengan `creative_generate_speech`; baris Ganjar yang diberi `tag` (mis. `sighs`, `excited`) mengirim `[tag] teks`, caption tetap tanpa tag.
 3. Mengunduh `content_url` hasilnya (URL bertanda tangan, berlaku 2 jam) ke `out/vo-raw/<id>.mp3` (folder `out` tidak ikut git).
 4. `python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash>` memotong senyap awal dan akhir, menyamakan kenyaringan (-16 LUFS), menyimpan ke `voiceover/<id>.mp3` di folder video ini (bukan `public/`), mencatat durasi di `voiceover.json`, dan membuat ulang `voiceover-files.ts` (impor tiap mp3 supaya ikut dibundel Remotion). Untuk video lain tambahkan `--video <NamaFolder>`.

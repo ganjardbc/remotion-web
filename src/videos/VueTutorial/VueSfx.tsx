@@ -9,6 +9,8 @@ import type { SfxEvent } from "./sfxTypes";
 // musik dibuat scripts/make-vue-bed.py.
 
 const FPS = 30;
+// Musik latar di public/; ganti bila video ini punya musik sendiri.
+const MUSIC_FILE = "music/vue_bed.mp3";
 
 const FILES: Record<SfxEvent, string> = {
   pop_ganjar: "free/pop_ganjar.wav",
@@ -71,7 +73,7 @@ export const VueSfx: React.FC = () => (
       <Audio key={v.id} src={v.file} from={v.at} volume={1} />
     ))}
     <Audio
-      src={staticFile("music/vue_bed.mp3")}
+      src={staticFile(MUSIC_FILE)}
       loop
       loopVolumeCurveBehavior="extend"
       volume={musicVolume}
