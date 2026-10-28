@@ -1,143 +1,31 @@
 import type React from "react";
-import { AbsoluteFill, useCurrentFrame } from "remotion";
+import {
+  Chair as BaseChair,
+  Desk as BaseDesk,
+  Laptop as BaseLaptop,
+  Mug as BaseMug,
+  PORTRAIT_ANCHORS,
+  RoomBack as BaseRoomBack,
+  WORKSPACE_DAY,
+  type WorkspacePalette,
+} from "../../assets/backdrops/workspace";
 import { useTheme } from "../../themes";
 
 // Kamar kerja Ganjar. Urutan gambar (belakang ke depan): RoomBack, Chair, karakter duduk, Desk, Laptop, Mug.
-// Semua posisi dalam piksel kanvas 1080x1920.
+// Gambar dan jangkar ada di assets/backdrops/workspace; di sini hanya warna tema video yang disambungkan.
 
-export const DESK_TOP = 1130;
-const SLAB = 26;
-const FRONT_BOTTOM = 1290;
-export const SEAT_X = 290;
-export const LAPTOP_W = 240;
-export const LAPTOP_LID_H = 150;
-const MUG_X = 80;
-// Laptop digeser ke kanan dari kursi, jadi badan Ganjar terlihat di sisi kirinya.
-const LAPTOP_X = SEAT_X + 120;
+export const DESK_TOP = PORTRAIT_ANCHORS.deskTop;
+export const SEAT_X = PORTRAIT_ANCHORS.seatX;
+export const LAPTOP_W = PORTRAIT_ANCHORS.laptopW;
+export const LAPTOP_LID_H = PORTRAIT_ANCHORS.laptopLidH;
 
-const ROOM = {
-  wall: "#F3EADF",
-  wallShade: "#EADFCF",
-  baseboard: "#DCCBB4",
-  floor: "#231E30",
-  deskTop: "#E2B27A",
-  deskTopEdge: "#C98F55",
-  deskFront: "#B9824B",
-  deskLine: "#8F5F33",
-  chair: "#8A2630",
-  chairEdge: "#3D0F14",
-  chairAccent: "#E5484D",
-  chairAccentDark: "#5C161C",
-  laptop: "#D9DDE8",
-  laptopEdge: "#B4BACB",
-  sky: "#BFE0F7",
-  frame: "#FFFFFF",
-} as const;
-
-const Clock: React.FC<{ readonly x: number; readonly y: number }> = ({ x, y }) => {
+const useRoomPalette = (): WorkspacePalette => {
   const t = useTheme();
-  const r = 46;
-  // 02:47 dini hari. Jarum menit bergeser pelan supaya hidup.
-  const frame = useCurrentFrame();
-  const minute = 47 + frame / 1800;
-  const hand = (deg: number, len: number, w: number) => (
-    <line x1={r} y1={r} x2={r + Math.sin((deg * Math.PI) / 180) * len} y2={r - Math.cos((deg * Math.PI) / 180) * len} stroke={t.colors.ink} strokeWidth={w} strokeLinecap="round" />
-  );
-  return (
-    <svg style={{ position: "absolute", left: x - r, top: y - r }} width={r * 2} height={r * 2}>
-      <circle cx={r} cy={r} r={r - 3} fill="#FFFFFF" stroke={t.colors.ink} strokeWidth={5} />
-      {hand((2 + minute / 60) * 30, 22, 5)}
-      {hand(minute * 6, 32, 3.5)}
-      <circle cx={r} cy={r} r={4} fill={t.colors.accent} />
-    </svg>
-  );
+  return { ...WORKSPACE_DAY, clockInk: t.colors.ink, clockAccent: t.colors.accent, laptopLogo: t.colors.primary };
 };
 
-const Window: React.FC = () => (
-  <div style={{ position: "absolute", left: 730, top: 500, width: 270, height: 290, borderRadius: 18, backgroundColor: ROOM.frame, boxShadow: "0 8px 24px rgba(20,20,31,0.12)", padding: 14 }}>
-    <div style={{ position: "relative", width: "100%", height: "100%", borderRadius: 8, background: `linear-gradient(${ROOM.sky}, #E9F5FD)`, overflow: "hidden" }}>
-      <div style={{ position: "absolute", left: 28, top: 40, width: 90, height: 30, borderRadius: 20, backgroundColor: "#FFFFFF", opacity: 0.9 }} />
-      <div style={{ position: "absolute", left: 120, top: 80, width: 70, height: 24, borderRadius: 20, backgroundColor: "#FFFFFF", opacity: 0.8 }} />
-      <div style={{ position: "absolute", left: "50%", top: 0, bottom: 0, width: 10, marginLeft: -5, backgroundColor: ROOM.frame }} />
-      <div style={{ position: "absolute", top: "50%", left: 0, right: 0, height: 10, marginTop: -5, backgroundColor: ROOM.frame }} />
-    </div>
-  </div>
-);
-
-// Dinding, jendela, jam, lantai, dan bayangan di bawah meja.
-export const RoomBack: React.FC = () => (
-  <AbsoluteFill>
-    <div style={{ position: "absolute", inset: 0, background: `linear-gradient(${ROOM.wall}, ${ROOM.wallShade})` }} />
-    {/* sorot cahaya jendela */}
-    <div style={{ position: "absolute", left: 640, top: 480, width: 440, height: 800, background: "linear-gradient(160deg, rgba(255,255,255,0.55), transparent 70%)", transform: "skewX(-14deg)" }} />
-    <Window />
-    <Clock x={120} y={535} />
-    <div style={{ position: "absolute", left: 0, right: 0, top: FRONT_BOTTOM - 36, height: 36, backgroundColor: ROOM.baseboard }} />
-    <div style={{ position: "absolute", left: 0, right: 0, top: FRONT_BOTTOM, bottom: 0, backgroundColor: ROOM.floor }} />
-  </AbsoluteFill>
-);
-
-// Kursi gaming di belakang Ganjar: sandaran sempit dan tinggi, sayap di bahu, bantal kepala; merah dan merah gelap.
-// Yang tampak hanya sayap di kiri-kanan bahu dan bantal kepala di atas kepala.
-const CHAIR_W = 340;
-const CHAIR_TOP = DESK_TOP - 480;
-
-export const Chair: React.FC = () => {
-  const h = FRONT_BOTTOM - 20 - CHAIR_TOP;
-  const edge = { stroke: ROOM.chairEdge, strokeWidth: 5, strokeLinejoin: "round" } as const;
-  return (
-    <svg style={{ position: "absolute", left: SEAT_X - CHAIR_W / 2, top: CHAIR_TOP }} width={CHAIR_W} height={h} viewBox={`0 0 ${CHAIR_W} ${h}`}>
-      {/* bantal kepala */}
-      <rect x={95} y={2} width={150} height={96} rx={34} fill={ROOM.chairAccent} {...edge} />
-      <rect x={160} y={86} width={20} height={30} fill={ROOM.chairEdge} />
-      {/* sandaran dengan sayap bahu */}
-      <path
-        d={`M62 108 Q170 84 278 108 L298 232 Q336 262 328 340 L322 ${h} L18 ${h} L12 340 Q4 262 42 232 Z`}
-        fill={ROOM.chair}
-        {...edge}
-      />
-      {/* bolster merah di sayap */}
-      <path d={`M42 232 Q4 262 12 340 L26 ${h} L58 ${h} L48 340 Q44 280 70 244 Z`} fill={ROOM.chairAccent} {...edge} />
-      <path d={`M298 232 Q336 262 328 340 L314 ${h} L282 ${h} L292 340 Q296 280 270 244 Z`} fill={ROOM.chairAccent} {...edge} />
-      {/* strip balap di tengah */}
-      <path d={`M140 112 L140 ${h} M200 112 L200 ${h}`} stroke={ROOM.chairAccent} strokeWidth={10} strokeLinecap="round" />
-    </svg>
-  );
-};
-
-// Tabletop dan panel depan dengan laci; menutup badan bawah karakter yang duduk.
-export const Desk: React.FC = () => (
-  <>
-    <div style={{ position: "absolute", left: 10, right: 10, top: DESK_TOP, height: SLAB, borderRadius: 8, backgroundColor: ROOM.deskTop, borderBottom: `5px solid ${ROOM.deskTopEdge}` }} />
-    <div style={{ position: "absolute", left: 30, right: 30, top: DESK_TOP + SLAB, height: FRONT_BOTTOM - DESK_TOP - SLAB, backgroundColor: ROOM.deskFront, borderRadius: "0 0 10px 10px", boxShadow: "0 18px 30px rgba(0,0,0,0.35)" }}>
-    </div>
-  </>
-);
-
-// Laptop menghadap Ganjar: yang terlihat punggung layar, dengan logo kecil di tengah.
-export const Laptop: React.FC = () => {
-  const t = useTheme();
-  return (
-    <>
-      <div style={{ position: "absolute", left: LAPTOP_X - LAPTOP_W / 2, top: DESK_TOP - LAPTOP_LID_H, width: LAPTOP_W, height: LAPTOP_LID_H, borderRadius: "16px 16px 4px 4px", backgroundColor: ROOM.laptop, border: `5px solid ${ROOM.laptopEdge}`, boxSizing: "border-box" }}>
-        <div style={{ position: "absolute", left: "50%", top: "50%", width: 36, height: 36, margin: "-18px 0 0 -18px", borderRadius: "50%", backgroundColor: t.colors.primary }} />
-      </div>
-      <div style={{ position: "absolute", left: LAPTOP_X - LAPTOP_W / 2 - 22, top: DESK_TOP - 10, width: LAPTOP_W + 44, height: 12, borderRadius: "4px 4px 8px 8px", backgroundColor: ROOM.laptopEdge }} />
-    </>
-  );
-};
-
-// Gelas kopi bekas begadang, uap bergerak pelan.
-export const Mug: React.FC = () => {
-  const frame = useCurrentFrame();
-  const steam = (i: number) => ({ opacity: 0.35 + 0.25 * Math.sin(frame / 14 + i), transform: `translateY(${-((frame + i * 12) % 36) * 0.6}px)` });
-  return (
-    <div style={{ position: "absolute", left: MUG_X, top: DESK_TOP - 62, width: 60, height: 62 }}>
-      {[0, 1].map((i) => (
-        <div key={i} style={{ position: "absolute", left: 14 + i * 22, top: -26, width: 6, height: 24, borderRadius: 3, backgroundColor: "#FFFFFF", ...steam(i) }} />
-      ))}
-      <div style={{ position: "absolute", left: 0, top: 0, width: 52, height: 62, borderRadius: "6px 6px 14px 14px", backgroundColor: "#FFFFFF", border: "4px solid #C9CFDD", boxSizing: "border-box" }} />
-      <div style={{ position: "absolute", left: 44, top: 14, width: 22, height: 30, borderRadius: "0 14px 14px 0", border: "5px solid #C9CFDD", borderLeft: "none", boxSizing: "border-box" }} />
-    </div>
-  );
-};
+export const RoomBack: React.FC = () => <BaseRoomBack palette={useRoomPalette()} />;
+export const Chair: React.FC = () => <BaseChair palette={useRoomPalette()} />;
+export const Desk: React.FC = () => <BaseDesk palette={useRoomPalette()} />;
+export const Laptop: React.FC = () => <BaseLaptop palette={useRoomPalette()} />;
+export const Mug: React.FC = () => <BaseMug />;
