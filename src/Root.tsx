@@ -39,6 +39,7 @@ import {
   ProgrammerBodohVideo,
   TOTAL_FRAMES as PROGRAMMER_BODOH_FRAMES,
 } from "./videos/ProgrammerBodoh/ProgrammerBodohVideo";
+import { Haiku55Video, TOTAL_FRAMES as HAIKU55_FRAMES } from "./videos/Haiku55/Haiku55Video";
 import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 
 export const RemotionRoot: React.FC = () => {
@@ -184,6 +185,15 @@ export const RemotionRoot: React.FC = () => {
           subtitle: "Ingatan permanen untuk project kamu.",
           cta: "Simpan buat nanti.",
         }}
+      />
+      <Composition
+        id="Haiku55-Reels"
+        component={Haiku55Video}
+        durationInFrames={HAIKU55_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ theme: "gh" }}
       />
       <Folder name="Characters">
         <RigDemoRoot />
