@@ -2,7 +2,7 @@ import type React from "react";
 import { Audio } from "@remotion/media";
 import { interpolate, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { ThemeProvider, useTheme } from "../../themes";
+import { getTheme, ThemeProvider, useTheme } from "../../themes";
 import { Enter } from "../OpenCode9Router/parts";
 import { floorOf, Stage } from "./Stage";
 import type { DraftMeta, DraftScene } from "./types";
@@ -114,7 +114,7 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
           </Series.Sequence>
         ))}
       </Series>
-      <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
+      <BrandFooter theme={theme} handle={getTheme(theme).handle} />
       <Sound scenes={scenes} starts={starts} total={totalFrames(scenes)} />
     </ThemeProvider>
   );

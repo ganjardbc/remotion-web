@@ -64,4 +64,5 @@ export const gh: Theme = {
     pop: [0.2, 0.8, 0.2, 1],
   },
   logo: { src: "gh-logo.png", width: 160, height: 160, round: true },
+  handle: "@ganjar_hadiatna",
 };

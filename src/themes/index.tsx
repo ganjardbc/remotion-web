@@ -12,6 +12,10 @@ const ThemeContext = createContext<Theme>(insell);
 
 export const useTheme = (): Theme => useContext(ThemeContext);
 
+// Theme by name outside a ThemeProvider; unknown names fall back to insell like ThemeProvider does.
+export const getTheme = (name?: string): Theme =>
+  themes[name as ThemeName] ?? insell;
+
 export const ThemeProvider: React.FC<{
   readonly name?: string;
   readonly children: React.ReactNode;

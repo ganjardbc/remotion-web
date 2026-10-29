@@ -65,4 +65,6 @@ export type Theme = {
     readonly height: number;
     readonly round: boolean;
   };
+  // Social handle shown in the brand footer.
+  readonly handle: string;
 };

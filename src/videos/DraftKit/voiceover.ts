@@ -1,16 +1,29 @@
 import type { CharacterId, DraftLine, DraftScene } from "./types";
+import voices from "./voices.json";
 
-// Voice over ElevenLabs untuk video dari draft. Suara per karakter sama dengan VueTutorial dan Haiku55; model dan
-// speed sama dengan Haiku55 (eleven_v4 mengabaikan speed). scripts/vo-generate.mjs memanggil API-nya,
-// scripts/vo-process.py mengolah hasilnya ke voiceover/<id>.mp3 di folder video dan mencatatnya di voiceover.json.
+// Voice over ElevenLabs untuk video dari draft. Daftar suara, suara bawaan per karakter, model, dan speed ada di
+// voices.json (juga dibaca content_studio); suara bisa diganti per video lewat `from-draft.mjs --voice`.
+// scripts/vo-generate.mjs memanggil API-nya, scripts/vo-process.py mengolah hasilnya ke voiceover/<id>.mp3 di folder
+// video dan mencatatnya di voiceover.json.
 
-export const VO_MODEL = "eleven_multilingual_v2";
-export const VO_SPEED = 1.2;
-export const VO_VOICES: Readonly<Record<CharacterId, { readonly id: string; readonly name: string }>> = {
-  ganjar: { id: "Se50W0zoqlDUbFxvcN9h", name: "Ari Eko" },
-  robot: { id: "NPDHDOOQCSyifTJZOe6J", name: "Nilasari" },
-  claudecode: { id: "NPDHDOOQCSyifTJZOe6J", name: "Nilasari" },
+export type Voice = { readonly id: string; readonly name: string };
+
+export const VO_MODEL: string = voices.model;
+export const VO_SPEED: number = voices.speed;
+
+const voiceOf = (id: string): Voice => {
+  const v = voices.voices.find((x) => x.id === id);
+  if (!v) throw new Error(`Suara ${id} tidak ada di DraftKit/voices.json`);
+  return v;
 };
+
+// Suara bawaan per karakter, ditimpa `overrides` (karakter -> id suara) bila ada.
+export const voicesWith = (overrides: Readonly<Partial<Record<CharacterId, string>>>): Readonly<Record<CharacterId, Voice>> =>
+  Object.fromEntries(
+    Object.entries(voices.defaults).map(([who, id]) => [who, voiceOf(overrides[who as CharacterId] ?? id)]),
+  ) as Record<CharacterId, Voice>;
+
+export const VO_VOICES = voicesWith({});
 
 export type VoEntry = { readonly hash: string; readonly file: string; readonly duration: number };
 

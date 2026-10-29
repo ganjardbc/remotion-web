@@ -64,4 +64,6 @@ export const insell: Theme = {
     pop: [0.34, 1.3, 0.64, 1], // ease-spring, confirmatory only
   },
   logo: { src: "insell-logo.png", width: 300, height: 120, round: false },
+  // The design system names no Insell account; replace once there is one.
+  handle: "@ganjar_hadiatna",
 };

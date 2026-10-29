@@ -1,9 +1,11 @@
 #!/usr/bin/env node
 // Membuat video Reels 9:16 dari draft content_studio (draft.json format reels) di atas src/videos/DraftKit.
-//   node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source <keterangan>] [--no-register]
+//   node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source <keterangan>] [--theme gh|insell]
+//                               [--voice <karakter>=<id suara>]... [--no-register]
 // Menulis src/videos/<Nama>/ (scenes.ts berisi data scene, voice over kosong, <Nama>Video.tsx, README.md) dan
 // mendaftarkan komposisi <Nama>-Reels di src/Root.tsx. Narator atau dialog mengikuti `delivery` di draft; draft lama
-// tanpa `delivery` dianggap narator bila hanya satu karakter yang berbicara.
+// tanpa `delivery` dianggap narator bila hanya satu karakter yang berbicara. `--theme` memilih design system
+// (default gh); `--voice` mengganti suara bawaan karakter dari src/videos/DraftKit/voices.json untuk video ini saja.
 // Setelah itu: periksa `spoken` di scenes.ts, lalu `node scripts/vo-generate.mjs --video <Nama>`.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -11,19 +13,32 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const argv = process.argv.slice(2);
-const opt = (name) => {
-  const i = argv.indexOf(name);
-  return i >= 0 ? argv[i + 1] : undefined;
-};
-const source = opt("--source");
-const args = argv.filter((a, i) => !a.startsWith("--") && argv[i - 1] !== "--source");
+const VALUED = ["--source", "--theme", "--voice"];
+const opts = (name) => argv.flatMap((a, i) => (a === name && argv[i + 1] !== undefined ? [argv[i + 1]] : []));
+const source = opts("--source")[0];
+const args = argv.filter((a, i) => !a.startsWith("--") && !VALUED.includes(argv[i - 1]));
 const [draftPath, name] = args;
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
 };
 if (!draftPath || !name || !/^[A-Z][A-Za-z0-9]*$/.test(name)) {
-  fail('Pakai: node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source "<keterangan>"] [--no-register]');
+  fail('Pakai: node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source "<keterangan>"] [--theme gh] [--voice robot=<id>] [--no-register]');
+}
+
+// Nama tema dari tipe ThemeName di src/themes/types.ts.
+const themeType = readFileSync(join(root, "src/themes/types.ts"), "utf8").match(/export type ThemeName\s*=\s*([^;]+);/);
+const themes = themeType ? [...themeType[1].matchAll(/"(\w+)"/g)].map(([, t]) => t) : [];
+const theme = opts("--theme")[0] ?? "gh";
+if (!themes.includes(theme)) fail(`tema '${theme}' tidak dikenal; pilih: ${themes.join(", ")}.`);
+
+const voiceBook = JSON.parse(readFileSync(join(root, "src/videos/DraftKit/voices.json"), "utf8"));
+const voices = {};
+for (const pair of opts("--voice")) {
+  const [who, id] = pair.split("=");
+  if (!(who in voiceBook.defaults)) fail(`--voice ${pair}: karakter '${who}' tidak ada di voices.json.`);
+  if (!voiceBook.voices.some((v) => v.id === id)) fail(`--voice ${pair}: suara '${id}' tidak ada di voices.json.`);
+  if (id !== voiceBook.defaults[who]) voices[who] = id;
 }
 const draft = JSON.parse(readFileSync(resolve(draftPath), "utf8"));
 if (draft.format !== "reels") fail(`format '${draft.format}' belum didukung; hanya reels.`);
@@ -78,9 +93,12 @@ write(
   "voiceover.ts",
   `import manifest from "./voiceover.json";
 import type { VoEntry } from "../DraftKit";
+import { voicesWith } from "../DraftKit/voiceover";
 
-// Dipakai scripts/vo-lines.mjs dan vo-generate.mjs. Suara, model, dan id baris ada di DraftKit/voiceover.ts.
-export { lineId, ttsText, VO_MODEL, VO_SPEED, VO_VOICES } from "../DraftKit/voiceover";
+// Dipakai scripts/vo-lines.mjs dan vo-generate.mjs. Model dan id baris ada di DraftKit/voiceover.ts, daftar suara di
+// DraftKit/voices.json. VO_VOICES = suara bawaan, ditimpa pilihan untuk video ini.
+export { lineId, ttsText, VO_MODEL, VO_SPEED } from "../DraftKit/voiceover";
+export const VO_VOICES = voicesWith(${JSON.stringify(voices)});
 export const VO_MANIFEST: Readonly<Record<string, VoEntry>> = (manifest as { lines: Record<string, VoEntry> }).lines;
 `,
 );
@@ -107,10 +125,10 @@ write(
   "README.md",
   `# ${name}
 
-"${draft.title}": reels 9:16 (1080x1920, 30 fps), ${scenes.length} scene, ${delivery === "narator" ? `narator ${fallbackSpeaker}` : `dialog ${speakers.join(", ")}`}, gaya ${draft.visual_style}. Komposisi \`${name}-Reels\` di \`src/Root.tsx\`. Dibuat dari draft content_studio${source ? ` (${source})` : ""} dengan \`scripts/from-draft.mjs\`, dirender oleh \`src/videos/DraftKit\`.
+"${draft.title}": reels 9:16 (1080x1920, 30 fps), ${scenes.length} scene, ${delivery === "narator" ? `narator ${fallbackSpeaker}` : `dialog ${speakers.join(", ")}`}, gaya ${draft.visual_style}, tema ${theme}. Komposisi \`${name}-Reels\` di \`src/Root.tsx\`. Dibuat dari draft content_studio${source ? ` (${source})` : ""} dengan \`scripts/from-draft.mjs\`, dirender oleh \`src/videos/DraftKit\`.
 
 - \`scenes.ts\`: data scene (latar, waktu, pemeran, teks layar, baris ucapan, \`note\` = arahan visual dari draft).
-- \`voiceover.ts\`, \`voiceover.json\`, \`voiceover-files.ts\`, \`voiceover/\`: voice over ElevenLabs. Suara dan model di \`DraftKit/voiceover.ts\`.
+- \`voiceover.ts\`, \`voiceover.json\`, \`voiceover-files.ts\`, \`voiceover/\`: voice over ElevenLabs. Suara per karakter untuk video ini di \`voiceover.ts\`; daftar suara dan model di \`DraftKit/voices.json\`.
 
 ## Langkah
 
@@ -138,13 +156,13 @@ if (!argv.includes("--no-register")) {
       lines.splice(
         closing,
         0,
-        `      <Composition id="${name}-Reels" component={${name}Video} durationInFrames={${upper}_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "gh" }} />`,
+        `      <Composition id="${name}-Reels" component={${name}Video} durationInFrames={${upper}_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "${theme}" }} />`,
       );
       writeFileSync(rootFile, lines.join("\n"));
     }
   }
 }
 
-console.log(`Dibuat src/videos/${name} (${scenes.length} scene, ${delivery}).`);
+console.log(`Dibuat src/videos/${name} (${scenes.length} scene, ${delivery}, tema ${theme}).`);
 if (digits.length) console.log(`Baris berangka, periksa \`spoken\`: ${digits.join(", ")}`);
 console.log(`Berikutnya: node scripts/vo-generate.mjs --video ${name}`);
