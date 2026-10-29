@@ -6,7 +6,7 @@
 // ulang, supaya kredit tidak terbuang, dan oleh vo-process.py untuk mencatat hasilnya.
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
-import { mkdirSync, rmSync } from "node:fs";
+import { existsSync, mkdirSync, rmSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -19,13 +19,14 @@ mkdirSync(tmp, { recursive: true });
 const out = join(tmp, "lines.mjs");
 
 await build({
-  entryPoints: [join(dir, "scenes.tsx")],
+  // Video dialog berpola VueTutorial memakai scenes.tsx; video dari draft (DraftKit) memakai scenes.ts.
+  entryPoints: [join(dir, existsSync(join(dir, "scenes.tsx")) ? "scenes.tsx" : "scenes.ts")],
   bundle: true,
   platform: "node",
   format: "esm",
   outfile: out,
   external: ["remotion", "react", "react/*", "@remotion/*"],
-  loader: { ".tsx": "tsx", ".json": "json", ".mp3": "empty" },
+  loader: { ".ts": "ts", ".tsx": "tsx", ".json": "json", ".mp3": "empty" },
   logLevel: "error",
 });
 const scenes = await import(pathToFileURL(out).href);
@@ -46,7 +47,7 @@ scenes.BASE_SCENES.forEach((s) => {
     const hash = createHash("sha1").update(`${voice.id}|${vo.VO_MODEL}|${text}`).digest("hex").slice(0, 12);
     const entry = vo.VO_MANIFEST[id];
     const status = !entry ? "baru" : entry.hash !== hash ? "berubah" : "ok";
-    rows.push({ id, scene: s.id, who: l.who, voice: voice.name, voice_id: voice.id, model: vo.VO_MODEL, text, chars: text.length, hash, status, slot: l.dur, duration: entry?.duration ?? null });
+    rows.push({ id, scene: s.id, who: l.who, voice: voice.name, voice_id: voice.id, model: vo.VO_MODEL, speed: vo.VO_SPEED ?? null, text, chars: text.length, hash, status, slot: l.dur, duration: entry?.duration ?? null });
   });
 });
 rmSync(tmp, { recursive: true, force: true });
