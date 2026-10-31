@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Membuat video Reels 9:16 dari draft content_studio (draft.json format reels) di atas src/videos/DraftKit.
+// Membuat video Reels 9:16 atau carousel 4:5 dari draft content_studio (draft.json) di atas src/videos/DraftKit.
 //   node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source <keterangan>] [--theme gh|insell]
 //                               [--voice <karakter>=<id suara>]... [--no-register]
 // Menulis src/videos/<Nama>/ (scenes.ts berisi data scene, voice over kosong, <Nama>Video.tsx, README.md) dan
@@ -7,6 +7,9 @@
 // tanpa `delivery` dianggap narator bila hanya satu karakter yang berbicara. `--theme` memilih design system
 // (default gh); `--voice` mengganti suara bawaan karakter dari src/videos/DraftKit/voices.json untuk video ini saja.
 // Setelah itu: periksa `spoken` di scenes.ts, lalu `node scripts/vo-generate.mjs --video <Nama>`.
+// Carousel menulis slides.ts dan <Nama>Carousel.tsx lalu mendaftarkan <Nama>-Carousel (satu frame per slide, tanpa
+// voice over; `--voice` diabaikan). Render jadi PNG per slide:
+//   npx remotion render src/index.ts <Nama>-Carousel out/<Nama> --sequence --image-format=png
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -41,11 +44,99 @@ for (const pair of opts("--voice")) {
   if (id !== voiceBook.defaults[who]) voices[who] = id;
 }
 const draft = JSON.parse(readFileSync(resolve(draftPath), "utf8"));
-if (draft.format !== "reels") fail(`format '${draft.format}' belum didukung; hanya reels.`);
+if (!["reels", "carousel"].includes(draft.format)) fail(`format '${draft.format}' belum didukung; hanya reels dan carousel.`);
 if (!["rig", "stickman"].includes(draft.visual_style)) fail(`visual_style '${draft.visual_style}' belum didukung; hanya rig dan stickman.`);
 
 const dst = join(root, "src/videos", name);
 if (existsSync(dst)) fail(`sudah ada: src/videos/${name}`);
+
+const upper = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
+const write = (f, s) => writeFileSync(join(dst, f), s);
+const cueOf = ({ character, expression, motion, position }) => ({ character, expression, motion: motion ?? null, position });
+
+// Menambah import dan <Composition> sebelum penutup </> terakhir di src/Root.tsx, kecuali --no-register.
+const register = (id, importLine, composition) => {
+  if (argv.includes("--no-register")) return;
+  const rootFile = join(root, "src/Root.tsx");
+  const lines = readFileSync(rootFile, "utf8").split("\n");
+  if (lines.some((l) => l.includes(`id="${id}"`))) {
+    console.log(`Root.tsx sudah punya komposisi ${id}, dilewati.`);
+    return;
+  }
+  let lastImport = -1;
+  lines.forEach((l, i) => {
+    if (/^import .* from ".*";$/.test(l) || /^\} from ".*";$/.test(l)) lastImport = i;
+  });
+  lines.splice(lastImport + 1, 0, importLine);
+  const closing = lines.lastIndexOf("    </>");
+  if (closing < 0) {
+    console.error("Penutup </> di Root.tsx tidak ditemukan; daftarkan komposisi secara manual.");
+    return;
+  }
+  lines.splice(closing, 0, `      ${composition}`);
+  writeFileSync(rootFile, lines.join("\n"));
+};
+
+if (draft.format === "carousel") {
+  const slides = draft.slides.map((s) => ({
+    id: s.slide_id,
+    role: s.role,
+    headline: s.headline,
+    body: s.body ?? "",
+    cast: s.visual.characters.map(cueOf),
+    backdrop: s.visual.backdrop,
+    time: s.visual.time,
+    note: s.visual.description,
+  }));
+  mkdirSync(dst, { recursive: true });
+  write(
+    "slides.ts",
+    `import type { CarouselMeta, CarouselSlide } from "../DraftKit";
+
+// Dibuat dari draft content_studio${source ? ` (${source})` : ""} oleh scripts/from-draft.mjs. Boleh diubah tangan:
+// teks, ekspresi, atau pose pemeran. \`backdrop\`, \`time\`, dan \`note\` dari draft tidak dirender.
+
+export const META: CarouselMeta = ${JSON.stringify({ title: draft.title, style: draft.visual_style }, null, 2)};
+
+export const SLIDES: readonly CarouselSlide[] = ${JSON.stringify(slides, null, 2)};
+`,
+  );
+  write(
+    `${name}Carousel.tsx`,
+    `import type React from "react";
+import { CarouselDeck } from "../DraftKit";
+import { META, SLIDES } from "./slides";
+
+// ${draft.title.replace(/\n/g, " ")} (carousel 4:5, ${slides.length} slide). Satu frame = satu slide.
+export const ${upper}_SLIDES = SLIDES.length;
+
+export const ${name}Carousel: React.FC<{ readonly theme: string }> = ({ theme }) => <CarouselDeck theme={theme} meta={META} slides={SLIDES} />;
+`,
+  );
+  write(
+    "README.md",
+    `# ${name}
+
+"${draft.title}": carousel 4:5 (1080x1350), ${slides.length} slide, gaya ${draft.visual_style}, tema ${theme}. Komposisi \`${name}-Carousel\` di \`src/Root.tsx\`, satu frame per slide. Dibuat dari draft content_studio${source ? ` (${source})` : ""} dengan \`scripts/from-draft.mjs\`, dirender oleh \`src/videos/DraftKit/Carousel.tsx\`.
+
+- \`slides.ts\`: data slide (peran, judul, isi, pemeran; \`note\` = arahan visual dari draft).
+
+## Langkah
+
+1. Cek satu slide: \`npx remotion still src/index.ts ${name}-Carousel out/${name}-01.png --frame=0\`.
+2. Render semua slide jadi PNG: \`npx remotion render src/index.ts ${name}-Carousel out/${name} --sequence --image-format=png\`.
+`,
+  );
+  register(
+    `${name}-Carousel`,
+    `import { ${upper}_SLIDES, ${name}Carousel } from "./videos/${name}/${name}Carousel";`,
+    `<Composition id="${name}-Carousel" component={${name}Carousel} durationInFrames={${upper}_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "${theme}" }} />`,
+  );
+  if (Object.keys(voices).length) console.log("Carousel tanpa voice over; --voice diabaikan.");
+  console.log(`Dibuat src/videos/${name} (carousel, ${slides.length} slide, tema ${theme}).`);
+  console.log(`Berikutnya: npx remotion render src/index.ts ${name}-Carousel out/${name} --sequence --image-format=png`);
+  process.exit(0);
+}
 
 const speakerOf = (scene) => scene.visual.characters.find((c) => c.speaking)?.character;
 const speakers = [...new Set(draft.scenes.map(speakerOf).filter(Boolean))];
@@ -63,16 +154,14 @@ const scenes = draft.scenes.map((s) => {
     seconds: s.duration_seconds,
     backdrop: s.visual.backdrop,
     time: s.visual.time,
-    cast: s.visual.characters.map(({ character, expression, motion, position }) => ({ character, expression, motion: motion ?? null, position })),
+    cast: s.visual.characters.map(cueOf),
     onScreenText: s.on_screen_text,
     lines: [{ who, from: 0.3, dur: Math.max(1, s.duration_seconds - 0.6), text: s.narration, ...(s.spoken ? { spoken: s.spoken } : {}) }],
     note: s.visual.description,
   };
 });
 
-const upper = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
 const meta = { title: draft.title, delivery, style: draft.visual_style };
-const write = (f, s) => writeFileSync(join(dst, f), s);
 mkdirSync(dst, { recursive: true });
 
 write(
@@ -138,30 +227,11 @@ write(
 `,
 );
 
-if (!argv.includes("--no-register")) {
-  const rootFile = join(root, "src/Root.tsx");
-  const lines = readFileSync(rootFile, "utf8").split("\n");
-  if (lines.some((l) => l.includes(`id="${name}-Reels"`))) {
-    console.log(`Root.tsx sudah punya komposisi ${name}-Reels, dilewati.`);
-  } else {
-    let lastImport = -1;
-    lines.forEach((l, i) => {
-      if (/^import .* from ".*";$/.test(l) || /^\} from ".*";$/.test(l)) lastImport = i;
-    });
-    lines.splice(lastImport + 1, 0, `import { ${upper}_FRAMES, ${name}Video } from "./videos/${name}/${name}Video";`);
-    const closing = lines.lastIndexOf("    </>");
-    if (closing < 0) {
-      console.error("Penutup </> di Root.tsx tidak ditemukan; daftarkan komposisi secara manual.");
-    } else {
-      lines.splice(
-        closing,
-        0,
-        `      <Composition id="${name}-Reels" component={${name}Video} durationInFrames={${upper}_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "${theme}" }} />`,
-      );
-      writeFileSync(rootFile, lines.join("\n"));
-    }
-  }
-}
+register(
+  `${name}-Reels`,
+  `import { ${upper}_FRAMES, ${name}Video } from "./videos/${name}/${name}Video";`,
+  `<Composition id="${name}-Reels" component={${name}Video} durationInFrames={${upper}_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "${theme}" }} />`,
+);
 
 console.log(`Dibuat src/videos/${name} (${scenes.length} scene, ${delivery}, tema ${theme}).`);
 if (digits.length) console.log(`Baris berangka, periksa \`spoken\`: ${digits.join(", ")}`);

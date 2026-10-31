@@ -45,6 +45,26 @@ export type DraftScene = {
   readonly note?: string;
 };
 
+// Carousel 4:5 (1080x1350): satu slide = satu gambar. Cover membuka, detail berisi satu poin, closing menutup.
+export type SlideRole = "cover" | "detail" | "closing";
+
+export type CarouselSlide = {
+  readonly id: string;
+  readonly role: SlideRole;
+  readonly headline: string;
+  readonly body: string;
+  // Pemeran digambar diam di panel bawah; latar dan waktu dari draft dicatat untuk dipoles tangan.
+  readonly cast: readonly CastCue[];
+  readonly backdrop: DraftBackdrop;
+  readonly time: TimeOfDay;
+  readonly note?: string;
+};
+
+export type CarouselMeta = {
+  readonly title: string;
+  readonly style: VisualStyle;
+};
+
 export type DraftMeta = {
   readonly title: string;
   readonly delivery: Delivery;

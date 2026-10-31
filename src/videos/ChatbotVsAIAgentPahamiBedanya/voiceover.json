@@ -1,0 +1,29 @@
+{
+  "lines": {
+    "scene-01-01": {
+      "hash": "e9b733d74ac7",
+      "file": "voiceover/scene-01-01.mp3",
+      "duration": 4.68
+    },
+    "scene-02-01": {
+      "hash": "cd577d9102ab",
+      "file": "voiceover/scene-02-01.mp3",
+      "duration": 6.78
+    },
+    "scene-03-01": {
+      "hash": "2848c7946916",
+      "file": "voiceover/scene-03-01.mp3",
+      "duration": 7.99
+    },
+    "scene-04-01": {
+      "hash": "00ec64055ab5",
+      "file": "voiceover/scene-04-01.mp3",
+      "duration": 4.56
+    },
+    "scene-05-01": {
+      "hash": "96a2b060a1dc",
+      "file": "voiceover/scene-05-01.mp3",
+      "duration": 4.32
+    }
+  }
+}

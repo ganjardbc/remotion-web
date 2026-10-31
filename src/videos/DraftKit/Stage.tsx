@@ -49,7 +49,7 @@ import type { CastCue, CharacterId, DraftLine, DraftScene, VisualStyle } from ".
 type Size = { readonly width: number; readonly top: (floorY: number) => number };
 
 // Tinggi karakter (px) per gaya. Rig: tinggi kotak viewBox; stickman: tinggi gambar.
-const HEIGHT: Readonly<Record<VisualStyle, Readonly<Record<CharacterId, number>>>> = {
+export const HEIGHT: Readonly<Record<VisualStyle, Readonly<Record<CharacterId, number>>>> = {
   rig: { ganjar: 760, robot: 420, claudecode: 380 },
   stickman: { ganjar: 640, robot: 340, claudecode: 300 },
 };
@@ -58,7 +58,7 @@ const SEATED_STICKMAN = 760;
 // Di atas meja karakter non-manusia lebih kecil supaya muat di dinding.
 const DESK_SCALE = 0.75;
 
-const size = (who: CharacterId, style: VisualStyle, h: number): Size => {
+export const size = (who: CharacterId, style: VisualStyle, h: number): Size => {
   if (style === "rig") {
     const s = who === "ganjar" ? ganjarSize(h) : who === "robot" ? robotSize(h) : claudeCodeSize(h);
     return { width: s.width, top: (floor) => floor - h + s.floorGap };
@@ -68,6 +68,20 @@ const size = (who: CharacterId, style: VisualStyle, h: number): Size => {
   const w = who === "robot" ? robotStickmanSize(h).width : claudeCodeStickmanSize(h).width;
   return { width: w, top: (floor) => floor + (25 * h) / 400 - h };
 };
+
+// Klip rig untuk gerak dari draft; `toward` = arah karakter lain (-1 kiri, 1 kanan, 0 tidak ada).
+export const ganjarClip = (motion: string | null | undefined, toward: number) =>
+  motion === "headTurn"
+    ? { clip: headTurn(60, (toward || 1) * 0.7, 6), dur: 60 }
+    : motion === "point"
+      ? { clip: point(toward < 0 ? "L" : "R", 60, 95), dur: 60 }
+      : motion === "startle"
+        ? { clip: startle(24), dur: 24 }
+        : null;
+
+// Robot dan Claude Code memakai klip Robot.
+export const robotClip = (motion: string | null | undefined) =>
+  motion === "armGesture" ? { clip: armGesture("R", 60, 130, 14), dur: 60 } : motion === "surprise" ? { clip: surprise, dur: 24 } : motion === "walk" ? { clip: walk(90), dur: 90 } : null;
 
 const SLOTS: Readonly<Record<number, readonly number[]>> = { 1: [540], 2: [300, 780], 3: [210, 540, 870] };
 const ORDER = { kiri: 0, tengah: 1, kanan: 2 } as const;
@@ -120,19 +134,11 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; r
         <ClaudeCodeStickman height={h} expression={expression} gesture={gesture} strokeWidth={5} />
       );
   } else if (who === "ganjar") {
-    const clip =
-      cue.motion === "headTurn"
-        ? { clip: headTurn(60, (toward || 1) * 0.7, 6), dur: 60 }
-        : cue.motion === "point"
-          ? { clip: point(toward < 0 ? "L" : "R", 60, 95), dur: 60 }
-          : cue.motion === "startle"
-            ? { clip: startle(24), dur: 24 }
-            : null;
+    const clip = ganjarClip(cue.motion, toward);
     const clips = clip ? [{ clip: clip.clip, start, dur: clip.dur }] : [];
     body = <Ganjar height={h} expression={expression} talking={talking} look={look} sit={actor.clip ? 1 : 0} clips={clips} />;
   } else {
-    const clip =
-      cue.motion === "armGesture" ? { clip: armGesture("R", 60, 130, 14), dur: 60 } : cue.motion === "surprise" ? { clip: surprise, dur: 24 } : cue.motion === "walk" ? { clip: walk(90), dur: 90 } : null;
+    const clip = robotClip(cue.motion);
     const clips = clip ? [{ clip: clip.clip, start, dur: clip.dur }] : [];
     body =
       who === "robot" ? (

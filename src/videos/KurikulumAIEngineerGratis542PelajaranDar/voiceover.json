@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "scene-01-01": {
+      "hash": "a6a6dc478d7b",
+      "file": "voiceover/scene-01-01.mp3",
+      "duration": 7.38
+    },
+    "scene-02-01": {
+      "hash": "2c37b563e6ab",
+      "file": "voiceover/scene-02-01.mp3",
+      "duration": 10.08
+    },
+    "scene-03-01": {
+      "hash": "bf68b95e5c1f",
+      "file": "voiceover/scene-03-01.mp3",
+      "duration": 12.82
+    },
+    "scene-04-01": {
+      "hash": "fd3c957e335a",
+      "file": "voiceover/scene-04-01.mp3",
+      "duration": 9.38
+    },
+    "scene-05-01": {
+      "hash": "212dbadc3b98",
+      "file": "voiceover/scene-05-01.mp3",
+      "duration": 10.03
+    },
+    "scene-06-01": {
+      "hash": "e973197b0e33",
+      "file": "voiceover/scene-06-01.mp3",
+      "duration": 10.5
+    },
+    "scene-07-01": {
+      "hash": "2c30858e3444",
+      "file": "voiceover/scene-07-01.mp3",
+      "duration": 7.29
+    }
+  }
+}
