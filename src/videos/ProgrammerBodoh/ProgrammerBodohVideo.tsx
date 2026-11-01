@@ -7,23 +7,28 @@ import {
   useVideoConfig,
 } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { ClaudeCodeStickman, GanjarStickman, claudeCodeStickmanSize, ganjarStickmanSize } from "../../assets/characters";
+import { ClaudeCode, CLAUDE_CODE_VIEWBOX, Ganjar, GANJAR_VIEWBOX, claudeCodeSize, ganjarSize } from "../../assets/characters";
 import { ThemeProvider, useTheme } from "../../themes";
+import { CLAUDE_CLIPS, CLAUDE_FACE, CLAUDE_LOOK, GANJAR_CLIPS, GANJAR_FACE, GANJAR_LOOK } from "./cast";
 import { Sfx, type SfxSet } from "./Sfx";
 import { Chair, DESK_TOP, Desk, FLOOR_Y, Laptop, Mug, RoomBack, SEAT_X } from "./Room";
 import { CTA, CTA_START, FPS, HOOK, HOOK_SECONDS, LINES, LINE_START, TOTAL_FRAMES, type Speaker } from "./config";
 
 export { TOTAL_FRAMES };
 
-const GANJAR_HEIGHT = 760;
-// Meja memotong badan GanjarStickman di sekitar perut: bagian bawah tersembunyi di balik meja.
-const GANJAR_TOP = DESK_TOP - 0.63 * GANJAR_HEIGHT;
-const CLAUDE_HEIGHT = 260;
+const GANJAR_WIDTH = 600;
+const GANJAR_HEIGHT = GANJAR_WIDTH * (GANJAR_VIEWBOX.h / GANJAR_VIEWBOX.w);
+const GANJAR_SCALE = GANJAR_WIDTH / GANJAR_VIEWBOX.w;
+// Titik rig yang sejajar dengan permukaan meja (dada bawah); sisanya tersembunyi di balik meja.
+const SEAT_RIG_Y = 650;
+const GANJAR_TOP = DESK_TOP - (SEAT_RIG_Y - GANJAR_VIEWBOX.y) * GANJAR_SCALE;
+const CLAUDE_HEIGHT = 250;
+const CLAUDE_SCALE = CLAUDE_HEIGHT / CLAUDE_CODE_VIEWBOX.h;
 const CLAUDE_CENTER_X = 850;
-// Telapak ClaudeCodeStickman berhenti 20 unit di atas dasar viewBox (240): dikoreksi supaya menapak di atas meja.
-const CLAUDE_FEET_GAP = (20 * CLAUDE_HEIGHT) / 240;
-// Sisi atas kotak oranye, 50 unit dari puncak viewBox.
-const CLAUDE_BOX_TOP = DESK_TOP + CLAUDE_FEET_GAP - CLAUDE_HEIGHT + (50 * CLAUDE_HEIGHT) / 240;
+// Lantai rig (y = 0) menapak di atas meja.
+const CLAUDE_TOP = DESK_TOP + CLAUDE_CODE_VIEWBOX.y * CLAUDE_SCALE;
+// Sisi atas kotak oranye, 300 unit di atas lantai rig.
+const CLAUDE_BOX_TOP = DESK_TOP - 300 * CLAUDE_SCALE;
 
 const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
 const ease = Easing.bezier(0.2, 0.8, 0.2, 1);
@@ -339,20 +344,18 @@ const Stage: React.FC = () => {
   const speaking = (who: Speaker): boolean =>
     line !== null && line.who === who && frame - LINE_START[idx] < line.speech * fps;
 
-  const robotExpression = inCta ? "senang" : line?.robot ?? "normal";
   const talkBounce = speaking("robot") ? Math.abs(Math.sin((frame / fps) * 12)) * 7 : 0;
   const shake = idx === 7 && frame - LINE_START[7] < 24 ? Math.sin(frame * 1.6) * 3 : 0;
 
-  const r = claudeCodeStickmanSize(CLAUDE_HEIGHT);
-  const s = ganjarStickmanSize(GANJAR_HEIGHT);
-  const ganjarExpression = inCta ? "senang" : line?.ganjar ?? "senyum";
+  const r = claudeCodeSize(CLAUDE_HEIGHT);
+  const s = ganjarSize(GANJAR_HEIGHT);
   const ganjarBounce = speaking("ganjar") ? Math.abs(Math.sin((frame / fps) * 12)) * 7 : 0;
   const ganjarShake = idx === 7 && frame - LINE_START[7] < 24 ? Math.sin(frame * 1.6) * 3 : 0;
 
   return (
     <>
       <Chair />
-      {/* potong di balik meja: kaki GanjarStickman tidak boleh muncul di bawah panel depan */}
+      {/* potong di balik meja: kaki Ganjar tidak boleh muncul di bawah panel depan */}
       <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: DESK_TOP + 60, overflow: "hidden" }}>
         <div
           style={{
@@ -363,7 +366,7 @@ const Stage: React.FC = () => {
             transformOrigin: "50% 62%",
           }}
         >
-          <GanjarStickman height={GANJAR_HEIGHT} expression={ganjarExpression} talking={speaking("ganjar")} gesture={inCta ? "lambai" : line?.handGanjar ?? "netral"} hair headphones={false} strokeWidth={5} />
+          <Ganjar height={GANJAR_HEIGHT} face={GANJAR_FACE} clips={GANJAR_CLIPS} look={GANJAR_LOOK} talking={speaking("ganjar")} />
         </div>
       </div>
       <Desk />
@@ -373,12 +376,12 @@ const Stage: React.FC = () => {
         style={{
           position: "absolute",
           left: CLAUDE_CENTER_X - r.width / 2,
-          top: DESK_TOP + CLAUDE_FEET_GAP - CLAUDE_HEIGHT - talkBounce,
+          top: CLAUDE_TOP - talkBounce,
           transform: `rotate(${shake}deg)`,
-          transformOrigin: "50% 100%",
+          transformOrigin: `50% ${-CLAUDE_CODE_VIEWBOX.y * CLAUDE_SCALE}px`,
         }}
       >
-        <ClaudeCodeStickman height={CLAUDE_HEIGHT} expression={robotExpression} gesture={inCta ? "lambai" : line?.handRobot ?? "netral"} strokeWidth={5} />
+        <ClaudeCode height={CLAUDE_HEIGHT} face={CLAUDE_FACE} clips={CLAUDE_CLIPS} look={CLAUDE_LOOK} />
       </div>
       <SpeakerTag name="Ganjar" left={SEAT_X + 130} top={GANJAR_TOP + 10} on={speaking("ganjar")} />
       <SpeakerTag name="Claude" left={CLAUDE_CENTER_X - 85} top={CLAUDE_BOX_TOP - 66} on={speaking("robot")} />
@@ -389,7 +392,7 @@ const Stage: React.FC = () => {
 // `sfx`: "free" (efek CC0, sisanya jatuh ke synth) atau "synth" (semua buatan skrip).
 type Props = { readonly theme: string; readonly sfx?: SfxSet };
 
-// Reels 9:16 satir: Ganjar (stickman, duduk di depan laptop) ngobrol dengan Claude (stickman) di atas meja soal programmer yang makin lupa ngoding.
+// Reels 9:16 satir: Ganjar (rig, duduk di depan laptop) ngobrol dengan Claude Code (rig) di atas meja soal programmer yang makin lupa ngoding.
 export const ProgrammerBodohVideo: React.FC<Props> = ({ theme, sfx = "free" }) => (
   <ThemeProvider name={theme}>
     <Camera>

@@ -1,6 +1,6 @@
 // Naskah dan waktu "Programmer Jadi Bodoh Karena Claude" (satir, 9:16). Ubah di sini, bukan di komponen.
 // Semua waktu dalam detik.
-import type { Gesture, RobotExpression, GanjarStickmanExpression } from "../../assets/characters";
+import type { GanjarExpression, Gesture, RobotExpression } from "../../assets/characters";
 import { lineId, voDuration } from "./voiceover";
 
 export const FPS = 30;
@@ -20,7 +20,7 @@ type BaseLine = VoLine & {
   readonly seconds: number;
   // Jeda ekstra setelah kalimat, untuk efek suara atau punchline.
   readonly hold?: number;
-  readonly ganjar: GanjarStickmanExpression;
+  readonly ganjar: GanjarExpression;
   readonly robot: RobotExpression;
   // Gerak tangan tiap karakter selama kalimat ini.
   readonly handGanjar: Gesture;
@@ -52,7 +52,7 @@ export const CTA_SECONDS = Math.max(4.5, (voDuration(CTA_VO_ID) ?? 0) + 1.2);
 
 const BASE_LINES: readonly BaseLine[] = [
   { who: "robot", tag: "calmly", text: "Bang, kodenya udah aku bikinin. Tinggal *copy-paste*.", seconds: 3.4, ganjar: "senang", robot: "senang", handGanjar: "tepuk", handRobot: "pinggang", skill: 90, reliance: 25 },
-  { who: "ganjar", tag: "excited", text: "Mantap! Ini jalannya gimana, Claude?", seconds: 2.8, ganjar: "senyumSantai", robot: "normal", handGanjar: "tunjuk", handRobot: "netral", skill: 80, reliance: 40 },
+  { who: "ganjar", tag: "excited", text: "Mantap! Ini jalannya gimana, Claude?", seconds: 2.8, ganjar: "senang", robot: "normal", handGanjar: "tunjuk", handRobot: "netral", skill: 80, reliance: 40 },
   { who: "robot", tag: "deadpan", text: "Nggak tau. Aku cuma *nulis*, bukan mikir.", seconds: 3.2, ganjar: "bingung", robot: "malu", handGanjar: "garukKepala", handRobot: "angkatBahu", skill: 70, reliance: 50 },
   { who: "ganjar", tag: "confused", text: "Terus kalau error?", seconds: 2.2, ganjar: "bingung", robot: "normal", handGanjar: "angkatBahu", handRobot: "netral", skill: 62, reliance: 58 },
   { who: "robot", tag: "calmly", text: "Tanya aku lagi. Aku yang bikin, aku juga yang *fix*.", seconds: 3.6, ganjar: "mikir", robot: "senang", handGanjar: "mikir", handRobot: "angkatTangan", skill: 52, reliance: 70 },
@@ -61,7 +61,7 @@ const BASE_LINES: readonly BaseLine[] = [
   { who: "ganjar", tag: "surprised", text: "Hah?! Jadi yang *bodoh* itu aku?!", seconds: 3, ganjar: "kaget", robot: "kaget", handGanjar: "menyerah", handRobot: "angkatBahu", skill: 14, reliance: 92 },
   { who: "robot", tag: "sarcastic", text: "Tenang. Kamu tetap berguna: *bayar subscription* aku.", seconds: 3.6, ganjar: "kesal", robot: "senang", handGanjar: "facepalm", handRobot: "angkatTangan", skill: 8, reliance: 97 },
   { who: "ganjar", tag: "nervous", text: "Kalau internet mati, aku ngoding pakai apa?", seconds: 3.4, hold: 0.8, ganjar: "mikir", robot: "normal", handGanjar: "mikir", handRobot: "netral", skill: 5, reliance: 100 },
-  { who: "robot", tag: "deadpan", text: "Pakai *doa*.", seconds: 2.4, hold: 1.1, ganjar: "tertawa", robot: "senang", handGanjar: "tepuk", handRobot: "angkatBahu", skill: 2, reliance: 100 },
+  { who: "robot", tag: "deadpan", text: "Pakai *doa*.", seconds: 2.4, hold: 1.1, ganjar: "senang", robot: "senang", handGanjar: "tepuk", handRobot: "angkatBahu", skill: 2, reliance: 100 },
 ];
 
 export const CTA = {
