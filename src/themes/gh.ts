@@ -24,10 +24,12 @@ export const gh: Theme = {
     primary: "#3051B8", // --color-primary
     primaryDark: "#25429D", // brand-700
     primaryDeep: "#1B3173", // brand-800
+    primaryInk: "#121F4A", // brand-900
     primaryTint: "#EAEEFA", // brand-100
     primarySoft: "#CED7F3", // brand-200
     onPrimary: "#FFFFFF",
     accent: "#FF914D", // --color-accent
+    accent2: "#AF67DE", // --color-accent-2
     onAccent: "#201812", // --color-on-accent
     danger: "#E5484D", // --color-danger
     success: "#1A9C6B", // --color-success
@@ -52,11 +54,11 @@ export const gh: Theme = {
   },
   radius: { card: 12, large: 20 },
   type: {
-    // Display text is mixed-case by default; set "uppercase" for glance-read canvases.
-    headlineTransform: "none",
+    // Judul: huruf awal tiap kata kapital (Title Case) agar Reels dan carousel sama. Huruf kapital semua lebih sulit dibaca.
+    headlineTransform: "capitalize",
     headlineWeight: 800,
     scale: 0.95,
-    tracking: -0.025,
+    tracking: -0.01,
   },
   motion: {
     // No bounce or spring in GH: sharp ease-out for everything that enters.

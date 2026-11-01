@@ -19,11 +19,15 @@ export type Theme = {
     readonly primary: string;
     readonly primaryDark: string;
     readonly primaryDeep: string;
+    // Biru tergelap (brand-900): teks di atas primaryTint.
+    readonly primaryInk: string;
     readonly primaryTint: string;
     readonly primarySoft: string;
     readonly onPrimary: string;
     // Highlight colour: one phrase or control at a time.
     readonly accent: string;
+    // Aksen kedua (ungu): penanda geser dan sorotan sekunder.
+    readonly accent2: string;
     readonly onAccent: string;
     // Status colours (validation). Optional: not every design system defines them.
     readonly danger?: string;
@@ -51,7 +55,7 @@ export type Theme = {
   };
   readonly radius: { readonly card: number; readonly large: number };
   readonly type: {
-    readonly headlineTransform: "none" | "uppercase";
+    readonly headlineTransform: "none" | "uppercase" | "capitalize";
     readonly headlineWeight: number;
     // Scales large headlines so wide/uppercase faces still fit the frame.
     readonly scale: number;
