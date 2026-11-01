@@ -1,6 +1,6 @@
 # KurikulumAIEngineerGratis542PelajaranDar
 
-"Kurikulum AI Engineer Gratis: 542 Pelajaran dari Nol": reels 9:16 (1080x1920, 30 fps), 7 scene, narator Claude Code (rig 2D), tema gh, tata letak seperti Haiku55 (panel visual di atas, karakter di bawah). Komposisi `KurikulumAIEngineerGratis542PelajaranDar-Reels` di `src/Root.tsx`. Dibuat dari draft content_studio (content_studio belajar-jadi-ai-engineer-20261029-191216) dengan `scripts/from-draft.mjs`, dirender oleh `src/videos/DraftKit`.
+"Kurikulum AI Engineer Gratis: 542 Pelajaran dari Nol": reels 9:16 (1080x1920, 30 fps), 7 scene, narator Claude Code (rig 2D), tema gh, tata letak seperti Haiku55 (panel visual di atas, karakter di bawah). Komposisi `KurikulumAIEngineerGratis542PelajaranDar-Reels` di `src/Root.tsx`. Dirender oleh `src/videos/DraftKit`.
 
 - `config.ts`: id scene, durasi scene dari audio, `when(scene, frasa)` = perkiraan waktu cue visual dari posisi frasa di teks ucapan.
 - `visuals.tsx`, `parts.tsx`: visual tiap scene dan komponen bersama. `KurikulumAIEngineerGratis542PelajaranDarVideo.tsx`: Series scene, karakter, footer, suara.

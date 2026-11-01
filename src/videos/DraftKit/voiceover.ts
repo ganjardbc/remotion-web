@@ -1,8 +1,8 @@
 import type { CharacterId, DraftLine, DraftScene } from "./types";
 import voices from "./voices.json";
 
-// Voice over ElevenLabs untuk video dari draft. Daftar suara, suara bawaan per karakter, model, dan speed ada di
-// voices.json (juga dibaca content_studio); suara bisa diganti per video lewat `from-draft.mjs --voice`.
+// Voice over ElevenLabs untuk video DraftKit. Daftar suara, suara bawaan per karakter, model, dan speed ada di
+// voices.json; suara bisa diganti per video lewat `VO_VOICES` di voiceover.ts video itu.
 // scripts/vo-generate.mjs memanggil API-nya, scripts/vo-process.py mengolah hasilnya ke voiceover/<id>.mp3 di folder
 // video dan mencatatnya di voiceover.json.
 

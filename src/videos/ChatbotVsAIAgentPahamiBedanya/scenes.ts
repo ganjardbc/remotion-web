@@ -1,6 +1,6 @@
 import type { DraftMeta, DraftScene } from "../DraftKit";
 
-// Dibuat dari draft content_studio (content_studio chatbot-vs-ai-agent-20261029-134735) oleh scripts/from-draft.mjs. Boleh diubah tangan:
+// Data scene video ini. Boleh diubah tangan:
 // tambah baris dialog, ubah ekspresi atau gerak, dan isi `spoken` bila teks yang diucapkan beda dari subtitle
 // (angka dieja, singkatan dibaca utuh). Mengubah teks atau `spoken` membuat baris itu perlu di-generate ulang.
 

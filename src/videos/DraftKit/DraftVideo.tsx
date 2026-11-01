@@ -8,7 +8,7 @@ import { floorOf, Stage } from "./Stage";
 import type { DraftMeta, DraftScene } from "./types";
 import { sceneFrames } from "./voiceover";
 
-// Reels 9:16 dari draft content_studio: tiap scene = latar dan pemeran (Stage), teks layar di atas, subtitle baris
+// Reels 9:16 dari data DraftKit: tiap scene = latar dan pemeran (Stage), teks layar di atas, subtitle baris
 // yang sedang diucapkan di bawah lantai, lalu footer, voice over, whoosh antar scene, dan musik latar.
 
 export const FPS = 30;

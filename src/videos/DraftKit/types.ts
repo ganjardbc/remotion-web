@@ -1,6 +1,6 @@
 import type { TimeOfDay } from "../../assets/backdrops";
 
-// Bentuk data video dari draft content_studio (Reels 9:16). Satu scene = latar, pemeran, teks layar, dan
+// Bentuk data video DraftKit (Reels 9:16). Satu scene = latar, pemeran, teks layar, dan
 // baris ucapan. `narator`: semua baris diucapkan satu karakter; `dialog`: dua karakter atau lebih bergantian.
 
 export type CharacterId = "ganjar" | "robot" | "claudecode";
@@ -11,7 +11,7 @@ export type Position = "kiri" | "tengah" | "kanan";
 
 export type CastCue = {
   readonly character: CharacterId;
-  // Ekspresi dari kosakata karakter dan varian itu (dicek content_studio sebelum diekspor).
+  // Ekspresi dari kosakata karakter dan varian itu.
   readonly expression: string;
   // Rig: nama clip (headTurn, point, startle, armGesture, surprise, walk). Stickman: nama gesture.
   readonly motion?: string | null;
@@ -43,26 +43,6 @@ export type DraftScene = {
   readonly lines: readonly DraftLine[];
   // Arahan visual dari draft, untuk dipoles tangan; tidak dirender.
   readonly note?: string;
-};
-
-// Carousel 4:5 (1080x1350): satu slide = satu gambar. Cover membuka, detail berisi satu poin, closing menutup.
-export type SlideRole = "cover" | "detail" | "closing";
-
-export type CarouselSlide = {
-  readonly id: string;
-  readonly role: SlideRole;
-  readonly headline: string;
-  readonly body: string;
-  // Pemeran digambar diam di panel bawah; latar dan waktu dari draft dicatat untuk dipoles tangan.
-  readonly cast: readonly CastCue[];
-  readonly backdrop: DraftBackdrop;
-  readonly time: TimeOfDay;
-  readonly note?: string;
-};
-
-export type CarouselMeta = {
-  readonly title: string;
-  readonly style: VisualStyle;
 };
 
 export type DraftMeta = {
