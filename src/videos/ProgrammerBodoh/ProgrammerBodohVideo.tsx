@@ -7,21 +7,23 @@ import {
   useVideoConfig,
 } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { RobotStickman, GanjarStickman, robotStickmanSize, ganjarStickmanSize } from "../../assets/characters";
+import { ClaudeCodeStickman, GanjarStickman, claudeCodeStickmanSize, ganjarStickmanSize } from "../../assets/characters";
 import { ThemeProvider, useTheme } from "../../themes";
 import { Sfx, type SfxSet } from "./Sfx";
-import { Chair, DESK_TOP, Desk, Laptop, Mug, RoomBack, SEAT_X } from "./Room";
+import { Chair, DESK_TOP, Desk, FLOOR_Y, Laptop, Mug, RoomBack, SEAT_X } from "./Room";
 import { CTA, CTA_START, FPS, HOOK, HOOK_SECONDS, LINES, LINE_START, TOTAL_FRAMES, type Speaker } from "./config";
 
 export { TOTAL_FRAMES };
 
 const GANJAR_HEIGHT = 760;
 // Meja memotong badan GanjarStickman di sekitar perut: bagian bawah tersembunyi di balik meja.
-const GANJAR_TOP = DESK_TOP - 0.62 * GANJAR_HEIGHT;
-const ROBOT_HEIGHT = 300;
-const ROBOT_CENTER_X = 810;
-// Kaki robot sedikit di bawah kotak viewBox: dikoreksi supaya telapak menapak di atas meja.
-const ROBOT_FEET_GAP = (25 * ROBOT_HEIGHT) / 400;
+const GANJAR_TOP = DESK_TOP - 0.63 * GANJAR_HEIGHT;
+const CLAUDE_HEIGHT = 260;
+const CLAUDE_CENTER_X = 850;
+// Telapak ClaudeCodeStickman berhenti 20 unit di atas dasar viewBox (240): dikoreksi supaya menapak di atas meja.
+const CLAUDE_FEET_GAP = (20 * CLAUDE_HEIGHT) / 240;
+// Sisi atas kotak oranye, 50 unit dari puncak viewBox.
+const CLAUDE_BOX_TOP = DESK_TOP + CLAUDE_FEET_GAP - CLAUDE_HEIGHT + (50 * CLAUDE_HEIGHT) / 240;
 
 const clamp01 = (n: number): number => Math.min(1, Math.max(0, n));
 const ease = Easing.bezier(0.2, 0.8, 0.2, 1);
@@ -46,7 +48,7 @@ const toChars = (text: string): readonly { readonly ch: string; readonly hl: boo
 };
 
 const rankFor = (skill: number): string =>
-  skill >= 85 ? "Senior Engineer" : skill >= 65 ? "Mid Engineer" : skill >= 45 ? "Junior" : skill >= 25 ? "Magang" : skill >= 10 ? "Operator Copy-Paste" : "Penonton Layar";
+  skill >= 85 ? "Senior Engineer" : skill >= 65 ? "Mid Engineer" : skill >= 45 ? "Junior" : skill >= 25 ? "Intern" : skill >= 10 ? "Operator Copy-Paste" : "Penonton Layar";
 
 // Nilai meter: bergerak mulus ke target tiap kalimat.
 const meterValue = (frame: number, key: "skill" | "reliance"): number => {
@@ -61,12 +63,11 @@ const meterValue = (frame: number, key: "skill" | "reliance"): number => {
 const Meter: React.FC<{
   readonly label: string;
   readonly value: number;
-  readonly from: string;
-  readonly to: string;
-  readonly invert?: boolean;
-}> = ({ label, value, from, to, invert }) => {
+  // Warna di nilai 0, 50, dan 100; titik tengah menjaga warna tidak keruh saat bergeser.
+  readonly stops: readonly [string, string, string];
+}> = ({ label, value, stops }) => {
   const t = useTheme();
-  const color = interpolateColors(invert ? 100 - value : value, [0, 100], [to, from]);
+  const color = interpolateColors(value, [0, 50, 100], [...stops]);
   return (
     <div style={{ flex: 1 }}>
       <div style={{ fontFamily: t.fonts.body, fontSize: 24, fontWeight: 600, letterSpacing: "0.06em", color: t.colors.muted, textTransform: "uppercase" }}>
@@ -105,11 +106,11 @@ const Meters: React.FC = () => {
       }}
     >
       <div style={{ display: "flex", gap: 44 }}>
-        <Meter label="Skill ngoding" value={skill} from="#1A9C6B" to="#E5484D" />
-        <Meter label="Kegantungan Claude" value={reliance} from="#FFB067" to="#E8590C" invert />
+        <Meter label="Skill ngoding" value={skill} stops={["#E5484D", "#E8A10C", "#1A9C6B"]} />
+        <Meter label="Kegantungan Claude" value={reliance} stops={["#E8A10C", "#E8590C", "#E5484D"]} />
       </div>
       <div style={{ marginTop: 22, fontFamily: t.fonts.mono, fontSize: 28, color: t.colors.muted }}>
-        pangkat: <span style={{ color: t.colors.accent, fontWeight: 700 }}>{rankFor(skill)}</span>
+        rank: <span style={{ color: t.colors.accent, fontWeight: 700 }}>{rankFor(skill)}</span>
       </div>
     </div>
   );
@@ -130,10 +131,11 @@ const ChatMessage: React.FC<{ readonly index: number; readonly current: number }
   // Pesan baru muncul dari bawah slot 0; yang lama bergeser naik satu slot.
   const slot = current - index - (1 - shift);
   const gone = clamp01((frame - CTA_START) / 10);
-  const opacity = clamp01(1 - 0.3 * slot) * clamp01(slot + 1) * clamp01((2.7 - slot) / 0.7) * (1 - gone);
+  // Pesan lama tetap terbaca; hanya yang keluar di slot teratas yang memudar.
+  const opacity = clamp01(1 - 0.12 * slot) * clamp01(slot + 1) * clamp01((2.7 - slot) / 0.7) * (1 - gone);
 
   const chars = toChars(line.text);
-  const typed = clamp01((frame - start) / (line.seconds * FPS * 0.6));
+  const typed = clamp01((frame - start) / (line.speech * FPS * 0.85));
   const shown = Math.ceil(chars.length * typed);
 
   const avatar = (
@@ -194,7 +196,9 @@ const ChatMessage: React.FC<{ readonly index: number; readonly current: number }
             style={{
               opacity: i < shown ? 1 : 0,
               fontWeight: c.hl ? 800 : 600,
-              color: c.hl ? (robot ? "#FFFFFF" : t.colors.accent) : undefined,
+              // Sorot gaya stabilo: warna teks saja tidak terbaca di atas balon oranye.
+              color: c.hl ? t.colors.ink : undefined,
+              backgroundColor: c.hl ? (robot ? "#FFFFFF" : t.colors.accent) : undefined,
             }}
           >
             {c.ch}
@@ -270,6 +274,62 @@ const CtaCard: React.FC = () => {
   );
 };
 
+// Label kecil di dekat karakter yang sedang bicara, dengan batang suara.
+const SpeakerTag: React.FC<{ readonly name: string; readonly left: number; readonly top: number; readonly on: boolean }> = ({ name, left, top, on }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left,
+        top,
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        padding: "8px 18px",
+        borderRadius: 999,
+        backgroundColor: t.colors.primary,
+        color: t.colors.onPrimary,
+        fontFamily: t.fonts.heading,
+        fontWeight: 700,
+        fontSize: 26,
+        opacity: on ? 1 : 0,
+      }}
+    >
+      {name}
+      <div style={{ display: "flex", alignItems: "center", gap: 4, height: 24 }}>
+        {[0, 1, 2].map((i) => (
+          <div key={i} style={{ width: 5, height: 8 + Math.abs(Math.sin(frame / 3.5 + i * 1.4)) * 16, borderRadius: 3, backgroundColor: t.colors.accent }} />
+        ))}
+      </div>
+    </div>
+  );
+};
+
+type Shot = { readonly x: number; readonly zoom: number };
+
+// Bidikan tiap kalimat: mengarah ke pembicara, lebih dekat di momen kaget dan punchline.
+const shotFor = (idx: number, inCta: boolean): Shot => {
+  if (idx < 0 || inCta) return { x: 540, zoom: 1 };
+  const zoom = idx === 7 ? 1.1 : idx === 10 ? 1.08 : 1.04;
+  return { x: LINES[idx].who === "robot" ? CLAUDE_CENTER_X : SEAT_X, zoom };
+};
+
+// Kamera di atas ruangan. Titik tumpunya di garis lantai, jadi panel chat dan meter di luar kamera tidak ikut bergeser.
+const Camera: React.FC<{ readonly children: React.ReactNode }> = ({ children }) => {
+  const frame = useCurrentFrame();
+  const idx = lineIndexAt(frame);
+  const inCta = frame >= CTA_START;
+  const start = inCta ? CTA_START : idx >= 0 ? LINE_START[idx] : 0;
+  const prev = shotFor(inCta ? idx : idx - 1, false);
+  const next = shotFor(idx, inCta);
+  const p = ease(clamp01((frame - start) / 16));
+  const x = prev.x + (next.x - prev.x) * p;
+  const zoom = prev.zoom + (next.zoom - prev.zoom) * p;
+  return <AbsoluteFill style={{ transform: `scale(${zoom})`, transformOrigin: `${x}px ${FLOOR_Y}px` }}>{children}</AbsoluteFill>;
+};
+
 const Stage: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -277,13 +337,13 @@ const Stage: React.FC = () => {
   const inCta = frame >= CTA_START;
   const line = idx >= 0 && !inCta ? LINES[idx] : null;
   const speaking = (who: Speaker): boolean =>
-    line !== null && line.who === who && frame - LINE_START[idx] < line.seconds * fps - 8;
+    line !== null && line.who === who && frame - LINE_START[idx] < line.speech * fps;
 
   const robotExpression = inCta ? "senang" : line?.robot ?? "normal";
   const talkBounce = speaking("robot") ? Math.abs(Math.sin((frame / fps) * 12)) * 7 : 0;
   const shake = idx === 7 && frame - LINE_START[7] < 24 ? Math.sin(frame * 1.6) * 3 : 0;
 
-  const r = robotStickmanSize(ROBOT_HEIGHT);
+  const r = claudeCodeStickmanSize(CLAUDE_HEIGHT);
   const s = ganjarStickmanSize(GANJAR_HEIGHT);
   const ganjarExpression = inCta ? "senang" : line?.ganjar ?? "senyum";
   const ganjarBounce = speaking("ganjar") ? Math.abs(Math.sin((frame / fps) * 12)) * 7 : 0;
@@ -312,14 +372,16 @@ const Stage: React.FC = () => {
       <div
         style={{
           position: "absolute",
-          left: ROBOT_CENTER_X - r.width / 2,
-          top: DESK_TOP + ROBOT_FEET_GAP - ROBOT_HEIGHT - talkBounce,
+          left: CLAUDE_CENTER_X - r.width / 2,
+          top: DESK_TOP + CLAUDE_FEET_GAP - CLAUDE_HEIGHT - talkBounce,
           transform: `rotate(${shake}deg)`,
           transformOrigin: "50% 100%",
         }}
       >
-        <RobotStickman height={ROBOT_HEIGHT} expression={robotExpression} gesture={inCta ? "lambai" : line?.handRobot ?? "netral"} strokeWidth={5} />
+        <ClaudeCodeStickman height={CLAUDE_HEIGHT} expression={robotExpression} gesture={inCta ? "lambai" : line?.handRobot ?? "netral"} strokeWidth={5} />
       </div>
+      <SpeakerTag name="Ganjar" left={SEAT_X + 130} top={GANJAR_TOP + 10} on={speaking("ganjar")} />
+      <SpeakerTag name="Claude" left={CLAUDE_CENTER_X - 85} top={CLAUDE_BOX_TOP - 66} on={speaking("robot")} />
     </>
   );
 };
@@ -327,14 +389,16 @@ const Stage: React.FC = () => {
 // `sfx`: "free" (efek CC0, sisanya jatuh ke synth) atau "synth" (semua buatan skrip).
 type Props = { readonly theme: string; readonly sfx?: SfxSet };
 
-// Reels 9:16 satir: Ganjar (stickman, duduk di depan laptop) ngobrol dengan Robot (Claude) di atas meja soal programmer yang makin lupa ngoding.
+// Reels 9:16 satir: Ganjar (stickman, duduk di depan laptop) ngobrol dengan Claude (stickman) di atas meja soal programmer yang makin lupa ngoding.
 export const ProgrammerBodohVideo: React.FC<Props> = ({ theme, sfx = "free" }) => (
   <ThemeProvider name={theme}>
-    <RoomBack />
+    <Camera>
+      <RoomBack />
+      <Stage />
+    </Camera>
     <AbsoluteFill>
       <Meters />
       <Hook />
-      <Stage />
       <ChatFeed />
       <CtaCard />
     </AbsoluteFill>
