@@ -308,7 +308,7 @@ export const KuisScene: React.FC = () => {
 
 const WAYS = [
   { icon: "globe", title: "Website", sub: "tanpa setup apapun", chip: "buka & belajar", at: "lewat website" },
-  { icon: "bot", title: "AI Tutor", sub: "interaktif", chip: "tanya jawab", at: "pakai A-I tutor" },
+  { icon: "bot", title: "AI Tutor", sub: "interaktif", chip: "tanya jawab", at: "pakai Ei Ai tutor" },
   { icon: "terminal", title: "Lokal", sub: "unduh repo ke komputer", chip: "git clone", at: "unduh repositorinya" },
 ] as const;
 

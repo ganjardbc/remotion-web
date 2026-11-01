@@ -31,7 +31,7 @@ export const BASE_SCENES: readonly DraftScene[] = [
         "from": 0.3,
         "dur": 8.4,
         "text": "Mau jadi AI Engineer tapi bingung mulai dari mana — dan takut keluar biaya besar? Coba cek repositori GitHub ini dulu.",
-        "spoken": "Mau jadi AI Engineer tapi bingung mulai dari mana — dan takut keluar biaya besar? Coba cek repositori GitHub ini dulu."
+        "spoken": "Mau jadi Ei Ai Engineer tapi bingung mulai dari mana — dan takut keluar biaya besar? Coba cek repositori GitHub ini dulu."
       }
     ],
     "note": "Claude Code berdiri di tengah layar. Di latar belakang tampak layar monitor dengan banyak tab browser terbuka dan tanda tanya besar melayang di sudut kanan atas sebagai ilustrasi kebingungan. Teks hook muncul di bagian bawah layar."
@@ -56,7 +56,7 @@ export const BASE_SCENES: readonly DraftScene[] = [
         "from": 0.3,
         "dur": 8.4,
         "text": "Ada repositori GitHub bernama 'ai-engineering-from-scratch' — open source, berlisensi MIT, alias gratis sepenuhnya untuk siapa saja.",
-        "spoken": "Ada repositori GitHub bernama 'ai-engineering-from-scratch' — open source, berlisensi M-I-T, alias gratis sepenuhnya untuk siapa saja."
+        "spoken": "Ada repositori GitHub bernama Ei Ai Engineering From Scratch — open source, berlisensi Em Ai Ti, alias gratis sepenuhnya untuk siapa saja."
       }
     ],
     "note": "Claude Code melakukan armGesture ke arah layar di sisinya. Di layar tampil tampilan halaman GitHub dengan nama repositori 'ai-engineering-from-scratch' dan label 'MIT License' yang disorot. Ikon gembok terbuka dan bintang GitHub muncul sebagai elemen dekoratif."
@@ -131,7 +131,7 @@ export const BASE_SCENES: readonly DraftScene[] = [
         "from": 0.3,
         "dur": 7.4,
         "text": "Cara belajarnya fleksibel — lewat website tanpa setup apapun, pakai AI tutor interaktif, atau unduh repositorinya ke komputer kamu. Pilih yang paling nyaman.",
-        "spoken": "Cara belajarnya fleksibel — lewat website tanpa setup apapun, pakai A-I tutor interaktif, atau unduh repositorinya ke komputer kamu. Pilih yang paling nyaman."
+        "spoken": "Cara belajarnya fleksibel — lewat website tanpa setup apapun, pakai Ei Ai tutor interaktif, atau unduh repositorinya ke komputer kamu. Pilih yang paling nyaman."
       }
     ],
     "note": "Di sisi kanan tampil tiga ikon berjejer vertikal: ikon globe untuk website, ikon robot kecil untuk AI tutor, dan ikon terminal/komputer untuk lokal. Masing-masing ikon diberi label singkat. Claude Code melakukan armGesture ke arah daftar tersebut."
@@ -181,7 +181,7 @@ export const BASE_SCENES: readonly DraftScene[] = [
         "from": 0.3,
         "dur": 5.4,
         "text": "Cari 'ai-engineering-from-scratch' di GitHub sekarang, dan mulai dari kuis penempatan sepuluh pertanyaan!",
-        "spoken": "Cari 'ai-engineering-from-scratch' di GitHub sekarang, dan mulai dari kuis penempatan sepuluh pertanyaan!"
+        "spoken": "Cari Ei Ai Engineering From Scratch di GitHub sekarang, dan mulai dari kuis penempatan sepuluh pertanyaan!"
       }
     ],
     "note": "Latar bersih untuk segmen CTA agar terasa segar dan berbeda dari scene sebelumnya. Teks besar di tengah atas: 'ai-engineering-from-scratch'. Di bawahnya ikon GitHub dan panah menuju teks 'Mulai Kuis Sekarang'. Claude Code melakukan armGesture mengajak penonton bertindak."
