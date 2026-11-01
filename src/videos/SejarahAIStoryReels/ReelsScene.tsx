@@ -1,14 +1,12 @@
 import type React from "react";
 import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { Backdrop } from "../../Backdrop";
-import { DeskPlant, GlowLaptop } from "../../assets/backdrops/workspace";
+import { GlowLaptop } from "../../assets/backdrops/workspace";
 import { Ganjar, GANJAR_VIEWBOX, Robot, ROBOT_VIEWBOX, robotSize } from "../../assets/characters";
-import { ThemeProvider, useTheme, type Theme } from "../../themes";
+import { ThemeProvider, useTheme } from "../../themes";
 import { buildGanjar, buildRobot, type GazeOptions } from "../SejarahAIStory/BeatScene";
-import { BEATS, timeBeat, type Beat, type TimedLine } from "../SejarahAIStory/config";
-import type { Era } from "../SejarahAIStory/design";
-import { EraProvider } from "../SejarahAIStory/design";
-import { VISUALS } from "../SejarahAIStory/visuals";
+import { BEATS, timeBeat, type Beat, type TimedLine } from "./config";
+import { VISUALS } from "./visuals";
 
 const W = 1080;
 const H = 1920;
@@ -31,31 +29,12 @@ const ROBOT_HEIGHT = ROBOT_WIDTH * (ROBOT_VIEWBOX.h / ROBOT_VIEWBOX.w);
 const ROBOT_HEAD_TOP = DESK_TOP - 485 * (ROBOT_WIDTH / 660);
 
 const PAD = 60;
-// Ilustrasi dirancang di kotak 620x330, diperbesar mengisi lebar layar.
-const VISUAL_SCALE = 1.25;
+// Area ilustrasi: di bawah judul, di atas balon bicara.
+const VISUAL_TOP = 410;
+const VISUAL_HEIGHT = 620;
 
 // Menghadap penonton; menunjuk ke atas, ke arah bahan penjelasan.
 const GAZE: GazeOptions = { idle: 0.1, speaking: 0.05, listening: 0.6, pointAngle: 135 };
-
-// Era "gh": diturunkan dari token GH design system supaya ilustrasi bersama bisa dipakai ulang.
-const ghEra = (t: Theme): Era => ({
-  name: "gh",
-  fontHeading: t.fonts.heading,
-  fontMono: t.fonts.mono,
-  bg: t.colors.ground,
-  shape: t.code.raised,
-  ink: t.colors.groundText,
-  muted: t.colors.groundTextMuted,
-  accent: t.colors.accent,
-  onAccent: t.colors.onAccent,
-  panel: t.colors.groundChipBg,
-  panelInk: t.colors.ink,
-  spot: t.colors.primarySoft,
-  spotOpacity: 0.9,
-  ground: t.code.bg,
-  groundLine: t.colors.accent,
-  pattern: "none",
-});
 
 const fr = (seconds: number, fps: number): number => Math.round(seconds * fps);
 
@@ -165,7 +144,6 @@ const Desk: React.FC = () => {
         }}
       />
       <div style={{ position: "absolute", left: 0, top: DESK_TOP + TOP_H, width: W, height: 36, background: "linear-gradient(rgba(0,0,0,0.35), rgba(0,0,0,0))" }} />
-      <DeskPlant x={40} deskTop={DESK_TOP} pot={t.colors.accent} potEdge={t.colors.primaryDeep} />
       <GlowLaptop x={LAPTOP_X} deskTop={DESK_TOP} accent={t.colors.accent} />
     </>
   );
@@ -195,7 +173,7 @@ const Bubble: React.FC<{ readonly line: TimedLine; readonly local: number }> = (
     easing: Easing.bezier(...t.motion.enter),
   });
   const robot = line.who === "robot";
-  const width = robot ? 440 : 680;
+  const width = robot ? 460 : 720;
   const cx = robot ? ROBOT_X : GANJAR_X;
   const top = robot ? ROBOT_HEAD_TOP : GANJAR_HEAD_TOP;
   const left = Math.min(W - 24 - width, Math.max(24, cx - width / 2));
@@ -222,7 +200,7 @@ const Bubble: React.FC<{ readonly line: TimedLine; readonly local: number }> = (
           padding: "20px 28px",
           fontFamily: t.fonts.body,
           fontWeight: 600,
-          fontSize: 34,
+          fontSize: 36,
           lineHeight: 1.3,
           boxShadow: t.shadows.lift,
           position: "relative",
@@ -251,7 +229,7 @@ const Bubble: React.FC<{ readonly line: TimedLine; readonly local: number }> = (
   );
 };
 
-// ---------- panel penjelasan ----------
+// ---------- judul ----------
 
 const Header: React.FC<{ readonly beat: Beat }> = ({ beat }) => {
   const t = useTheme();
@@ -296,47 +274,9 @@ const Header: React.FC<{ readonly beat: Beat }> = ({ beat }) => {
   );
 };
 
-const Facts: React.FC<{ readonly beat: Beat; readonly lines: readonly TimedLine[] }> = ({ beat, lines }) => {
-  const t = useTheme();
-  const frame = useCurrentFrame();
-  const { fps } = useVideoConfig();
-  return (
-    <div style={{ position: "absolute", left: PAD, top: 835, width: W - PAD * 2, display: "flex", flexDirection: "column", gap: 10 }}>
-      {beat.facts.map((fact, i) => {
-        const start = (lines[Math.min(i, lines.length - 1)]?.at ?? 0) * fps;
-        const k = interpolate(frame, [start, start + 12], [0, 1], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-          easing: Easing.bezier(...t.motion.enter),
-        });
-        return (
-          <div
-            key={fact}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              opacity: k,
-              translate: `${(1 - k) * -40}px 0`,
-              fontFamily: t.fonts.body,
-              fontWeight: 600,
-              fontSize: 28,
-              color: t.colors.groundText,
-            }}
-          >
-            <span style={{ width: 14, height: 14, borderRadius: 4, background: t.colors.accent, flex: "none" }} />
-            {fact}
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
 // ---------- scene ----------
 
 const SceneInner: React.FC<{ readonly index: number }> = ({ index }) => {
-  const t = useTheme();
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const beat = BEATS[index];
@@ -345,32 +285,17 @@ const SceneInner: React.FC<{ readonly index: number }> = ({ index }) => {
   const active = lines.find((l) => seconds >= l.at && seconds < l.at + l.dur);
   const Visual = VISUALS[beat.visual];
   return (
-    <EraProvider value={ghEra(t)}>
-      <Backdrop
-        variant="ground"
-        label={`${String(index + 1).padStart(2, "0")} / ${String(BEATS.length).padStart(2, "0")}`}
-        sweep={index === 0}
-      />
+    <>
+      <Backdrop variant="ground" sweep={index === 0} />
       <Header beat={beat} />
-      <div
-        style={{
-          position: "absolute",
-          left: (W - 620 * VISUAL_SCALE) / 2,
-          top: 390,
-          width: 620,
-          height: 330,
-          transform: `scale(${VISUAL_SCALE})`,
-          transformOrigin: "0 0",
-        }}
-      >
-        <Visual />
+      <div style={{ position: "absolute", left: PAD, top: VISUAL_TOP, width: W - PAD * 2, height: VISUAL_HEIGHT }}>
+        <Visual lines={lines} />
       </div>
-      <Facts beat={beat} lines={lines} />
       <Workspace />
       <Cast lines={lines} active={active} />
       <Desk />
       {active ? <Bubble key={active.at} line={active} local={frame - active.at * fps} /> : null}
-    </EraProvider>
+    </>
   );
 };
 

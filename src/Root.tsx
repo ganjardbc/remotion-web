@@ -1,6 +1,6 @@
 import { Composition, Folder } from "remotion";
 import { VUE_TUTORIAL_FRAMES, VueTutorialVideo } from "./videos/VueTutorial/VueTutorialVideo";
-import { TOTAL_FRAMES as SEJARAH_AI_STORY_FRAMES } from "./videos/SejarahAIStory/config";
+import { TOTAL_FRAMES as SEJARAH_AI_STORY_FRAMES } from "./videos/SejarahAIStoryReels/config";
 import { SejarahAIStoryReelsVideo } from "./videos/SejarahAIStoryReels/SejarahAIStoryReelsVideo";
 import {
   ProgrammerBodohVideo,

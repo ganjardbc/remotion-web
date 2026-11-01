@@ -3,12 +3,13 @@ import { fade } from "@remotion/transitions/fade";
 import { Fragment } from "react";
 import { useVideoConfig } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { BEAT_FRAMES, BEATS, TRANSITION_FRAMES } from "../SejarahAIStory/config";
+import { BEAT_FRAMES, BEATS, TRANSITION_FRAMES } from "./config";
 import { ReelsScene } from "./ReelsScene";
+import { Sfx } from "./Sfx";
 
 type Props = { readonly theme: string };
 
-// Versi 9:16 dari Sejarah AI Story: panel penjelasan di atas, panel karakter di bawah.
+// Versi 9:16 dari Sejarah AI Story: satu ilustrasi di atas, Ganjar dan Robot mengobrol di bawah.
 export const SejarahAIStoryReelsVideo: React.FC<Props> = ({ theme }) => {
   const { fps } = useVideoConfig();
   const timing = linearTiming({ durationInFrames: TRANSITION_FRAMES });
@@ -31,6 +32,7 @@ export const SejarahAIStoryReelsVideo: React.FC<Props> = ({ theme }) => {
           );
         })}
       </TransitionSeries>
+      <Sfx />
       <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
     </>
   );

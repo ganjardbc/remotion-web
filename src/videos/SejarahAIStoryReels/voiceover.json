@@ -1,0 +1,149 @@
+{
+  "lines": {
+    "dartmouth-01": {
+      "hash": "f52000d51d7e",
+      "file": "voiceover/dartmouth-01.mp3",
+      "duration": 6.91
+    },
+    "dartmouth-02": {
+      "hash": "6e8e92c0b282",
+      "file": "voiceover/dartmouth-02.mp3",
+      "duration": 5.56
+    },
+    "dartmouth-03": {
+      "hash": "8778cbeae8f6",
+      "file": "voiceover/dartmouth-03.mp3",
+      "duration": 2.58
+    },
+    "deepblue-01": {
+      "hash": "fea9d8cd4a69",
+      "file": "voiceover/deepblue-01.mp3",
+      "duration": 8.59
+    },
+    "deepblue-02": {
+      "hash": "01d9a3b52b90",
+      "file": "voiceover/deepblue-02.mp3",
+      "duration": 2.1
+    },
+    "deepblue-03": {
+      "hash": "dcbe00d879ed",
+      "file": "voiceover/deepblue-03.mp3",
+      "duration": 4.78
+    },
+    "deeplearning-01": {
+      "hash": "14e44ac96452",
+      "file": "voiceover/deeplearning-01.mp3",
+      "duration": 5.61
+    },
+    "deeplearning-02": {
+      "hash": "42b2eabeb81e",
+      "file": "voiceover/deeplearning-02.mp3",
+      "duration": 5.75
+    },
+    "deeplearning-03": {
+      "hash": "3997aff83470",
+      "file": "voiceover/deeplearning-03.mp3",
+      "duration": 3.17
+    },
+    "deeplearning-04": {
+      "hash": "9ce3146b8bd2",
+      "file": "voiceover/deeplearning-04.mp3",
+      "duration": 3.11
+    },
+    "hook-01": {
+      "hash": "f2d2695640e3",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 3.81
+    },
+    "hook-02": {
+      "hash": "1fc2be70955b",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 5.74
+    },
+    "hook-03": {
+      "hash": "b3c9d26f9f89",
+      "file": "voiceover/hook-03.mp3",
+      "duration": 1.45
+    },
+    "hook-04": {
+      "hash": "66d95cfff6b1",
+      "file": "voiceover/hook-04.mp3",
+      "duration": 3.66
+    },
+    "outro-01": {
+      "hash": "c64e04c7568a",
+      "file": "voiceover/outro-01.mp3",
+      "duration": 3.48
+    },
+    "outro-02": {
+      "hash": "cc6b4533ded8",
+      "file": "voiceover/outro-02.mp3",
+      "duration": 5.79
+    },
+    "outro-03": {
+      "hash": "059688727cc2",
+      "file": "voiceover/outro-03.mp3",
+      "duration": 2.0
+    },
+    "outro-04": {
+      "hash": "a172b190d7a0",
+      "file": "voiceover/outro-04.mp3",
+      "duration": 2.22
+    },
+    "transformer-01": {
+      "hash": "cf0b89e8479f",
+      "file": "voiceover/transformer-01.mp3",
+      "duration": 6.96
+    },
+    "transformer-02": {
+      "hash": "46b3ac8a5761",
+      "file": "voiceover/transformer-02.mp3",
+      "duration": 1.47
+    },
+    "transformer-03": {
+      "hash": "ba674098ce8f",
+      "file": "voiceover/transformer-03.mp3",
+      "duration": 6.42
+    },
+    "turing-01": {
+      "hash": "8d5079ff5d90",
+      "file": "voiceover/turing-01.mp3",
+      "duration": 6.44
+    },
+    "turing-02": {
+      "hash": "b0dab5a0a155",
+      "file": "voiceover/turing-02.mp3",
+      "duration": 1.98
+    },
+    "turing-03": {
+      "hash": "84067912b1f3",
+      "file": "voiceover/turing-03.mp3",
+      "duration": 7.03
+    },
+    "turing-04": {
+      "hash": "bc9fe6227b0b",
+      "file": "voiceover/turing-04.mp3",
+      "duration": 2.42
+    },
+    "winter-01": {
+      "hash": "53d76549ab3c",
+      "file": "voiceover/winter-01.mp3",
+      "duration": 7.66
+    },
+    "winter-02": {
+      "hash": "6e95dabc15ec",
+      "file": "voiceover/winter-02.mp3",
+      "duration": 2.69
+    },
+    "winter-03": {
+      "hash": "71f256aa45b9",
+      "file": "voiceover/winter-03.mp3",
+      "duration": 5.31
+    },
+    "winter-04": {
+      "hash": "f9ddb1e9f22d",
+      "file": "voiceover/winter-04.mp3",
+      "duration": 1.72
+    }
+  }
+}
