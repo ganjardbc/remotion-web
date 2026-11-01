@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Membuat video Reels 9:16 atau carousel 4:5 dari draft content_studio (draft.json) di atas src/videos/DraftKit.
-//   node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source <keterangan>] [--theme gh|insell]
+//   node scripts/from-draft.mjs <draft.json> <NamaPascalCase> [--source <keterangan>] [--theme gh]
 //                               [--voice <karakter>=<id suara>]... [--no-register]
 // Menulis src/videos/<Nama>/ (scenes.ts berisi data scene, voice over kosong, <Nama>Video.tsx, README.md) dan
 // mendaftarkan komposisi <Nama>-Reels di src/Root.tsx. Narator atau dialog mengikuti `delivery` di draft; draft lama

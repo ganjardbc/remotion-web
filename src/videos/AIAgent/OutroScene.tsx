@@ -106,7 +106,7 @@ const OutroInner: React.FC<OutroProps> = ({ tagline }) => {
           {tagline}
         </Interactive.Div>
         <CanvasImage
-          name="Insell logo"
+          name="Logo"
           src={staticFile(t.logo.src)}
           premountFor={fps}
           style={{

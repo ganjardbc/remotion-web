@@ -5,8 +5,7 @@ import { ThemeProvider, useTheme, type Theme } from "../../themes";
 import { ganjarClip, HEIGHT, robotClip, size } from "./Stage";
 import type { CarouselMeta, CarouselSlide, CastCue, CharacterId, VisualStyle } from "./types";
 
-// Carousel 4:5 dari draft content_studio, satu frame = satu slide (fps 1). Bentuknya mengikuti template social
-// design system (insell-design-system/social): cover dan closing di bidang `ground` tema, detail di `canvas`, logo dan
+// Carousel 4:5 dari draft content_studio, satu frame = satu slide (fps 1). Cover dan closing di bidang `ground` tema, detail di `canvas`, logo dan
 // handle di atas, teks di tengah, pemeran di panel bawah, nomor slide di bawah. Semua warna dan huruf dari tema.
 
 export const CAROUSEL_WIDTH = 1080;

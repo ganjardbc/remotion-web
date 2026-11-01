@@ -1,26 +1,25 @@
 import { createContext, useContext } from "react";
 import type React from "react";
 import { gh } from "./gh";
-import { insell } from "./insell";
 import type { Theme, ThemeName } from "./types";
 
 export type { Theme, ThemeName };
 
-const themes: Record<ThemeName, Theme> = { insell, gh };
+const themes: Record<ThemeName, Theme> = { gh };
 
-const ThemeContext = createContext<Theme>(insell);
+const ThemeContext = createContext<Theme>(gh);
 
 export const useTheme = (): Theme => useContext(ThemeContext);
 
-// Theme by name outside a ThemeProvider; unknown names fall back to insell like ThemeProvider does.
+// Theme by name outside a ThemeProvider; unknown names fall back to gh like ThemeProvider does.
 export const getTheme = (name?: string): Theme =>
-  themes[name as ThemeName] ?? insell;
+  themes[name as ThemeName] ?? gh;
 
 export const ThemeProvider: React.FC<{
   readonly name?: string;
   readonly children: React.ReactNode;
 }> = ({ name, children }) => {
-  const theme = themes[name as ThemeName] ?? insell;
+  const theme = themes[name as ThemeName] ?? gh;
   return (
     <ThemeContext.Provider value={theme}>{children}</ThemeContext.Provider>
   );
@@ -44,8 +43,8 @@ export const themed = <P extends object>(
 export const themeSchema = {
   theme: {
     type: "string",
-    default: "insell",
-    description: "Design system: insell or gh",
+    default: "gh",
+    description: "Design system: gh",
   },
 } as const;
 

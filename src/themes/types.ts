@@ -1,4 +1,4 @@
-export type ThemeName = "insell" | "gh";
+export type ThemeName = "gh";
 
 type Bezier = readonly [number, number, number, number];
 
