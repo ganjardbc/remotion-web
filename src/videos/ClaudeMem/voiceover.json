@@ -1,0 +1,44 @@
+{
+  "lines": {
+    "catat": {
+      "hash": "51ff1e646e7d",
+      "file": "voiceover/catat.mp3",
+      "duration": 6.97
+    },
+    "closing": {
+      "hash": "fd68d2ff74a9",
+      "file": "voiceover/closing.mp3",
+      "duration": 4.92
+    },
+    "cta": {
+      "hash": "86f06efa6a7b",
+      "file": "voiceover/cta.mp3",
+      "duration": 5.71
+    },
+    "hook": {
+      "hash": "b23fb2e2f28e",
+      "file": "voiceover/hook.mp3",
+      "duration": 6.83
+    },
+    "ingat": {
+      "hash": "eb8ce3d746c0",
+      "file": "voiceover/ingat.mp3",
+      "duration": 9.8
+    },
+    "pasang": {
+      "hash": "46863ee4444d",
+      "file": "voiceover/pasang.mp3",
+      "duration": 4.74
+    },
+    "repo": {
+      "hash": "5aaf1580cabe",
+      "file": "voiceover/repo.mp3",
+      "duration": 7.2
+    },
+    "simpan": {
+      "hash": "b81a739e6071",
+      "file": "voiceover/simpan.mp3",
+      "duration": 6.13
+    }
+  }
+}
