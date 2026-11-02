@@ -1,4 +1,4 @@
-export { GanjarRig, GANJAR_VIEWBOX } from "./GanjarRig";
+export { GanjarRig, GANJAR_VIEWBOX, type GanjarView } from "./GanjarRig";
 export { evalGanjar, idle, headTurn, point, startle } from "./clips";
 export type { PlacedClip, Clip } from "./clips";
 export { evalFace, EXPRESSIONS } from "./face";

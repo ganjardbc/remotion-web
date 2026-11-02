@@ -3,8 +3,9 @@ import { useCurrentFrame, useVideoConfig } from "remotion";
 import { evalLook, type LookKey } from "../../shared/look";
 import { evalGanjar, type PlacedClip } from "./clips";
 import { EXPRESSIONS, evalFace, type FaceKey, type GanjarExpression } from "./face";
-import { GANJAR_VIEWBOX, GanjarRig } from "./GanjarRig";
+import { GANJAR_VIEWBOX, GanjarRig, type GanjarView } from "./GanjarRig";
 import { FLOOR_Y } from "./geometry";
+import { applyDelta, type PoseDelta } from "./pose";
 
 export const GANJAR_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarExpression[];
 
@@ -24,7 +25,11 @@ export type GanjarProps = {
   readonly sit?: number;
   // Arah pandang berwaktu: kepala dan badan menoleh ke lawan bicara atau objek.
   readonly look?: readonly LookKey[];
+  // Selisih pose (lengan, kepala, badan) di atas gerak clip. Dipakai untuk pose statis seperti mengetik.
+  readonly pose?: PoseDelta;
   readonly bust?: boolean;
+  // "belakang" = tampak punggung (tanpa wajah). Bawaan "depan".
+  readonly view?: GanjarView;
   readonly style?: React.CSSProperties;
 };
 
@@ -45,7 +50,9 @@ export const Ganjar: React.FC<GanjarProps> = ({
   talking = false,
   sit = 0,
   look = [],
+  pose: delta,
   bust = false,
+  view = "depan",
   style,
 }) => {
   const frame = useCurrentFrame();
@@ -56,12 +63,12 @@ export const Ganjar: React.FC<GanjarProps> = ({
   const vb = bust ? BUST_BOX : GANJAR_VIEWBOX;
   const base = evalGanjar(frame, clips);
   const gaze = evalLook(frame, fps, look);
-  const pose = {
+  const pose = applyDelta({
     ...base,
     sit: base.sit + sit,
     head: { ...base.head, turn: base.head.turn + gaze.turn, rot: base.head.rot + gaze.tilt },
     torso: { ...base.torso, rot: base.torso.rot + gaze.turn * 0.8 },
-  };
+  }, delta ?? {});
   return (
     <svg
       width={(height * vb.w) / vb.h}
@@ -69,7 +76,7 @@ export const Ganjar: React.FC<GanjarProps> = ({
       viewBox={`${vb.x} ${vb.y} ${vb.w} ${vb.h}`}
       style={{ overflow: "visible", display: "block", ...style }}
     >
-      <GanjarRig pose={pose} face={{ ...state, ...mouth }} />
+      <GanjarRig pose={pose} face={{ ...state, ...mouth }} view={view} />
     </svg>
   );
 };

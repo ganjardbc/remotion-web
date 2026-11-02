@@ -46,6 +46,30 @@ import { Chair, Desk, Laptop, Mug, PORTRAIT_ANCHORS, RoomBack } from "../../asse
 - Perabot meja bersama: `GlowLaptop` (laptop kecil tampak dari belakang dengan logo berdenyut) dan `DeskPlant` (tanaman di pot berwarna), keduanya bertumpu pada `deskTop` dan berwarna dari luar. Dipakai `SejarahAIStory` (warna era) dan `SejarahAIStoryReels` (warna tema), render keduanya identik byte-per-byte dengan sebelum diekstrak. Meja, kursi, dan dinding kedua video itu tetap di file masing-masing karena warnanya mengikuti era atau tema video.
 - Belum ada: aktivitas lain (minum).
 
+## workspace/deskback (meja kerja tampak belakang)
+
+Kamera lurus di belakang karakter: dinding dengan jendela, tirai, rak bercahaya, bingkai, tanaman, meja dengan monitor, lampu, dan keyboard, lalu kursi mesh dan karpet berbulu. Gaya bidang datar (sama dengan rig 2D), kanvas tegak 1080x1920. Waktu `siang | sore | malam` atau angka 0..1: siang terang berjendela dan kayu terang, malam hangat dengan lampu rak (LED), lampu meja, dan layar menyala. Rujukan: dua foto meja kerja dari Ganjar (malam hangat dan siang terang).
+
+```tsx
+import { DeskBackScene } from "../../assets/backdrops/workspace";
+
+<DeskBackScene time="malam" />        // adegan lengkap dengan Ganjar duduk dari belakang
+```
+
+Urutan gambar (belakang ke depan), kalau ingin menyusun sendiri:
+
+1. `DeskBackRoom`: dinding, jendela, tirai, rak, tanaman, meja, karpet.
+2. `DeskBackLights`: peredupan waktu, lalu monitor, lampu, dan cahaya (digambar di atas peredupan supaya tetap terang).
+3. Karakter duduk (`Ganjar view="belakang" sit={1}`), dipotong di `seatTop + 40` supaya kaki tidak tampak.
+4. `DeskBackChair`: sandaran mesh, dudukan, sandaran tangan, dasar kursi. Bungkus 3 dan 4 dengan `style={{ filter: characterFilter(time) }}`.
+
+- `DESKBACK_ANCHORS` (`DeskBackAnchors`): `floorY`, `deskBack`, `deskFront`, `slab`, `seatX`, `seatTop`, `characterHeight`, `characterTop`, `monitor`, `shelf`, `window`. Karakter dan kursi membaca jangkar yang sama; ubah `characterHeight` dan `characterTop` bersama (ujung baju bertumpu di `seatTop`).
+- `deskBackPalette(time)` / `DESKBACK_DAY`, `DESKBACK_SORE`, `DESKBACK_MALAM`: semua warna hex 6 digit supaya bisa diinterpolasi. `glow` (kekuatan cahaya hangat) dan `dim` (peredupan ruangan) mengatur suasana malam.
+- ID gradien SVG dibuat unik per instance (`useId`), jadi beberapa adegan bisa tampil di satu halaman (`DeskBackTimes`) tanpa saling menimpa.
+- Area atas (di atas y = 300) sengaja kosong untuk judul atau teks Reels.
+- Demo di Studio (folder Latar): `DeskBackScene`, `DeskBackTimes` (tiga waktu berdampingan), `DeskBackCycle` (peralihan siang ke malam).
+- Belum ada: karakter lain (Robot, Claude Code) tampak belakang; gerak kepala menoleh ke monitor; versi lanskap.
+
 ## plain dan outdoor
 
 ```tsx

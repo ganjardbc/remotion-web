@@ -17,7 +17,7 @@ import { Ganjar, GanjarStickman, Robot } from "../assets/characters";
 - `face`: kunci ekspresi berwaktu (detik). Tanpa `face`, `expression` dipakai statis.
 - `clips`: gerak badan (`headTurn`, `point`, `startle` untuk Ganjar; `armGesture`, `surprise`, `walk` untuk Robot), tiap clip dengan `start` dan `dur` dalam frame.
 - `bust` (Ganjar rig): hanya kepala dan bahu.
-- Hanya tampak depan. Animasi hanya boleh bergantung pada `useCurrentFrame()`.
+- Tampak depan, kecuali Ganjar rig 2D yang punya `view="belakang"` (lihat di bawah). Animasi hanya boleh bergantung pada `useCurrentFrame()`.
 
 ## Struktur
 
@@ -49,6 +49,19 @@ Ukuran dan bentuk diatur lewat konstanta di `ganjar/rig/GanjarRig.tsx`, semuanya
 - Rambut: `HAIR_SCALE_X/Y` (lebar, tinggi), `HAIR_X/Y` (posisi), `HAIR_ROTATE` dan `HAIR_PIVOT` (rotasi), `HAIR_ROUNDNESS` (kebulatan ujung).
 - Wajah: `HEAD_HALF_WIDTH`, `HEAD_TOP`, `HEAD_BOTTOM`, `HEAD_JAW`, `HEAD_CROWN`. Posisi mata, alis, dan mulut ada di `FACE` (`geometry.ts`).
 - Kepala utuh: `HEAD_SCALE`, skala dari pangkal leher.
+
+### Tampak belakang (`view="belakang"`)
+
+Hanya Ganjar rig 2D. Tanpa wajah: rambut menutup seluruh kepala sampai tengkuk dengan pusaran dan garis helai, telinga menyembul di sisi, kerah kaos lebih tinggi dengan jahitan tulang punggung, tangan tanpa garis telapak, celana tanpa saku kargo. Pose, `sit`, `look`, dan `clips` bekerja seperti tampak depan; `head.turn` menggeser rambut dan telinga sedikit.
+
+```tsx
+<Ganjar height={1000} view="belakang" sit={1}
+  pose={{ armL: { shoulder: 4, elbow: -80 }, armR: { shoulder: 4, elbow: -80 } }} />
+```
+
+- `pose` (`PoseDelta`): selisih pose statis di atas `clips` (lengan, kepala, badan, kaki). Siku negatif = lengan bawah menekuk ke dalam; dari belakang lengan bawah tertutup badan, hanya siku yang tampak, jadi pose mengetik cukup `elbow` sekitar -80.
+- Kaki dan sepatu masih gambar tampak depan. Untuk karakter duduk, potong di bawah dudukan kursi (lihat `DeskBackScene`).
+- Gaya garis dan warna rambut belakang (`hairShade`) di `rig/geometry.ts`; bentuknya `HAIR_BACK_D` di `rig/GanjarRig.tsx`.
 
 Bentuk digambar dua lapis (garis lalu isi) supaya tepi luarnya satu siluet bersih tanpa garis sambungan di bahu, siku, lutut, dan dahi.
 

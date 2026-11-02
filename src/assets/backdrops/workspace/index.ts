@@ -7,3 +7,4 @@ export { WORKSPACE_MALAM, WORKSPACE_SORE } from "./palette";
 export { characterFilter, workspacePalette, WORKSPACE_TIMES, type TimeOfDay } from "./time";
 export { WorkspaceCycle, WorkspaceScene, WorkspaceTimes, WorkspaceTyping } from "./WorkspaceSheet";
 export { DeskPlant, GlowLaptop } from "./DeskProps";
+export { DESKBACK_ANCHORS, DESKBACK_DAY, DESKBACK_MALAM, DESKBACK_SORE, DESKBACK_TIMES, DeskBackChair, DeskBackCycle, DeskBackLights, DeskBackRoom, DeskBackScene, DeskBackTimes, deskBackPalette, type DeskBackAnchors, type DeskBackPalette, type DeskBackProps } from "./deskback";

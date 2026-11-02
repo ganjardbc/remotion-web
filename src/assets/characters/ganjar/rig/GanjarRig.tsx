@@ -344,6 +344,41 @@ const Head: React.FC<{ readonly face: FaceState; readonly turn: number }> = ({
   );
 };
 
+// Tampak belakang: rambut menutup seluruh kepala dan turun ke tengkuk, telinga menyembul di sisi.
+const HAIR_BACK_D =
+  "M-52 80 C-46 56 -12 44 16 48 C30 38 56 42 68 58 C108 74 138 122 136 196 C135 236 128 262 121 292 C98 336 44 372 0 376 C-44 372 -98 336 -121 292 C-128 262 -135 236 -136 196 C-138 126 -100 84 -52 80 Z";
+
+const HeadBack: React.FC<{ readonly turn: number }> = ({ turn }) => (
+  <g data-part="head">
+    {(["line", "fill"] as const).map((pass) => (
+      <g key={pass}>
+        <Ears turn={turn} pass={pass} />
+        <Shape d={FACE_D} fill={C.skin} pass={pass} />
+      </g>
+    ))}
+    <g data-part="hair" transform={`translate(${turn * 8} 0)`}>
+      <path
+        d={HAIR_BACK_D}
+        fill={C.outline}
+        stroke={C.outline}
+        strokeWidth={LINE_W + HAIR_ROUNDNESS}
+        strokeLinejoin="round"
+      />
+      <path
+        d={HAIR_BACK_D}
+        fill={C.hair}
+        stroke={C.hair}
+        strokeWidth={HAIR_ROUNDNESS}
+        strokeLinejoin="round"
+      />
+      {/* Pusaran dan helai rambut: garis tipis satu tingkat lebih gelap dari rambut. */}
+      <Seam d="M-4 108 C20 112 34 130 28 152 C22 170 2 170 -2 156" color={C.hairShade} width={5} />
+      <Seam d="M-80 176 C-90 220 -88 262 -80 296" color={C.hairShade} width={4} />
+      <Seam d="M80 176 C90 220 88 262 80 296" color={C.hairShade} width={4} />
+    </g>
+  </g>
+);
+
 // ---------- Lengan ----------
 
 // Lengan diam sedikit terbuka supaya tidak tertutup badan.
@@ -358,7 +393,8 @@ const Arm: React.FC<{
   readonly side: -1 | 1;
   readonly arm: ArmPose;
   readonly pass: Pass;
-}> = ({ side, arm, pass }) => (
+  readonly back?: boolean;
+}> = ({ side, arm, pass, back = false }) => (
   <g
     data-part={side === -1 ? "arm-left" : "arm-right"}
     transform={armTransform(side, arm)}
@@ -384,7 +420,7 @@ const Arm: React.FC<{
           />
         ) : null}
         <Shape d={ellipse(0, 0, 25, 27)} fill={C.skin} pass={pass} />
-        {pass === "fill" ? (
+        {pass === "fill" && !back ? (
           <Seam d="M-11 12 Q0 19 11 12" color={C.skinShade} width={4} />
         ) : null}
       </g>
@@ -416,7 +452,11 @@ const Sleeve: React.FC<{
 const TORSO_D =
   "M-48 446 Q0 484 48 446 C72 446 90 449 100 453 L104 480 C102 510 98 528 96 548 C96 620 102 700 110 762 Q0 776 -110 762 C-102 700 -96 620 -96 548 C-98 528 -102 510 -104 480 L-100 453 C-90 449 -72 446 -48 446 Z";
 
-const Shirt: React.FC<{ readonly pose: GanjarPose }> = ({ pose }) => {
+// Tampak belakang: kerah lebih tinggi (tidak ada lekuk leher depan).
+const TORSO_BACK_D = TORSO_D.replace("Q0 484", "Q0 458");
+
+const Shirt: React.FC<{ readonly pose: GanjarPose; readonly back?: boolean }> = ({ pose, back = false }) => {
+  const torsoD = back ? TORSO_BACK_D : TORSO_D;
   const breathe = `translate(0 ${P.waist.y}) scale(${1 + pose.torso.breathe * 0.5} ${1 + pose.torso.breathe}) translate(0 ${-P.waist.y})`;
   const sleeves = (pass: Pass) => (
     <>
@@ -427,24 +467,30 @@ const Shirt: React.FC<{ readonly pose: GanjarPose }> = ({ pose }) => {
   return (
     <g data-part="shirt">
       <g transform={breathe}>
-        <Shape d={TORSO_D} fill={C.shirt} pass="line" />
+        <Shape d={torsoD} fill={C.shirt} pass="line" />
       </g>
       {sleeves("line")}
       <g transform={breathe}>
-        <Shape d={TORSO_D} fill={C.shirt} pass="fill" />
+        <Shape d={torsoD} fill={C.shirt} pass="fill" />
       </g>
       {sleeves("fill")}
+      {back ? (
+        <g transform={breathe}>
+          <Seam d="M-48 446 Q0 458 48 446" color={C.shirtRib} width={6} />
+          <Seam d="M0 462 L0 752" color={C.shirtRib} width={3} />
+        </g>
+      ) : null}
     </g>
   );
 };
 
-const Neck: React.FC = () => {
+const Neck: React.FC<{ readonly back?: boolean }> = ({ back = false }) => {
   const d = "M-26 380 L26 380 L28 470 L-28 470 Z";
   return (
     <g data-part="neck">
       <Shape d={d} fill={C.skin} pass="line" />
       <Shape d={d} fill={C.skin} pass="fill" />
-      <Seam d="M-26 404 Q0 420 26 404" color={C.skinShade} width={8} />
+      {back ? null : <Seam d="M-26 404 Q0 420 26 404" color={C.skinShade} width={8} />}
     </g>
   );
 };
@@ -511,7 +557,8 @@ const Leg: React.FC<{
   readonly leg: LegPose;
   readonly sit: number;
   readonly pass: Pass;
-}> = ({ side, leg, sit, pass }) => {
+  readonly back?: boolean;
+}> = ({ side, leg, sit, pass, back = false }) => {
   const k = 1 - SIT_SHRINK * sit;
   return (
     <g
@@ -537,30 +584,35 @@ const Leg: React.FC<{
           fill={C.pants}
           pass={pass}
         />
-        {pass === "fill" ? <CargoPocket side={side} /> : null}
+        {pass === "fill" && !back ? <CargoPocket side={side} /> : null}
       </g>
     </g>
   );
 };
 
-const LowerBody: React.FC<{ readonly pose: GanjarPose }> = ({ pose }) => (
+const LowerBody: React.FC<{ readonly pose: GanjarPose; readonly back?: boolean }> = ({ pose, back = false }) => (
   <g data-part="legs">
     {(["line", "fill"] as const).map((pass) => (
       <g key={pass}>
-        <Leg side={-1} leg={pose.legL} sit={pose.sit} pass={pass} />
-        <Leg side={1} leg={pose.legR} sit={pose.sit} pass={pass} />
+        <Leg side={-1} leg={pose.legL} sit={pose.sit} pass={pass} back={back} />
+        <Leg side={1} leg={pose.legR} sit={pose.sit} pass={pass} back={back} />
         <Shape d={PANTS_WAIST_D} fill={C.pants} pass={pass} />
       </g>
     ))}
   </g>
 );
 
+export type GanjarView = "depan" | "belakang";
+
 export type GanjarRigProps = {
   readonly pose: GanjarPose;
   readonly face: FaceState;
+  // Tampak depan (bawaan) atau belakang: tanpa wajah, rambut menutup kepala, kerah belakang.
+  readonly view?: GanjarView;
 };
 
-export const GanjarRig: React.FC<GanjarRigProps> = ({ pose, face }) => {
+export const GanjarRig: React.FC<GanjarRigProps> = ({ pose, face, view = "depan" }) => {
+  const back = view === "belakang";
   const { root, torso, head } = pose;
   const lifted = Math.max(0, -(root.y + pose.hipY));
   const shadow = 1 - Math.min(0.3, lifted / 200);
@@ -578,24 +630,24 @@ export const GanjarRig: React.FC<GanjarRigProps> = ({ pose, face }) => {
         data-part="lower-body"
         transform={`translate(0 ${pose.hipY + pose.sit * SIT_SHRINK * THIGH})`}
       >
-        <LowerBody pose={pose} />
+        <LowerBody pose={pose} back={back} />
         <g
           data-part="upper-body"
           transform={`rotate(${torso.rot} ${P.waist.x} ${P.waist.y})`}
         >
           {(["line", "fill"] as const).map((pass) => (
             <g key={pass}>
-              <Arm side={-1} arm={pose.armL} pass={pass} />
-              <Arm side={1} arm={pose.armR} pass={pass} />
+              <Arm side={-1} arm={pose.armL} pass={pass} back={back} />
+              <Arm side={1} arm={pose.armR} pass={pass} back={back} />
             </g>
           ))}
-          <Neck />
-          <Shirt pose={pose} />
+          <Neck back={back} />
+          <Shirt pose={pose} back={back} />
           <g
             data-part="head-group"
             transform={`translate(0 ${head.y}) rotate(${head.rot} ${P.neck.x} ${P.neck.y}) translate(${P.neck.x} ${P.neck.y}) scale(${HEAD_SCALE}) translate(${-P.neck.x} ${-P.neck.y})`}
           >
-            <Head face={face} turn={head.turn} />
+            {back ? <HeadBack turn={head.turn} /> : <Head face={face} turn={head.turn} />}
           </g>
         </g>
       </g>
