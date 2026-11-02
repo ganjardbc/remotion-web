@@ -9,6 +9,7 @@ import {
 import { Haiku55Video, TOTAL_FRAMES as HAIKU55_FRAMES } from "./videos/Haiku55/Haiku55Video";
 import { ModelTeamVideo, TOTAL_FRAMES as MODEL_TEAM_FRAMES } from "./videos/ModelTeam/ModelTeamVideo";
 import { ClaudeMemVideo, TOTAL_FRAMES as CLAUDE_MEM_FRAMES } from "./videos/ClaudeMem/ClaudeMemVideo";
+import { ReviewKodeAIVideo, TOTAL_FRAMES as REVIEW_KODE_AI_FRAMES } from "./videos/ReviewKodeAI/ReviewKodeAIVideo";
 import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 import { CHATBOT_VS_AIAGENT_PAHAMI_BEDANYA_FRAMES, ChatbotVsAIAgentPahamiBedanyaVideo } from "./videos/ChatbotVsAIAgentPahamiBedanya/ChatbotVsAIAgentPahamiBedanyaVideo";
 import { KURIKULUM_AIENGINEER_GRATIS542_PELAJARAN_DAR_FRAMES, KurikulumAIEngineerGratis542PelajaranDarVideo } from "./videos/KurikulumAIEngineerGratis542PelajaranDar/KurikulumAIEngineerGratis542PelajaranDarVideo";
@@ -60,6 +61,15 @@ export const RemotionRoot: React.FC = () => {
         id="ClaudeMem-Reels"
         component={ClaudeMemVideo}
         durationInFrames={CLAUDE_MEM_FRAMES}
+        fps={30}
+        width={1080}
+        height={1920}
+        defaultProps={{ theme: "gh" }}
+      />
+      <Composition
+        id="ReviewKodeAI-Reels"
+        component={ReviewKodeAIVideo}
+        durationInFrames={REVIEW_KODE_AI_FRAMES}
         fps={30}
         width={1080}
         height={1920}
