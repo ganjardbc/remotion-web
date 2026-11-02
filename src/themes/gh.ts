@@ -30,6 +30,7 @@ export const gh: Theme = {
     onPrimary: "#FFFFFF",
     accent: "#FF914D", // --color-accent
     accent2: "#AF67DE", // --color-accent-2
+    accentDark: "#C24A00", // --color-accent-700
     onAccent: "#201812", // --color-on-accent
     danger: "#E5484D", // --color-danger
     success: "#1A9C6B", // --color-success

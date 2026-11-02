@@ -28,6 +28,8 @@ export type Theme = {
     readonly accent: string;
     // Aksen kedua (ungu): penanda geser dan sorotan sekunder.
     readonly accent2: string;
+    // Oranye gelap (accent-700): latar kartu berteks putih, kontras >= 4,5:1.
+    readonly accentDark?: string;
     readonly onAccent: string;
     // Status colours (validation). Optional: not every design system defines them.
     readonly danger?: string;
