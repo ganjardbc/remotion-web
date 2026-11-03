@@ -14,7 +14,7 @@ Sudah dibuat (2 November 2026): ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6
 Kalau `SPOKEN` berubah, generate ulang klip scene itu saja dan olah dengan:
 
 ```bash
-python3 scripts/vo-process.py <id> out/vo-raw/PromptPanjang/<id>.mp3 --hash <hash> --video PromptPanjang
+node scripts/vo-process.mjs <id> out/vo-raw/PromptPanjang/<id>.mp3 --hash <hash> --video PromptPanjang
 ```
 
 Lalu cek frasa di `at(...)` dan `when(...)`.

@@ -2,7 +2,7 @@ import type React from "react";
 import { Interactive, interpolate } from "remotion";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
-import { Enter, Pop } from "../OpenCode9Router/parts";
+import { Enter, Pop } from "../../motion";
 import { Accent, Bar, Card, Frame, Headline, PointTag, cue, useCue } from "./parts";
 
 // Semua waktu cue dalam detik sejak suara mulai di scene itu (dari transkrip kata voiceover).

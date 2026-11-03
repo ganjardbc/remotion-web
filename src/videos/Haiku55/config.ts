@@ -6,6 +6,8 @@ import { VO_FILES } from "./voiceover-files";
 export const FPS = 30;
 // Jeda sebelum suara mulai di tiap scene, dan ekor setelah suara selesai.
 export const LEAD = 6;
+// Kecepatan bicara Nilasari, speed 1.2 (diukur dari Haiku55).
+const CHARS_PER_SEC = 15.3;
 const TAIL = 0.45;
 
 export const SCENE_IDS = ["hook", "relate", "intro", "fast", "context", "volume", "teaser", "closing", "cta"] as const;
@@ -23,11 +25,21 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
   cta: "Follow kalau kamu mau lanjut ke bagian kedua, yaitu cara menyusun pembagian Opus, Sonnet, dan Haiku dalam satu sistem.",
 };
 
+export const CAPTION = "Haiku 5.5 sering dianggap model kelas dua. Padahal dia dibuat untuk volume tinggi, dan di tugas seperti itu kecepatan lebih berarti daripada kepintaran maksimal.";
+export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;
+
 const entries = (manifest as { lines: Record<string, { duration: number }> }).lines;
 
-export const VO: Readonly<Record<SceneId, { readonly file: string; readonly seconds: number }>> = Object.fromEntries(
-  SCENE_IDS.map((id) => [id, { file: VO_FILES[id], seconds: entries[id].duration }]),
-) as Record<SceneId, { file: string; seconds: number }>;
+export const VO: Readonly<Record<SceneId, { readonly file: string | null; readonly seconds: number }>> = Object.fromEntries(
+  SCENE_IDS.map((id) => [id, entries[id] ? { file: VO_FILES[id], seconds: entries[id].duration } : { file: null, seconds: SPOKEN[id].length / CHARS_PER_SEC }]),
+) as Record<SceneId, { file: string | null; seconds: number }>;
+
+// Detik sejak suara mulai saat `phrase` diucapkan, diperkirakan dari posisi huruf di SPOKEN.
+export const at = (id: SceneId, phrase: string): number => {
+  const i = SPOKEN[id].indexOf(phrase);
+  if (i < 0) throw new Error(`Frasa "${phrase}" tidak ada di SPOKEN.${id}`);
+  return (i / SPOKEN[id].length) * VO[id].seconds;
+};
 
 export const SCENE_FRAMES: readonly number[] = SCENE_IDS.map((id) => LEAD + Math.ceil((VO[id].seconds + TAIL) * FPS));
 export const SCENE_START: readonly number[] = SCENE_FRAMES.map((_, i) => SCENE_FRAMES.slice(0, i).reduce((a, b) => a + b, 0));

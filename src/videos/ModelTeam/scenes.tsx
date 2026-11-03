@@ -2,7 +2,7 @@ import type React from "react";
 import { interpolate } from "remotion";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
-import { Enter, Pop } from "../OpenCode9Router/parts";
+import { Enter, Pop } from "../../motion";
 import { Accent, Bar, Card, Frame, Headline, cue, useCue } from "./parts";
 
 type IconName = React.ComponentProps<typeof Icon>["name"];

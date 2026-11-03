@@ -12,7 +12,7 @@
 Selama `voiceover.json` kosong, durasi scene diperkirakan 15,3 huruf/detik (±43 detik) dan video tanpa suara narasi. Generate dengan ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene, lalu:
 
 ```bash
-python3 scripts/vo-process.py <id> out/vo-raw/ReviewKodeAI/<id>.mp3 --hash <hash> --video ReviewKodeAI
+node scripts/vo-process.mjs <id> out/vo-raw/ReviewKodeAI/<id>.mp3 --hash <hash> --video ReviewKodeAI
 ```
 
 Setelah itu durasi scene dan cue ikut audio secara otomatis. Kalau `SPOKEN` berubah, cek frasa di `at(...)` dan `when(...)`.

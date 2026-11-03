@@ -37,7 +37,12 @@ Alur wajib: Hook, Relate, Shift, Closing, CTA.
 - **Shift**: sudut pandang tidak umum yang membongkar asumsi. Setelah insight tajam pertama, **wajib** ada 1 kalimat urgency follow ("ini baru bagian pertama...").
 - **Closing**: kesimpulan tajam, ada kalimat yang layak jadi quote.
 - **CTA**: ajakan follow dengan alasan spesifik ke isi konten, bukan "follow untuk tips lainnya".
-- Referensi implementasi: `src/videos/AgenBodoh` (hook 4 dtk, relate 7, shift 10, urgency 6, closing 6, CTA 6).
+- Referensi implementasi, alur, dan durasi: `src/videos/PromptPanjang` (hook 5 dtk, relate 7, shift 9, urgency 5, cara 9, closing 4, CTA 5). Struktur file lihat Struktur file video di bawah.
+
+## Struktur file video
+Wajib dibaca sebelum membuat atau mengubah folder `src/videos/<Nama>/`:
+
+@docs/struktur-video.md
 
 ## Format B: Carousel (Instagram/LinkedIn, 1080x1350)
 - 5-8 slide (boleh 9-10 untuk topik kaya). **Setiap slide wajib punya judul**, termasuk hook dan closing.
@@ -79,5 +84,4 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 - Tampilan carousel belum pernah dirender di sandbox Claude (tanpa Chrome); ukuran sudah dicocokkan dengan sample dan muat menurut metrik Poppins. Cek dengan `remotion still`.
 - Lengan stiker ClaudeCode di sample tampak lebih pendek (±1,5 unit) daripada rig (3 unit); rig tidak diubah.
 - Format A (Reels): belum ada validator, belum ada field caption dan 5 hashtag per video. Tema Title Case sudah berlaku untuk Reels yang memakai `headlineTransform`; render ulang untuk melihat dampaknya.
-- Beberapa video lama (AgenBodoh, ClaudeLoop, FileDibajak, GratisMurah, IzinPagar, PenulisUI, TokenTips, dll.) belum terdaftar di `Root.tsx`.
 - `npm run lint` gagal oleh error lama di `src/assets/camera/demo/ShotReel.tsx` (prop `from` bernilai 0 bisa dihapus, auto-fix tersedia).

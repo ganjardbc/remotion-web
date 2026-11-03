@@ -12,7 +12,7 @@
 Selama `voiceover.json` kosong, durasi scene diperkirakan 15,3 huruf/detik (±58 detik) dan video tanpa suara narasi. Generate dengan ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene, lalu:
 
 ```bash
-python3 scripts/vo-process.py <id> out/vo-raw/ClaudeMem/<id>.mp3 --hash <hash> --video ClaudeMem
+node scripts/vo-process.mjs <id> out/vo-raw/ClaudeMem/<id>.mp3 --hash <hash> --video ClaudeMem
 ```
 
 Setelah itu durasi scene dan cue ikut audio secara otomatis.

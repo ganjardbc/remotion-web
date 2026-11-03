@@ -12,6 +12,7 @@ Konteks project untuk agent AI apa pun (Claude Code, Codex, Cursor, dll.). Baca 
 | Butuh | Baca |
 |---|---|
 | Aturan konten Format A/B/C, keputusan project, daftar yang belum dikerjakan | [CLAUDE.md](CLAUDE.md) |
+| Membuat atau mengubah folder `src/videos/<Nama>/` (nama dan isi file wajib, voiceover) | [docs/struktur-video.md](docs/struktur-video.md) |
 | Membuat atau mengubah carousel (field, ukuran, warna, validator, render) | [docs/carousel.md](docs/carousel.md) |
 | Warna, huruf, gerak | `design-system/gh-design-system` (`readme.md`, `SKILL.md`), tema kode `src/themes/gh.ts` |
 | Karakter Ganjar, Robot, Claude Code | `src/assets/characters/README.md` |
@@ -30,7 +31,7 @@ Konteks project untuk agent AI apa pun (Claude Code, Codex, Cursor, dll.). Baca 
 
 ## Struktur singkat
 - `src/Root.tsx`: semua komposisi harus didaftarkan di sini agar muncul di Studio.
-- `src/videos/<Nama>/`: satu video atau carousel per folder. Carousel = `carousel.content.ts` (mengekspor `CAROUSEL: CarouselSpec`) + komponen tipis.
+- `src/videos/<Nama>/`: satu topik per folder. Nama dan isi file baku, lihat [docs/struktur-video.md](docs/struktur-video.md). Reels = `README.md`, `<Nama>Video.tsx`, `config.ts`, `scenes.tsx`, `parts.tsx`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`. Carousel = `carousel.content.ts` + `<Nama>Carousel.tsx`.
 - `src/carousel/CarouselDeck.tsx`: renderer carousel. `src/content/`: tipe dan validator konten.
 - `src/assets/`: karakter, latar, kamera, layar. `src/themes/`: tema GH.
 

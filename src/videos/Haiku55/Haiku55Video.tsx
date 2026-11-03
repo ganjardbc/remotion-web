@@ -64,9 +64,10 @@ const MUSIC_VOLUME = 0.07;
 
 const Sound: React.FC = () => (
   <>
-    {SCENE_IDS.map((id, i) => (
-      <Audio key={id} src={VO[id].file} from={SCENE_START[i] + LEAD} volume={1} />
-    ))}
+    {SCENE_IDS.map((id, i) => {
+      const file = VO[id].file;
+      return file ? <Audio key={id} src={file} from={SCENE_START[i] + LEAD} volume={1} /> : null;
+    })}
     {SCENE_START.map((start, i) => (
       <Audio key={`whoosh-${i}`} src={staticFile("sfx/synth/whoosh.wav")} from={start} volume={0.3} />
     ))}

@@ -2,7 +2,7 @@ import type React from "react";
 import { Interactive } from "remotion";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
-import { Enter } from "../OpenCode9Router/parts";
+import { Enter } from "../../motion";
 import { REPO_URL } from "./config";
 import { Accent, Bar, Card, Chip, Frame, GithubMark, Grow, Headline, PointTag, cue, useCue } from "./parts";
 

@@ -3,7 +3,7 @@ import { Easing, interpolate, useCurrentFrame } from "remotion";
 import { Backdrop } from "../../Backdrop";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
-import { Enter } from "../OpenCode9Router/parts";
+import { Enter } from "../../motion";
 import { at, FPS, LEAD, SCENE_IDS, type SceneId } from "./config";
 
 type IconName = React.ComponentProps<typeof Icon>["name"];

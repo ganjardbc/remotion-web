@@ -5,7 +5,7 @@
 - `config.ts`: id scene, durasi scene dari audio, `when(scene, frasa)` = perkiraan waktu cue visual dari posisi frasa di teks ucapan.
 - `visuals.tsx`, `parts.tsx`: visual tiap scene dan komponen bersama. `KurikulumAIEngineerGratis542PelajaranDarVideo.tsx`: Series scene, karakter, footer, suara.
 - `scenes.ts`: data scene (latar, waktu, pemeran, teks layar, baris ucapan, `note` = arahan visual dari draft).
-- `voiceover.ts`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`: voice over ElevenLabs. Suara per karakter untuk video ini di `voiceover.ts`; daftar suara dan model di `DraftKit/voices.json`.
+- `voiceover.ts`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`: voice over ElevenLabs. Suara per karakter untuk video ini di `voiceover.ts`; daftar suara dan model di `src/draft-kit/voices.json`.
 
 ## Langkah
 

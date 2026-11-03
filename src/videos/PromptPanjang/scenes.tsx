@@ -1,7 +1,7 @@
 import type React from "react";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
-import { Enter } from "../OpenCode9Router/parts";
+import { Enter } from "../../motion";
 import { Accent, Bar, Card, Chip, Frame, Grow, Headline, cue, useCue } from "./parts";
 
 // Cue ditulis sebagai frasa dari SPOKEN (config.ts); `when` mengubahnya ke detik sejak suara mulai.
