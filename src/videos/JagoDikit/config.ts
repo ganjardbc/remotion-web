@@ -10,7 +10,10 @@ export const META: DraftMeta = {
   delivery: "dialog",
   style: "rig",
   subtitle: "caption",
-  sceneSfx: false,
+  // Variasi: pop pendek tiap giliran bicara ganti, whoosh lebih rendah saat latar berganti, dan gerak diam halus pada karakter.
+  speakerPop: true,
+  whooshVariants: true,
+  idleMotion: true,
 };
 
 // Voiceover dialog: eleven_v4 membaca tag emosi `[tag]` per baris (lihat scenes.ts); speed bawaan model, tidak dipercepat.
