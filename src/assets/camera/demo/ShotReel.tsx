@@ -206,7 +206,7 @@ export const ShotReel: React.FC = () => {
   const d = D * fps;
   return (
     <AbsoluteFill style={{ background: "#000" }}>
-      <Sequence from={0} durationInFrames={a}>
+      <Sequence  durationInFrames={a}>
         <PartA />
       </Sequence>
       <Sequence from={a} durationInFrames={b}>
