@@ -16,7 +16,7 @@
 3. Voice over: `node scripts/vo-lines.mjs --video __NAME__` menampilkan baris dan statusnya (`--pending` = JSON yang perlu di-generate). Generate tiap baris lewat ElevenLabs API (`ELEVENLABS_API_KEY` di `.env.local`) ke `out/vo-raw/<id>.mp3`, lalu:
 
    ```bash
-   python3 scripts/vo-process.py <id> out/vo-raw/<id>.mp3 --hash <hash> --video __NAME__
+   node scripts/vo-process.mjs <id> out/vo-raw/<id>.mp3 --hash <hash> --video __NAME__
    ```
 
    Hasilnya masuk ke `voiceover/` di folder ini dan `voiceover-files.ts` dibuat ulang otomatis. Suara dan model ada di `voiceover.ts`; mengubahnya mengubah hash semua baris.

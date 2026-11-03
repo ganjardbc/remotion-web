@@ -1,4 +1,4 @@
-// Dibuat otomatis oleh scripts/vo-process.py. Jangan diubah tangan.
+// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.
 import f0 from "./voiceover/dartmouth-01.mp3";
 import f1 from "./voiceover/dartmouth-02.mp3";
 import f2 from "./voiceover/dartmouth-03.mp3";

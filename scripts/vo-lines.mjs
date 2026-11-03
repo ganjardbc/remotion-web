@@ -3,7 +3,7 @@
 //   node scripts/vo-lines.mjs [--video VueTutorial]            tabel semua baris (id, suara, hash, status)
 //   node scripts/vo-lines.mjs [--video VueTutorial] --pending  JSON baris yang perlu di-generate (belum ada atau teks/suara/model berubah)
 // Hash = sha1(voiceId | model | teksTTS), 12 huruf pertama. Dipakai Claude untuk memutuskan baris mana yang di-generate
-// ulang, supaya kredit tidak terbuang, dan oleh vo-process.py untuk mencatat hasilnya.
+// ulang, supaya kredit tidak terbuang, dan oleh vo-process.mjs untuk mencatat hasilnya.
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, rmSync } from "node:fs";
@@ -19,7 +19,7 @@ mkdirSync(tmp, { recursive: true });
 const out = join(tmp, "lines.mjs");
 
 await build({
-  // Video dialog berpola VueTutorial memakai scenes.tsx; video dari draft (DraftKit) memakai scenes.ts.
+  // Video dialog berpola VueTutorial memakai scenes.tsx; video dari draft (src/draft-kit) memakai scenes.ts.
   entryPoints: [join(dir, existsSync(join(dir, "scenes.tsx")) ? "scenes.tsx" : "scenes.ts")],
   bundle: true,
   platform: "node",

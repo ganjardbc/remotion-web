@@ -3,7 +3,7 @@
 //   node scripts/vo-generate.mjs --video <Video> [--yes]
 // Daftar baris dari `scripts/vo-lines.mjs --pending`. Sebelum memanggil API, jumlah baris dan huruf (≈ kredit)
 // ditampilkan dan diminta konfirmasi; --yes melewatinya. Tiap klip mentah disimpan di out/vo-raw/<Video>/<id>.mp3,
-// lalu diolah scripts/vo-process.py ke folder video. Butuh ELEVENLABS_API_KEY (environment atau .env.local).
+// lalu diolah scripts/vo-process.mjs ke folder video. Butuh ELEVENLABS_API_KEY (environment atau .env.local).
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -75,7 +75,7 @@ for (const r of pending) {
   }
   const raw = join(rawDir, `${r.id}.mp3`);
   writeFileSync(raw, Buffer.from(await res.arrayBuffer()));
-  execFileSync("python3", [join(root, "scripts/vo-process.py"), r.id, raw, "--hash", r.hash, "--video", video], { stdio: "inherit" });
+  execFileSync("node", [join(root, "scripts/vo-process.mjs"), r.id, raw, "--hash", r.hash, "--video", video], { stdio: "inherit" });
   done += 1;
 }
 console.log(`${done} baris selesai. Durasi scene kini mengikuti audio; cek dengan Remotion Studio atau render.`);

@@ -40,9 +40,9 @@ write("scenes.tsx", fill(read(join(tpl, "scenes.tsx.tmpl"))));
 write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl"))));
 write("README.md", fill(read(join(tpl, "README.md.tmpl"))));
 
-// Voice over kosong; vo-process.py mengisinya.
+// Voice over kosong; vo-process.mjs mengisinya.
 write("voiceover.json", '{ "lines": {} }\n');
-write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.py. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');
+write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');
 
 // Daftarkan komposisi di src/Root.tsx.
 if (!process.argv.includes("--no-register")) {
