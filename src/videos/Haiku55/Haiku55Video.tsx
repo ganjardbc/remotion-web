@@ -8,6 +8,7 @@ import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import { ThemeProvider } from "../../themes";
 import { FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, type SceneId } from "./config";
 import { ClosingScene, ContextScene, CtaScene, FastScene, HookScene, IntroScene, RelateScene, TeaserScene, VolumeScene } from "./scenes";
+import type { VideoComposition } from "../../compositions";
 
 export { TOTAL_FRAMES };
 
@@ -102,4 +103,14 @@ export const Haiku55Video: React.FC<Props> = ({ theme }) => {
       <Sound />
     </ThemeProvider>
   );
+};
+
+export const COMPOSITION: VideoComposition = {
+  id: "Haiku55-Reels",
+  component: Haiku55Video,
+  durationInFrames: TOTAL_FRAMES,
+  fps: 30,
+  width: 1080,
+  height: 1920,
+  defaultProps: { theme: "gh" },
 };

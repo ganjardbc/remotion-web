@@ -4,6 +4,7 @@ import { linearTiming, TransitionSeries, type TransitionPresentation } from "@re
 import { fade } from "@remotion/transitions/fade";
 import { slide } from "@remotion/transitions/slide";
 import { wipe } from "@remotion/transitions/wipe";
+import type { VideoComposition } from "../../compositions";
 import { SceneRenderer } from "./SceneRenderer";
 import { SCENES, SCENE_FRAMES, TRANSITION_FRAMES, __UPPER___FRAMES } from "./scenes";
 import { __NAME__Sfx } from "./__NAME__Sfx";
@@ -37,3 +38,13 @@ export const __NAME__Video: React.FC = () => (
     <__NAME__Sfx />
   </AbsoluteFill>
 );
+
+export const COMPOSITION: VideoComposition = {
+  id: "__NAME__",
+  component: __NAME__Video,
+  durationInFrames: __UPPER___FRAMES,
+  fps: 30,
+  width: 1920,
+  height: 1080,
+  defaultProps: { theme: "gh" },
+};

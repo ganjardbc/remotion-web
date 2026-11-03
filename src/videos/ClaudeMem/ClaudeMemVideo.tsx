@@ -8,6 +8,7 @@ import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import { ThemeProvider } from "../../themes";
 import { at, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, type SceneId } from "./config";
 import { CatatScene, ClosingScene, CtaScene, HookScene, IngatScene, PasangScene, RepoScene, SimpanScene } from "./scenes";
+import type { VideoComposition } from "../../compositions";
 
 export { TOTAL_FRAMES };
 
@@ -104,4 +105,14 @@ export const ClaudeMemVideo: React.FC<Props> = ({ theme }) => {
       <Sound />
     </ThemeProvider>
   );
+};
+
+export const COMPOSITION: VideoComposition = {
+  id: "ClaudeMem-Reels",
+  component: ClaudeMemVideo,
+  durationInFrames: TOTAL_FRAMES,
+  fps: 30,
+  width: 1080,
+  height: 1920,
+  defaultProps: { theme: "gh" },
 };

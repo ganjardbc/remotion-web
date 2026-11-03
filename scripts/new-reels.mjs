@@ -1,10 +1,11 @@
 #!/usr/bin/env node
 // Membuat folder Reels baru (Format A/C, narator Claude Code) sesuai docs/struktur-video.md.
-//   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta] [--no-register]
+//   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]
 // Menulis README.md, config.ts, scenes.tsx, <Nama>Video.tsx dari scripts/templates/reels, menyalin parts.tsx dari
-// src/videos/PromptPanjang (selalu versi terbaru), menyiapkan voiceover.json kosong dan voiceover-files.ts, lalu
-// mendaftarkan komposisi <Nama>-Reels di src/Root.tsx. Setelah itu: isi SPOKEN dan CAPTION di config.ts, isi scene di
-// scenes.tsx, dan ikuti README.md di folder baru. Untuk video dialog (Ganjar dan Claude) pakai scripts/new-video.mjs.
+// src/videos/PromptPanjang (selalu versi terbaru), menyiapkan voiceover.json kosong dan voiceover-files.ts.
+// Komposisi <Nama>-Reels terdaftar otomatis dari export COMPOSITION di <Nama>Video.tsx (src/compositions.ts), jadi
+// src/Root.tsx tidak perlu diubah. Setelah itu: isi SPOKEN dan CAPTION di config.ts, isi scene di scenes.tsx, dan
+// ikuti README.md di folder baru. Untuk video dialog (Ganjar dan Claude) pakai scripts/new-video.mjs.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -16,7 +17,7 @@ const sceneArg = si >= 0 ? argv[si + 1] : "hook,relate,shift,urgency,closing,cta
 const args = argv.filter((a, i) => !a.startsWith("--") && !(si >= 0 && i === si + 1));
 const [name, title] = args;
 
-const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta] [--no-register]';
+const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]';
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
@@ -74,40 +75,5 @@ write("parts.tsx", read(join(root, "src/videos/PromptPanjang/parts.tsx")));
 // Voiceover kosong; vo-process.mjs mengisinya.
 write("voiceover.json", '{ "lines": {} }\n');
 write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');
-
-// Daftarkan komposisi di src/Root.tsx.
-if (!process.argv.includes("--no-register")) {
-  const rootFile = join(root, "src/Root.tsx");
-  const lines = read(rootFile).split("\n");
-  if (lines.some((l) => l.includes(`id="${name}-Reels"`))) {
-    console.log(`Root.tsx sudah punya komposisi ${name}-Reels, dilewati.`);
-  } else {
-    const importLine = `import { ${name}Video, TOTAL_FRAMES as ${upper}_FRAMES } from "./videos/${name}/${name}Video";`;
-    let lastImport = -1;
-    lines.forEach((l, i) => {
-      if (/^import .* from ".*";$/.test(l) || /^\} from ".*";$/.test(l)) lastImport = i;
-    });
-    lines.splice(lastImport + 1, 0, importLine);
-    const comp = [
-      "      <Composition",
-      `        id="${name}-Reels"`,
-      `        component={${name}Video}`,
-      `        durationInFrames={${upper}_FRAMES}`,
-      "        fps={30}",
-      "        width={1080}",
-      "        height={1920}",
-      '        defaultProps={{ theme: "gh" }}',
-      "      />",
-    ];
-    const at = lines.findIndex((l) => l.includes('<Folder name="Characters">'));
-    const closing = lines.lastIndexOf("    </>");
-    if (at < 0 && closing < 0) {
-      console.error("Titik sisip di Root.tsx tidak ditemukan; daftarkan komposisi secara manual.");
-    } else {
-      lines.splice(at >= 0 ? at : closing, 0, ...comp);
-      writeFileSync(rootFile, lines.join("\n"));
-    }
-  }
-}
 
 console.log(`Dibuat src/videos/${name} (${ids.length} scene). Berikutnya: isi SPOKEN dan CAPTION di config.ts, edit scenes.tsx, lihat src/videos/${name}/README.md.`);

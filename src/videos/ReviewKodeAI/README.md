@@ -1,6 +1,6 @@
 # ReviewKodeAI
 
-"Review Kode AI Kamu Bohong": reels 9:16 (1080x1920, 30 fps), Format A (opini), 6 scene, komposisi `ReviewKodeAI-Reels` di `src/Root.tsx`. Satu konten tuntas. Alur: Hook, Relate, Shift, Urgency (kalimat "ini baru bagian pertama"), Closing, CTA. Sudut pandang: tes hijau cuma membuktikan AI paham tesnya, bukan paham masalahmu, karena kode dan tesnya ditulis AI yang sama. Karakter narator: Claude Code (rig 2D). Pola file sama dengan `ClaudeMem`.
+"Review Kode AI Kamu Bohong": reels 9:16 (1080x1920, 30 fps), Format A (opini), 6 scene, komposisi `ReviewKodeAI-Reels` (terdaftar otomatis lewat `COMPOSITION`). Satu konten tuntas. Alur: Hook, Relate, Shift, Urgency (kalimat "ini baru bagian pertama"), Closing, CTA. Sudut pandang: tes hijau cuma membuktikan AI paham tesnya, bukan paham masalahmu, karena kode dan tesnya ditulis AI yang sama. Karakter narator: Claude Code (rig 2D). Pola file sama dengan `ClaudeMem`.
 
 - `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`.
 - `scenes.tsx`: enam scene. Cue ditulis sebagai frasa dari `SPOKEN`.

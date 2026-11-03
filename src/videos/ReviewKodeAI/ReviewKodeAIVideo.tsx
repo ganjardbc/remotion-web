@@ -8,6 +8,7 @@ import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import { ThemeProvider } from "../../themes";
 import { at, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, type SceneId } from "./config";
 import { ClosingScene, CtaScene, HookScene, RelateScene, ShiftScene, UrgencyScene } from "./scenes";
+import type { VideoComposition } from "../../compositions";
 
 export { TOTAL_FRAMES };
 
@@ -98,4 +99,14 @@ export const ReviewKodeAIVideo: React.FC<Props> = ({ theme }) => {
       <Sound />
     </ThemeProvider>
   );
+};
+
+export const COMPOSITION: VideoComposition = {
+  id: "ReviewKodeAI-Reels",
+  component: ReviewKodeAIVideo,
+  durationInFrames: TOTAL_FRAMES,
+  fps: 30,
+  width: 1080,
+  height: 1920,
+  defaultProps: { theme: "gh" },
 };

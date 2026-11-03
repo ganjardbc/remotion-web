@@ -1,4 +1,5 @@
 import type React from "react";
+import type { VideoComposition } from "../../compositions";
 import { CarouselDeck } from "../../carousel/CarouselDeck";
 import { CAROUSEL } from "./carousel.content";
 
@@ -6,3 +7,13 @@ import { CAROUSEL } from "./carousel.content";
 export const __UPPER___CAROUSEL_SLIDES = CAROUSEL.slides.length;
 
 export const __NAME__Carousel: React.FC<{ readonly theme: string }> = ({ theme }) => <CarouselDeck theme={theme} spec={CAROUSEL} />;
+
+export const COMPOSITION: VideoComposition = {
+  id: "__NAME__-Carousel",
+  component: __NAME__Carousel,
+  durationInFrames: __UPPER___CAROUSEL_SLIDES,
+  fps: 1,
+  width: 1080,
+  height: 1350,
+  defaultProps: { theme: "gh" },
+};

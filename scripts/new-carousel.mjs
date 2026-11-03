@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 // Membuat folder carousel baru (Format B opini atau C tutorial) sesuai docs/struktur-video.md dan docs/carousel.md.
-//   node scripts/new-carousel.mjs <NamaPascalCase> "<Judul carousel>" [--format B|C] [--variant quick-tips|walkthrough] [--no-register]
+//   node scripts/new-carousel.mjs <NamaPascalCase> "<Judul carousel>" [--format B|C] [--variant quick-tips|walkthrough]
 // Menulis carousel.content.ts (kerangka slide dengan teks TODO yang lolos validator) dan <Nama>Carousel.tsx dari
-// scripts/templates/carousel, lalu mendaftarkan komposisi <Nama>-Carousel di src/Root.tsx. Setelah itu: isi semua
-// baris TODO, `npm run validate` sampai bersih, dan render dengan `--sequence --image-format=png` (lihat docs/carousel.md).
+// scripts/templates/carousel, komposisi <Nama>-Carousel terdaftar otomatis dari export COMPOSITION
+// (src/compositions.ts), jadi src/Root.tsx tidak perlu diubah. Setelah itu: isi semua baris TODO, `npm run validate` sampai bersih, dan render dengan `--sequence --image-format=png` (lihat docs/carousel.md).
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -19,7 +19,7 @@ const [name, title] = argv.filter((a, i) => !a.startsWith("--") && !valueIdx.has
 const format = opt("--format", "B");
 const variant = opt("--variant", "quick-tips");
 
-const usage = 'Pakai: node scripts/new-carousel.mjs <NamaPascalCase> "<Judul carousel>" [--format B|C] [--variant quick-tips|walkthrough] [--no-register]';
+const usage = 'Pakai: node scripts/new-carousel.mjs <NamaPascalCase> "<Judul carousel>" [--format B|C] [--variant quick-tips|walkthrough]';
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
@@ -79,33 +79,5 @@ const read = (p) => readFileSync(p, "utf8");
 mkdirSync(dst, { recursive: true });
 writeFileSync(join(dst, "carousel.content.ts"), fill(read(join(tpl, "carousel.content.ts.tmpl"))));
 writeFileSync(join(dst, `${name}Carousel.tsx`), fill(read(join(tpl, "Carousel.tsx.tmpl"))));
-
-// Daftarkan komposisi di src/Root.tsx (setelah komposisi carousel terakhir, atau sebelum penutup).
-if (!process.argv.includes("--no-register")) {
-  const rootFile = join(root, "src/Root.tsx");
-  const lines = read(rootFile).split("\n");
-  if (lines.some((l) => l.includes(`id="${name}-Carousel"`))) {
-    console.log(`Root.tsx sudah punya komposisi ${name}-Carousel, dilewati.`);
-  } else {
-    const importLine = `import { ${upper}_CAROUSEL_SLIDES, ${name}Carousel } from "./videos/${name}/${name}Carousel";`;
-    let lastImport = -1;
-    lines.forEach((l, i) => {
-      if (/^import .* from ".*";$/.test(l) || /^\} from ".*";$/.test(l)) lastImport = i;
-    });
-    lines.splice(lastImport + 1, 0, importLine);
-    const comp = `      <Composition id="${name}-Carousel" component={${name}Carousel} durationInFrames={${upper}_CAROUSEL_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "gh" }} />`;
-    let lastCarousel = -1;
-    lines.forEach((l, i) => {
-      if (l.includes('-Carousel"')) lastCarousel = i;
-    });
-    const closing = lines.lastIndexOf("    </>");
-    if (lastCarousel < 0 && closing < 0) {
-      console.error("Titik sisip di Root.tsx tidak ditemukan; daftarkan komposisi secara manual.");
-    } else {
-      lines.splice(lastCarousel >= 0 ? lastCarousel + 1 : closing, 0, comp);
-      writeFileSync(rootFile, lines.join("\n"));
-    }
-  }
-}
 
 console.log(`Dibuat src/videos/${name} (Format ${format}${format === "C" ? `, ${variant}` : ""}, ${slides.length} slide). Berikutnya: isi baris TODO di carousel.content.ts, lalu npm run validate.`);

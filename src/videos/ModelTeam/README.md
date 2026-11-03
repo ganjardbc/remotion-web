@@ -1,6 +1,6 @@
 # ModelTeam
 
-"Menyusun Opus, Sonnet, dan Haiku dalam Satu Sistem": reels 9:16 (1080x1920, 30 fps), 9 scene, komposisi `ModelTeam-Reels` di `src/Root.tsx`. Karakter narator: Claude Code (rig 2D). Voiceover ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2.
+"Menyusun Opus, Sonnet, dan Haiku dalam Satu Sistem": reels 9:16 (1080x1920, 30 fps), 9 scene, komposisi `ModelTeam-Reels` (terdaftar otomatis lewat `COMPOSITION`). Karakter narator: Claude Code (rig 2D). Voiceover ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2.
 
 - `config.ts`: teks ucapan (`SPOKEN`), caption dan 5 hashtag, durasi scene mengikuti audio (`voiceover.json`), `at(scene, frasa)`, musik.
 - `scenes.tsx`: sembilan scene; cue dalam detik sejak suara mulai (timestamp kata ElevenLabs).

@@ -19,7 +19,7 @@ Acuan tampilan: sample **"Model Murah Bisa Menjebak"** (`src/videos/ModelMurah`)
 
 1. Tentukan jenis konten. Opini atau perspektif memakai **Format B**. Tutorial teknis memakai **Format C**, lalu tentukan sub-variannya (Quick Tips atau Full Walkthrough). Kalau ragu, tanyakan dulu.
 2. Setujui arah dulu: judul, struktur slide, dan sudut pandang. Baru setelah itu tulis isi lengkapnya.
-3. Buat foldernya dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis `carousel.content.ts` (kerangka slide berisi `TODO`) dan `<Nama>Carousel.tsx`, serta mendaftarkan komposisinya di `src/Root.tsx`. Jangan buat dengan tangan.
+3. Buat foldernya dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis `carousel.content.ts` (kerangka slide berisi `TODO`) dan `<Nama>Carousel.tsx`, komposisinya terdaftar otomatis (`COMPOSITION` di `<Nama>Carousel.tsx`). Jangan buat dengan tangan.
 4. Jalankan `npm run validate` sampai tidak ada ERROR dan tidak ada peringatan `TODO`.
 5. Render satu slide untuk dicek, lalu render semuanya.
 6. Buat alt text dengan `npm run alt`, lalu tempel bersama caption dan hashtag saat posting.
@@ -135,8 +135,16 @@ import { CAROUSEL } from "./carousel.content";
 export const NAMA_CAROUSEL_SLIDES = CAROUSEL.slides.length;
 export const NamaCarousel: React.FC<{ readonly theme: string }> = ({ theme }) => <CarouselDeck theme={theme} spec={CAROUSEL} />;
 
-// src/Root.tsx
-<Composition id="Nama-Carousel" component={NamaCarousel} durationInFrames={NAMA_CAROUSEL_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "gh" }} />
+// Terdaftar otomatis di Studio (src/compositions.ts); Root.tsx tidak perlu diubah.
+export const COMPOSITION: VideoComposition = {
+  id: "Nama-Carousel",
+  component: NamaCarousel,
+  durationInFrames: NAMA_CAROUSEL_SLIDES,
+  fps: 1,
+  width: 1080,
+  height: 1350,
+  defaultProps: { theme: "gh" },
+};
 ```
 
 Contoh lengkap: `src/videos/ModelMurah/`.

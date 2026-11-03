@@ -1,6 +1,6 @@
 # Haiku55
 
-"Haiku 5.5 Bukan Model Kelas Dua": reels 9:16 (1080x1920, 30 fps), 9 scene, komposisi `Haiku55-Reels` di `src/Root.tsx`. Karakter narator: Claude Code (rig 2D). Voiceover ElevenLabs, suara Nilasari.
+"Haiku 5.5 Bukan Model Kelas Dua": reels 9:16 (1080x1920, 30 fps), 9 scene, komposisi `Haiku55-Reels` (terdaftar otomatis lewat `COMPOSITION`). Karakter narator: Claude Code (rig 2D). Voiceover ElevenLabs, suara Nilasari.
 
 - `config.ts`: teks ucapan (`SPOKEN`, angka dieja), caption dan 5 hashtag, durasi scene mengikuti audio (`voiceover.json`), `at(scene, frasa)`, musik.
 - `scenes.tsx`: sembilan scene. Waktu cue dalam detik sejak suara mulai, diambil dari transkrip kata (ElevenLabs scribe).

@@ -20,7 +20,7 @@ Untuk Format A, id scene wajib memuat `hook`, `relate`, `shift`, `urgency`, `clo
 
 ## Reels: isi folder
 
-Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes hook,relate,shift,urgency,closing,cta]`. Jangan buat folder dengan tangan: skrip menulis semua berkas di bawah dengan nama yang benar, menyalin `parts.tsx` dari PromptPanjang, dan mendaftarkan `<Nama>-Reels` di `src/Root.tsx`. Template di `scripts/templates/reels`. Isi `SPOKEN` dan `CAPTION` di `config.ts` dan scene di `scenes.tsx` sesudahnya. Kalau `parts.tsx` PromptPanjang diperbarui, video baru otomatis memakai versi terbaru; video lama tidak ikut berubah.
+Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes hook,relate,shift,urgency,closing,cta]`. Jangan buat folder dengan tangan: skrip menulis semua berkas di bawah dengan nama yang benar, menyalin `parts.tsx` dari PromptPanjang, dan menulis `COMPOSITION` di `<Nama>Video.tsx` supaya terdaftar otomatis. Template di `scripts/templates/reels`. Isi `SPOKEN` dan `CAPTION` di `config.ts` dan scene di `scenes.tsx` sesudahnya. Kalau `parts.tsx` PromptPanjang diperbarui, video baru otomatis memakai versi terbaru; video lama tidak ikut berubah.
 
 ```
 src/videos/<Nama>/
@@ -104,7 +104,7 @@ src/videos/<Nama>/
 
 ## Carousel: isi folder
 
-Dibuat dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis kedua berkas di bawah (kerangka slide dengan teks `TODO` yang lolos validator), mendaftarkan `<Nama>-Carousel` di `src/Root.tsx`, dan menolak judul Format B di luar 4-8 kata. Template di `scripts/templates/carousel`. `npm run validate` memberi peringatan selama masih ada teks `TODO`.
+Dibuat dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis kedua berkas di bawah (kerangka slide dengan teks `TODO` yang lolos validator), dan menolak judul Format B di luar 4-8 kata. Template di `scripts/templates/carousel`. `npm run validate` memberi peringatan selama masih ada teks `TODO`.
 
 ```
 src/videos/<Nama>/
@@ -114,13 +114,29 @@ src/videos/<Nama>/
 
 Aturan isi dan tampilan ada di [carousel.md](carousel.md). Kalau satu topik punya Reels dan carousel, keduanya berbagi folder yang sama.
 
-## Mendaftarkan
+## Mendaftarkan komposisi (otomatis)
 
-Impor di `src/Root.tsx` sebagai `import { <Nama>Video, TOTAL_FRAMES as <NAMA>_FRAMES } from "./videos/<Nama>/<Nama>Video";`, lalu `<Composition id="<Nama>-Reels" ... fps={30} width={1080} height={1920} defaultProps={{ theme: "gh" }} />`.
+`src/Root.tsx` tidak perlu diubah. `src/compositions.ts` memindai `src/videos` dan mendaftarkan setiap folder yang punya `<Nama>Video.tsx` atau `<Nama>Carousel.tsx` (nama berkas harus sama dengan nama folder) dan mengekspor `COMPOSITION`:
+
+```ts
+import type { VideoComposition } from "../../compositions";
+
+export const COMPOSITION: VideoComposition = {
+  id: "<Nama>-Reels",          // carousel: "<Nama>-Carousel", video dialog: "<Nama>"
+  component: <Nama>Video,
+  durationInFrames: TOTAL_FRAMES,
+  fps: 30,                     // carousel: 1
+  width: 1080,                 // video dialog: 1920
+  height: 1920,                // carousel: 1350, video dialog: 1080
+  defaultProps: { theme: "gh" },
+};
+```
+
+Id kembar membuat Studio gagal dengan pesan "Id komposisi kembar". Skrip scaffold menulis blok ini otomatis. Satu-satunya pengecualian yang masih eksplisit di `Root.tsx` adalah folder `Characters` (CharacterRigDemo).
 
 ## Status kepatuhan (3 November 2026)
 
-`npm run validate:structure` memeriksa semua folder di atas (jenis folder, berkas wajib dan terlarang, impor lintas folder, ekspor `config.ts`, 5 hashtag, `BrandFooter` sekali, pendaftaran di `Root.tsx`, bagian README). Pengecualian ada di daftar `EXEMPT` di `scripts/validate-structure.mjs`.
+`npm run validate:structure` memeriksa semua folder di atas (jenis folder, berkas wajib dan terlarang, impor lintas folder, ekspor `config.ts`, 5 hashtag, `BrandFooter` sekali, `COMPOSITION` dengan id yang benar, bagian README). Pengecualian ada di daftar `EXEMPT` di `scripts/validate-structure.mjs`.
 
 Sesuai aturan: PromptPanjang, ClaudeMem, ReviewKodeAI, Haiku55, ModelTeam (Reels); ModelMurah, JuniorHilang (carousel); VueTutorial (dialog, kecuali nama Sfx di atas).
 

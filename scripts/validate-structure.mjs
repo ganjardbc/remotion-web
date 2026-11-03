@@ -9,7 +9,6 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const videos = join(root, "src/videos");
-const rootTsx = readFileSync(join(root, "src/Root.tsx"), "utf8");
 
 // Bukan konten video (prototipe karakter untuk Studio), jadi tidak mengikuti pola folder.
 const EXEMPT = new Set(["CharacterRigDemo"]);
@@ -60,9 +59,14 @@ const checkFolder = (name) => {
     if (re.test(read(join(dir, f)))) err(`${f}: impor dari folder video lain.`);
   }
 
-  const registered = (id, comp) => rootTsx.includes(`id="${id}"`) && rootTsx.includes(`./videos/${name}/${comp}`);
+  // Komposisi terdaftar otomatis (src/compositions.ts) dari export COMPOSITION di berkas utama folder.
+  const registered = (id, file) => {
+    if (!has(file)) return false;
+    const src = read(join(dir, file));
+    return /export const COMPOSITION\b/.test(src) && src.includes(`id: "${id}"`);
+  };
   if (type === "reels") {
-    if (!registered(`${name}-Reels`, `${name}Video`)) err(`komposisi ${name}-Reels belum terdaftar di src/Root.tsx.`);
+    if (!registered(`${name}-Reels`, `${name}Video.tsx`)) err(`${name}Video.tsx tidak mengekspor COMPOSITION dengan id "${name}-Reels".`);
     if (has("config.ts")) {
       const cfg = read(join(dir, "config.ts"));
       for (const e of CONFIG_EXPORTS) if (!new RegExp(`export (const|type) ${e}\\b`).test(cfg)) err(`config.ts tidak mengekspor ${e}.`);
@@ -95,10 +99,10 @@ const checkFolder = (name) => {
       for (const h of ["## Voiceover", "## Caption"]) if (!r.includes(h)) err(`README.md tidak punya bagian "${h}".`);
     }
   } else if (type === "carousel") {
-    if (!registered(`${name}-Carousel`, `${name}Carousel`)) err(`komposisi ${name}-Carousel belum terdaftar di src/Root.tsx.`);
+    if (!registered(`${name}-Carousel`, `${name}Carousel.tsx`)) err(`${name}Carousel.tsx tidak mengekspor COMPOSITION dengan id "${name}-Carousel".`);
     if (has(`${name}Carousel.tsx`) && !new RegExp(`export const ${name}Carousel\\b`).test(read(join(dir, `${name}Carousel.tsx`)))) err(`${name}Carousel.tsx tidak mengekspor ${name}Carousel.`);
-  } else if (!registered(name, `${name}Video`)) {
-    err(`komposisi ${name} belum terdaftar di src/Root.tsx.`);
+  } else if (!registered(name, `${name}Video.tsx`)) {
+    err(`${name}Video.tsx tidak mengekspor COMPOSITION dengan id "${name}".`);
   }
   return { type, errors, warns };
 };

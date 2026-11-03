@@ -7,6 +7,7 @@ import { wipe } from "@remotion/transitions/wipe";
 import { SceneRenderer } from "./SceneRenderer";
 import { SCENES, SCENE_FRAMES, TRANSITION_FRAMES, VUE_TUTORIAL_FRAMES } from "./scenes";
 import { VueSfx } from "./VueSfx";
+import type { VideoComposition } from "../../compositions";
 
 export { VUE_TUTORIAL_FRAMES };
 
@@ -44,3 +45,13 @@ export const VueTutorialVideo: React.FC = () => (
     <VueSfx />
   </AbsoluteFill>
 );
+
+export const COMPOSITION: VideoComposition = {
+  id: "VueTutorial",
+  component: VueTutorialVideo,
+  durationInFrames: VUE_TUTORIAL_FRAMES,
+  fps: 30,
+  width: 1920,
+  height: 1080,
+  defaultProps: { theme: "gh" },
+};

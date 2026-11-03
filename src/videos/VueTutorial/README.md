@@ -1,8 +1,8 @@
 # VueTutorial
 
-Membuat video baru berpola ini: `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"` (menyalin berkas umum dari folder ini, menulis `scenes.tsx` contoh 3 scene, menyiapkan voiceover kosong, dan mendaftarkan komposisi di `src/Root.tsx`). Template ada di `scripts/templates/dialog-video`.
+Membuat video baru berpola ini: `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"` (menyalin berkas umum dari folder ini, menulis `scenes.tsx` contoh 3 scene, menyiapkan voiceover kosong, komposisi terdaftar otomatis lewat `COMPOSITION`). Template ada di `scripts/templates/dialog-video`.
 
-"Cara Install & Menggunakan Framework Vue JS": 12 scene, 1920x1080, 30 fps, ±3 menit (5400 frame). Contoh video panjang dengan banyak bidikan kamera 2D. Komposisi `VueTutorial` di `src/Root.tsx`.
+"Cara Install & Menggunakan Framework Vue JS": 12 scene, 1920x1080, 30 fps, ±3 menit (5400 frame). Contoh video panjang dengan banyak bidikan kamera 2D. Komposisi `VueTutorial` terdaftar otomatis lewat `COMPOSITION`.
 
 ## Struktur
 

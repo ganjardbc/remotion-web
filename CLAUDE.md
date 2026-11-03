@@ -76,11 +76,11 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 ## Perintah
 - `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate + validate:structure. `npm run validate`: cek aturan konten carousel. `npm run validate:structure`: cek nama dan isi folder video terhadap `docs/struktur-video.md`.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: `--sequence --image-format=png`.
-- `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A) dan daftarkan di `Root.tsx`.
-- `node scripts/new-carousel.mjs <NamaPascalCase> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`: scaffold carousel baru (kerangka slide berisi TODO) dan daftarkan di `Root.tsx`.
+- `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A) (komposisi terdaftar otomatis).
+- `node scripts/new-carousel.mjs <NamaPascalCase> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`: scaffold carousel baru (kerangka slide berisi TODO) (komposisi terdaftar otomatis).
 - `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"`: scaffold video dialog berpola VueTutorial.
 - Voice over (ElevenLabs): `node scripts/vo-generate.mjs --video <Nama>` (meminta konfirmasi sebelum memanggil API).
-- Komposisi harus terdaftar di `src/Root.tsx` agar muncul di Studio.
+- Komposisi terdaftar otomatis dari `export const COMPOSITION` di `<Nama>Video.tsx` atau `<Nama>Carousel.tsx` (`src/compositions.ts`); `src/Root.tsx` tidak perlu diubah.
 
 ## Belum dikerjakan
 - Tampilan carousel belum pernah dirender di sandbox Claude (tanpa Chrome); ukuran sudah dicocokkan dengan sample dan muat menurut metrik Poppins. Cek dengan `remotion still`.

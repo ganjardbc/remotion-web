@@ -1,6 +1,6 @@
 # PromptPanjang
 
-"Prompt Panjang Itu Tanda Malas": reels 9:16 (1080x1920, 30 fps), Format A (opini), 7 scene, komposisi `PromptPanjang-Reels` di `src/Root.tsx`. **Satu konten tuntas, tanpa lanjutan:** kalimat urgency "ini baru bagian pertama" langsung dibayar di scene `cara` (tulis masalah dalam 2 kalimat), jadi tidak ada janji yang menggantung. Alur: Hook, Relate, Shift, Urgency, Cara, Closing, CTA. Sudut pandang: prompt panjang sering menyembunyikan pikiran yang belum jernih. Karakter narator: Claude Code (rig 2D). Pola file sama dengan `ClaudeMem` dan `ReviewKodeAI`.
+"Prompt Panjang Itu Tanda Malas": reels 9:16 (1080x1920, 30 fps), Format A (opini), 7 scene, komposisi `PromptPanjang-Reels` (terdaftar otomatis lewat `COMPOSITION`). **Satu konten tuntas, tanpa lanjutan:** kalimat urgency "ini baru bagian pertama" langsung dibayar di scene `cara` (tulis masalah dalam 2 kalimat), jadi tidak ada janji yang menggantung. Alur: Hook, Relate, Shift, Urgency, Cara, Closing, CTA. Sudut pandang: prompt panjang sering menyembunyikan pikiran yang belum jernih. Karakter narator: Claude Code (rig 2D). Pola file sama dengan `ClaudeMem` dan `ReviewKodeAI`.
 
 - `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`.
 - `scenes.tsx`: tujuh scene. Cue ditulis sebagai frasa dari `SPOKEN`.

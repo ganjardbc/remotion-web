@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 // Membuat video baru berpola VueTutorial (dialog Ganjar dan Claude, kamera 2D, sisipan layar, SFX, musik, voice over).
-//   node scripts/new-video.mjs <NamaPascalCase> "<Judul video>" [--no-register]
+//   node scripts/new-video.mjs <NamaPascalCase> "<Judul video>"
 // Menyalin berkas umum dari src/videos/VueTutorial (selalu versi terbaru), menulis scenes.tsx contoh 3 scene dari
-// scripts/templates/dialog-video, menyiapkan voiceover kosong, dan mendaftarkan komposisinya di src/Root.tsx.
+// scripts/templates/dialog-video, menyiapkan voiceover kosong. Komposisi <Nama> terdaftar otomatis dari export COMPOSITION di <Nama>Video.tsx
+// (src/compositions.ts), jadi src/Root.tsx tidak perlu diubah.
 // Setelah itu: edit scenes.tsx, lalu ikuti README.md di folder video baru.
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -12,7 +13,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const args = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const [name, title] = args;
 if (!name || !title || !/^[A-Z][A-Za-z0-9]*$/.test(name)) {
-  console.error('Pakai: node scripts/new-video.mjs <NamaPascalCase> "<Judul video>" [--no-register]');
+  console.error('Pakai: node scripts/new-video.mjs <NamaPascalCase> "<Judul video>"');
   process.exit(1);
 }
 const upper = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
@@ -43,28 +44,5 @@ write("README.md", fill(read(join(tpl, "README.md.tmpl"))));
 // Voice over kosong; vo-process.mjs mengisinya.
 write("voiceover.json", '{ "lines": {} }\n');
 write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');
-
-// Daftarkan komposisi di src/Root.tsx.
-if (!process.argv.includes("--no-register")) {
-  const rootFile = join(root, "src/Root.tsx");
-  const lines = read(rootFile).split("\n");
-  if (lines.some((l) => l.includes(`id="${name}"`))) {
-    console.log(`Root.tsx sudah punya komposisi ${name}, dilewati.`);
-  } else {
-    const importLine = `import { ${upper}_FRAMES, ${name}Video } from "./videos/${name}/${name}Video";`;
-    let lastImport = -1;
-    lines.forEach((l, i) => {
-      if (/^import .* from ".*";$/.test(l) || /^\} from ".*";$/.test(l)) lastImport = i;
-    });
-    lines.splice(lastImport + 1, 0, importLine);
-    const closing = lines.lastIndexOf("    </>");
-    if (closing < 0) {
-      console.error("Penutup </> di Root.tsx tidak ditemukan; daftarkan komposisi secara manual.");
-    } else {
-      lines.splice(closing, 0, `      <Composition id="${name}" component={${name}Video} durationInFrames={${upper}_FRAMES} fps={30} width={1920} height={1080} />`);
-      writeFileSync(rootFile, lines.join("\n"));
-    }
-  }
-}
 
 console.log(`Dibuat src/videos/${name}. Berikutnya: edit scenes.tsx, lalu lihat src/videos/${name}/README.md.`);
