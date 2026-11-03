@@ -104,6 +104,8 @@ src/videos/<Nama>/
 
 ## Carousel: isi folder
 
+Dibuat dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis kedua berkas di bawah (kerangka slide dengan teks `TODO` yang lolos validator), mendaftarkan `<Nama>-Carousel` di `src/Root.tsx`, dan menolak judul Format B di luar 4-8 kata. Template di `scripts/templates/carousel`. `npm run validate` memberi peringatan selama masih ada teks `TODO`.
+
 ```
 src/videos/<Nama>/
   carousel.content.ts     ekspor CAROUSEL: CarouselSpec

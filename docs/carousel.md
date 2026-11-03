@@ -19,8 +19,8 @@ Acuan tampilan: sample **"Model Murah Bisa Menjebak"** (`src/videos/ModelMurah`)
 
 1. Tentukan jenis konten. Opini atau perspektif memakai **Format B**. Tutorial teknis memakai **Format C**, lalu tentukan sub-variannya (Quick Tips atau Full Walkthrough). Kalau ragu, tanyakan dulu.
 2. Setujui arah dulu: judul, struktur slide, dan sudut pandang. Baru setelah itu tulis isi lengkapnya.
-3. Buat folder `src/videos/<Nama>/` berisi `carousel.content.ts` dan `<Nama>Carousel.tsx`, lalu daftarkan komposisinya di `src/Root.tsx`.
-4. Jalankan `npm run validate` sampai tidak ada ERROR.
+3. Buat foldernya dengan `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`. Skrip menulis `carousel.content.ts` (kerangka slide berisi `TODO`) dan `<Nama>Carousel.tsx`, serta mendaftarkan komposisinya di `src/Root.tsx`. Jangan buat dengan tangan.
+4. Jalankan `npm run validate` sampai tidak ada ERROR dan tidak ada peringatan `TODO`.
 5. Render satu slide untuk dicek, lalu render semuanya.
 6. Buat alt text dengan `npm run alt`, lalu tempel bersama caption dan hashtag saat posting.
 

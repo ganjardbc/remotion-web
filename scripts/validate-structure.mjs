@@ -104,7 +104,12 @@ const checkFolder = (name) => {
 };
 
 const only = process.argv.slice(2);
-const names = (only.length ? only : readdirSync(videos)).filter((n) => statSync(join(videos, n)).isDirectory() && existsSync(join(videos, n)));
+const unknown = only.filter((n) => !existsSync(join(videos, n)));
+if (unknown.length) {
+  console.error(`folder tidak ada: ${unknown.map((n) => `src/videos/${n}`).join(", ")}`);
+  process.exit(1);
+}
+const names = (only.length ? only : readdirSync(videos)).filter((n) => statSync(join(videos, n)).isDirectory());
 let bad = 0;
 for (const name of names) {
   if (EXEMPT.has(name)) {

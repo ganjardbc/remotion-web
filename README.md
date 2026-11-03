@@ -25,6 +25,7 @@ Repo ini hanya untuk akun personal branding. Konten edukasi ada di `edumotion-we
 | `npx remotion render src/index.ts <Id> out/<Nama>.mp4` | Render Reels |
 | `npx remotion render src/index.ts <Id> out/<Nama> --sequence --image-format=png` | Render carousel |
 | `node scripts/new-reels.mjs <Nama> "<Judul>"` | Scaffold Reels baru (narator Claude Code) |
+| `node scripts/new-carousel.mjs <Nama> "<Judul>"` | Scaffold carousel baru (Format B atau C) |
 | `node scripts/new-video.mjs <Nama> "<Judul>"` | Scaffold video dialog baru |
 | `node scripts/vo-generate.mjs --video <Nama>` | Voice over ElevenLabs |
 

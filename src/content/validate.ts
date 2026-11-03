@@ -31,6 +31,7 @@ export const RULES = {
 const INFORMAL = /\b(gue|gua|gw|lo|loe|lu|elo|elu)\b/i;
 const FORMAL = /\banda\b/i;
 const BULLET = /^\s*([-*•]|\d+[.)])\s/;
+const TODO = /\bTODO\b/;
 const GENERIC_CTA = /(tips|konten) lainnya|follow untuk tips|ikuti untuk tips/i;
 
 const words = (s: string): number => s.trim().split(/\s+/).filter(Boolean).length;
@@ -141,6 +142,7 @@ export const validateCarousel = (spec: CarouselSpec): Issue[] => {
     }
 
     slideText(s).forEach((t) => {
+      if (TODO.test(t)) warn(at, `masih ada teks TODO: "${t.slice(0, 40)}…"`);
       if (INFORMAL.test(t)) err(at, `pakai "aku-kamu", bukan gue/lo: "${t.slice(0, 40)}…"`);
       if (FORMAL.test(t)) warn(at, `"Anda" tidak konsisten dengan aku-kamu: "${t.slice(0, 40)}…"`);
     });
@@ -148,6 +150,7 @@ export const validateCarousel = (spec: CarouselSpec): Issue[] => {
 
   // Caption dan hashtag
   if (!spec.caption.trim()) err("caption", "caption kosong.");
+  if (TODO.test(spec.caption)) warn("caption", "caption masih berisi TODO.");
   if (spec.caption.length > RULES.captionWarnChars) warn("caption", `caption ${spec.caption.length} karakter; usahakan pendek (<= ${RULES.captionWarnChars}).`);
   if (INFORMAL.test(spec.caption)) err("caption", "pakai aku-kamu, bukan gue/lo.");
   if (spec.hashtags.length !== RULES.hashtags) err("hashtags", `tepat ${RULES.hashtags} hashtag, sekarang ${spec.hashtags.length}.`);
