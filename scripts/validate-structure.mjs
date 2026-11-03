@@ -42,7 +42,6 @@ const TAIL = 0.6;
 
 const checkDialogScenes = (sc, err, warns) => {
   const starts = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)];
-  let total = 0;
   starts.forEach((m, i) => {
     const id = m[1];
     const block = sc.slice(m.index, i + 1 < starts.length ? starts[i + 1].index : sc.length);
@@ -56,7 +55,6 @@ const checkDialogScenes = (sc, err, warns) => {
     });
     const end = lines.reduce((mx, l) => Math.max(mx, l.from + l.dur), 0);
     const length = Math.max(seconds, end + TAIL);
-    total += length;
     for (const e of block.matchAll(/expressions:\s*\{([^}]*)\}/g))
       for (const [, who, ex] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!EXPRESSIONS.includes(ex)) err(`scene ${id}: ekspresi "${ex}" (${who}) tidak ada di kosakata.`);
     for (const e of block.matchAll(/motions:\s*\{([^}]*)\}/g))
@@ -79,7 +77,6 @@ const checkDialogScenes = (sc, err, warns) => {
     if (/TODO/.test(block)) warns.push(`scene ${id}: masih ada teks TODO.`);
     if (id === "hook" && lines.length !== 1) warns.push(`scene hook punya ${lines.length} baris ucapan; Format A: hook 1 kalimat dari satu baris.`);
   });
-  if (total && (total < 30 || total > 60)) warns.push(`perkiraan durasi ${total.toFixed(0)} dtk di luar 30-60 dtk (Format A); angka pasti menunggu voiceover.`);
 };
 
 const checkFolder = (name) => {

@@ -44,6 +44,18 @@ Wajib dibaca sebelum membuat atau mengubah folder `src/videos/<Nama>/`:
 
 @docs/struktur-video.md
 
+## Reels dialog (aturan dari JagoDikit)
+Mekanisme (field, nama opsi, format papan) ada di [docs/struktur-video.md](docs/struktur-video.md). Di bawah ini keputusan tampilan dan cara kerja yang berlaku untuk video dialog baru. Rujukan: `src/videos/JagoDikit`.
+- **Subtitle**: bawaan `META.subtitle: "caption"` (satu baris rata tengah, sorotan kata, penanda pembicara). Gaya `"chat"` (bubble dengan avatar dan riwayat) tetap dipertahankan untuk konten yang memang berupa percakapan; pilih per video.
+- **Cutaway fullscreen** tetap tersedia di mesin, tapi pakai seperlunya: layar penuh yang menutup karakter dihindari. Info singkat dipindah ke kartu teks atas (`screenExtra`, `@logError`, `@kodePrompt`) atau ke papan tulis (latar `kelas`).
+- **Kartu teks atas** rata tengah dan tegak, lebar mengikuti isi. Tanpa miring, tanpa rata kiri atau kanan, kecuali diminta.
+- **Satu sorotan oranye per layar.** Titik jatuh pakai merah, centang hijau, tanda tanya oranye gelap. Tidak menampilkan teks yang sama dua kali di dua tempat tanpa alasan.
+- **Latar bervariasi antar scene** (siang, sore, malam, ruang kerja, kelas), jangan satu latar sepanjang video.
+- **Gerak**: tanpa zoom kamera dan tanpa transisi antar scene (potong langsung), kecuali diminta. Ease-out `[0.2, 0.8, 0.2, 1]`, tanpa bounce, spring, atau shake. Whoosh antar scene menyala. Lengan rig pendek, jadi menunjuk memakai tongkat penunjuk (`tunjuk`).
+- **Durasi tidak dibatasi 60 detik.** Batas 30-60 detik hanya untuk Reels Format A narator. Video dialog boleh jauh lebih panjang (menit); validator tidak memberi peringatan durasi untuk Reels dialog.
+- **Voiceover dialog**: `eleven_v4` dengan tag emosi per baris dan tanpa `speed` (`eleven_v4` mengabaikannya). Klip yang terlalu cepat diperlambat dengan ffmpeg `atempo`, bukan generate ulang. Setelah voiceover jadi, ukur ulang waktu baris, kata (`wordTimes`), cutaway, dan sfx dari audio asli (`silencedetect`). Generate selalu minta konfirmasi jumlah huruf dan kredit.
+- **Cara kerja**: usulkan daftar ide dulu dan tunggu dipilih sebelum mengubah visual yang berdampak luas. Fitur mesin baru dibuat sebagai opsi per video (bawaan mati) dan wajib didokumentasikan di `docs/struktur-video.md`. Commit dipecah per scope: mesin (`src/dialog-reels`, validator, docs) dulu, lalu isi video.
+
 ## Format B: Carousel (Instagram/LinkedIn, 1080x1350)
 - 5-8 slide (boleh 9-10 untuk topik kaya). **Setiap slide wajib punya judul**, termasuk hook dan closing.
 - Slide hook: 1-2 kalimat. Slide isi: 1-4 kalimat, 1-3 paragraf.
