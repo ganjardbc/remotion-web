@@ -5,11 +5,12 @@ import { BrandFooter } from "../BrandFooter";
 import { getTheme, ThemeProvider, useTheme } from "../themes";
 import { Enter } from "../motion";
 import { Camera } from "./Camera";
+import { Decor } from "./Decor";
 import { Inserts } from "./Inserts";
 import { screenSegments, withHighlight } from "./screenText";
 import { floorOf, Stage } from "./Stage";
 import { ClaudeCode, claudeCodeSize, Ganjar, ganjarSize, Robot, robotSize } from "../assets/characters";
-import type { CharacterId, DraftLine, DraftMeta, DraftScene } from "./types";
+import type { CharacterId, DraftLine, DraftMeta, DraftScene, SceneTransition } from "./types";
 import { sceneFrames } from "./voiceover";
 
 // Reels 9:16 dari data (Reels dialog): tiap scene = latar dan pemeran (Stage), teks layar di atas, subtitle baris
@@ -101,6 +102,93 @@ const LogError: React.FC = () => {
   );
 };
 
+// Prompt dan kode di dalam kartu teks atas: prompt diketik, dua baris kode muncul, lalu "aplikasi jalan".
+const KodePrompt: React.FC = () => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const now = frame / fps;
+  const PROMPT = "bikin aplikasi kasir sederhana";
+  const clampOpts = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+  const p = EASE(interpolate(now, [0.3, 0.7], [0, 1], clampOpts));
+  const typed = Math.floor(interpolate(now, [0.5, 1.4], [0, PROMPT.length], clampOpts));
+  const line = (at: number): number => EASE(interpolate(now, [at, at + 0.3], [0, 1], clampOpts));
+  return (
+    <div
+      style={{
+        marginTop: 20,
+        padding: "16px 22px",
+        borderRadius: t.radius.card,
+        backgroundColor: t.code.bg,
+        border: `2px solid ${t.code.line}`,
+        textAlign: "left",
+        fontFamily: t.fonts.mono,
+        fontWeight: 400,
+        fontSize: 26,
+        lineHeight: 1.5,
+        textTransform: "none",
+        letterSpacing: 0,
+        color: t.code.text,
+        opacity: p,
+        transform: `translateY(${(1 - p) * 14}px)`,
+      }}
+    >
+      <div style={{ color: t.colors.primarySoft }}>
+        {"> "}
+        {PROMPT.slice(0, typed)}
+        <span style={{ opacity: typed < PROMPT.length || Math.floor(now * 2) % 2 === 0 ? 1 : 0 }}>▌</span>
+      </div>
+      <div style={{ opacity: line(1.6) }}>const total = hitung(items);</div>
+      <div style={{ opacity: line(1.8) }}>{"export function Kasir() { ... }"}</div>
+      <div style={{ opacity: line(2.1), color: t.colors.success }}>✓ aplikasi jalan</div>
+    </div>
+  );
+};
+
+// Teks kartu kata demi kata: tiap kata fade dan naik 14 px berurutan (0,1 dtk), dimulai 0,15 dtk setelah kartu muncul. `*frasa*` = sorotan.
+const KineticText: React.FC<{ readonly text: string; readonly mark: string }> = ({ text, mark }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const now = frame / fps;
+  const words = text.split("*").flatMap((part, pi) => part.split(" ").filter(Boolean).map((w) => ({ w, hl: pi % 2 === 1 })));
+  return (
+    <>
+      {words.map((x, i) => {
+        const p = EASE(interpolate(now, [0.15 + i * 0.1, 0.15 + i * 0.1 + 0.3], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+        return (
+          <span key={i} style={{ display: "inline-block", opacity: p, transform: `translateY(${(1 - p) * 14}px)`, color: x.hl ? mark : undefined, marginRight: i < words.length - 1 ? "0.28em" : 0 }}>
+            {x.w}
+          </span>
+        );
+      })}
+    </>
+  );
+};
+
+// Transisi masuk scene: `geser` (isi meluncur dari kanan), `wipe` (panel biru menyapu ke kanan), `flash` (kilat putih). Footer ada di luar.
+const SceneTransitionIn: React.FC<{ readonly kind?: SceneTransition; readonly children: React.ReactNode }> = ({ kind, children }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (!kind || kind === "potong") return <>{children}</>;
+  const sec = kind === "flash" ? 0.3 : 0.45;
+  const p = EASE(interpolate(frame / fps, [0, sec], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  if (kind === "geser") return <div style={{ position: "absolute", inset: 0, transform: `translateX(${(1 - p) * 140}px)`, opacity: 0.35 + 0.65 * p }}>{children}</div>;
+  if (kind === "wipe")
+    return (
+      <>
+        {children}
+        {p < 1 ? <div style={{ position: "absolute", top: 0, bottom: 0, left: `${p * 100}%`, width: "100%", backgroundColor: t.colors.primary }} /> : null}
+      </>
+    );
+  return (
+    <>
+      {children}
+      {p < 1 ? <div style={{ position: "absolute", inset: 0, backgroundColor: "#FFFFFF", opacity: 1 - p }} /> : null}
+    </>
+  );
+};
+
 const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
   const t = useTheme();
   const { fps } = useVideoConfig();
@@ -120,7 +208,7 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
         const end = i + 1 < segs.length ? Math.round(segs[i + 1].from * fps) : undefined;
         return (
           <Sequence key={`${i}-${seg.text}`} from={start} durationInFrames={end === undefined ? Infinity : end - start} layout="none">
-            <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: "center" }}>
+            <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: scene.cardAlign === "kiri" ? "flex-start" : scene.cardAlign === "kanan" ? "flex-end" : "center" }}>
               <Enter
                 name="Teks layar"
                 delay={i === 0 ? 4 : 0}
@@ -139,10 +227,13 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
                   letterSpacing: `${t.type.tracking}em`,
                   textTransform: t.type.headlineTransform,
                   color: fg,
+                  maxWidth: scene.cardAlign && scene.cardAlign !== "tengah" ? 820 : undefined,
+                  rotate: scene.cardTilt ? `${scene.cardTilt}deg` : undefined,
                 }}
               >
-                {withHighlight(seg.text.split("\n").filter((l) => !l.startsWith("@")).join(" "), mark)}
+                {scene.cardMotion === "kata" ? <KineticText text={seg.text.split("\n").filter((l) => !l.startsWith("@")).join(" ")} mark={mark} /> : withHighlight(seg.text.split("\n").filter((l) => !l.startsWith("@")).join(" "), mark)}
                 {seg.text.split("\n").includes("@logError") ? <LogError /> : null}
+                {seg.text.split("\n").includes("@kodePrompt") ? <KodePrompt /> : null}
                 {scene.screenExtra === "profilFollow" ? <ProfilFollow fg={fg} bg={bg} /> : null}
                 {scene.screenExtra === "infoKelas" ? <InfoKelas fg={fg} bg={bg} /> : null}
               </Enter>
@@ -388,22 +479,53 @@ const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke"
   );
 };
 
-const Sound: React.FC<{ readonly scenes: readonly DraftScene[]; readonly starts: readonly number[]; readonly total: number; readonly sceneSfx: boolean }> = ({ scenes, starts, total, sceneSfx }) => (
-  <>
-    {scenes.flatMap((s, i) =>
-      s.lines.flatMap((l) => (l.vo ? [<Audio key={l.id} src={l.vo} from={starts[i] + Math.round(l.from * FPS)} volume={1} />] : [])),
-    )}
-    {(sceneSfx ? starts : []).map((start, i) => (
-      <Audio key={`whoosh-${i}`} src={staticFile("sfx/synth/whoosh.wav")} from={start} volume={0.3} />
-    ))}
-    <Audio
-      src={staticFile(MUSIC_FILE)}
-      loop
-      loopVolumeCurveBehavior="extend"
-      volume={(f) => MUSIC_VOLUME * interpolate(f, [0, 45, total - 75, total], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
-    />
-  </>
-);
+const SFX_VOLUME = 0.5;
+const RAMP = 18;
+
+// Pengali volume musik per frame: tiap scene punya `music` (bawaan 1), berpindah halus (RAMP frame) di awal scene berikutnya.
+const musicLevel = (scenes: readonly DraftScene[], starts: readonly number[], total: number): ((f: number) => number) => {
+  const xs: number[] = [];
+  const ys: number[] = [];
+  scenes.forEach((s, i) => {
+    const level = s.music ?? 1;
+    xs.push(i === 0 ? 0 : starts[i] + RAMP, i + 1 < scenes.length ? starts[i + 1] : total);
+    ys.push(level, level);
+  });
+  return (f) => interpolate(f, xs, ys, { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
+};
+
+const Sound: React.FC<{ readonly scenes: readonly DraftScene[]; readonly starts: readonly number[]; readonly total: number; readonly meta: DraftMeta }> = ({ scenes, starts, total, meta }) => {
+  const level = musicLevel(scenes, starts, total);
+  return (
+    <>
+      {scenes.flatMap((s, i) =>
+        s.lines.flatMap((l) => (l.vo ? [<Audio key={l.id} src={l.vo} from={starts[i] + Math.round(l.from * FPS)} volume={1} />] : [])),
+      )}
+      {meta.speakerPop
+        ? scenes.flatMap((s, i) =>
+            s.lines.map((l, k) => (
+              <Audio key={`pop-${i}-${k}`} src={staticFile(`sfx/synth/${l.who === "ganjar" ? "pop_ganjar" : "pop_claude"}.wav`)} from={Math.max(0, starts[i] + Math.round(l.from * FPS) - 3)} volume={0.22} />
+            )),
+          )
+        : null}
+      {scenes.flatMap((s, i) =>
+        s.lines.flatMap((l, k) =>
+          (l.sfx ?? []).map((x, n) => <Audio key={`sfx-${i}-${k}-${n}`} src={staticFile(`sfx/synth/${x.name}.wav`)} from={starts[i] + Math.round((l.from + (x.at ?? 0)) * FPS)} volume={x.volume ?? SFX_VOLUME} />),
+        ),
+      )}
+      {(meta.sceneSfx !== false ? starts : []).map((start, i) => {
+        const low = meta.whooshVariants && i > 0 && scenes[i].backdrop !== scenes[i - 1].backdrop;
+        return <Audio key={`whoosh-${i}`} src={staticFile("sfx/synth/whoosh.wav")} from={start} volume={low ? 0.38 : 0.3} playbackRate={low ? 0.75 : 1} />;
+      })}
+      <Audio
+        src={staticFile(MUSIC_FILE)}
+        loop
+        loopVolumeCurveBehavior="extend"
+        volume={(f) => MUSIC_VOLUME * level(f) * interpolate(f, [0, 45, total - 75, total], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })}
+      />
+    </>
+  );
+};
 
 export const totalFrames = (scenes: readonly DraftScene[]): number => sceneFrames(scenes, FPS).reduce((a, b) => a + b, 0);
 
@@ -415,18 +537,21 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
       <Series>
         {scenes.map((s, i) => (
           <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
-            <Camera scene={s} mode={meta.camera ?? "diam"}>
-              <Stage scene={s} style={meta.style} />
-            </Camera>
-            <Tint tone={s.tone} />
-            <OnScreenText scene={s} />
-            <Inserts inserts={s.inserts ?? []} />
-            {meta.subtitle === "caption" ? <Caption scene={s} motion={meta.captionMotion ?? "karaoke"} /> : <Subtitle scene={s} history={scenes.slice(0, i).flatMap((x) => chatItems(x).map((c) => ({ ...c, from: -ENTER_SEC })))} />}
+            <SceneTransitionIn kind={s.transisi}>
+              <Camera scene={s} mode={meta.camera ?? "diam"}>
+                <Stage scene={s} style={meta.style} idle={meta.idleMotion} />
+              </Camera>
+              <Tint tone={s.tone} />
+              <Decor decor={s.decor ?? []} />
+              <OnScreenText scene={s} />
+              <Inserts inserts={s.inserts ?? []} />
+              {meta.subtitle === "caption" ? <Caption scene={s} motion={meta.captionMotion ?? "karaoke"} /> : <Subtitle scene={s} history={scenes.slice(0, i).flatMap((x) => chatItems(x).map((c) => ({ ...c, from: -ENTER_SEC })))} />}
+            </SceneTransitionIn>
           </Series.Sequence>
         ))}
       </Series>
       <BrandFooter theme={theme} handle={getTheme(theme).handle} />
-      <Sound scenes={scenes} starts={starts} total={totalFrames(scenes)} sceneSfx={meta.sceneSfx !== false} />
+      <Sound scenes={scenes} starts={starts} total={totalFrames(scenes)} meta={meta} />
     </ThemeProvider>
   );
 };

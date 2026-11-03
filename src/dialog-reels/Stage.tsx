@@ -93,7 +93,21 @@ const speakingAt = (lines: readonly DraftLine[], who: CharacterId, t: number): b
 // Ekspresi pada waktu t: pengaturan terakhir dari baris yang sudah mulai; bila belum ada, ekspresi dasar dari `cast`.
 const expressionAt = (lines: readonly DraftLine[], who: CharacterId, t: number, base: string): string => {
   let e = base;
-  for (const l of lines) if (l.from <= t && l.expressions?.[who]) e = l.expressions[who] as string;
+  let at = -1;
+  for (const l of lines) {
+    const ex = l.expressions?.[who];
+    if (ex && l.from <= t && l.from >= at) {
+      e = ex;
+      at = l.from;
+    }
+    for (const r of l.reactions ?? []) {
+      const when = l.from + r.at;
+      if (r.who === who && when <= t && when >= at) {
+        e = r.expression;
+        at = when;
+      }
+    }
+  }
   return e;
 };
 
@@ -131,11 +145,12 @@ const slide = (cue: CastCue, t: number): { readonly dx: number; readonly bob: nu
 
 type Actor = { readonly cue: CastCue; readonly x: number; readonly floor: number; readonly h: number; readonly clip?: boolean };
 
-const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; readonly style: VisualStyle; readonly xOf: (c: CharacterId) => number | undefined }> = ({
+const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; readonly style: VisualStyle; readonly xOf: (c: CharacterId) => number | undefined; readonly idle?: boolean }> = ({
   actor,
   scene,
   style,
   xOf,
+  idle,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -183,8 +198,11 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; r
   }
 
   const sl = actor.clip ? { dx: 0, bob: 0 } : slide(cue, t);
+  // Gerak diam: napas kecil dan miring tipis, fase beda per karakter supaya tidak serempak.
+  const phase = who === "ganjar" ? 0 : who === "robot" ? 1.7 : 3.1;
+  const idleStyle = idle ? { transformOrigin: "50% 100%", transform: `translateY(${Math.sin(t * 1.7 + phase) * 3}px) rotate(${Math.sin(t * 1.1 + phase) * 0.45}deg)` } : {};
   const placed = (
-    <div style={{ position: "absolute", left: x - s.width / 2 + sl.dx, top: s.top(floor) - bounce - sl.bob, filter: characterFilter(scene.time) }}>{body}</div>
+    <div style={{ position: "absolute", left: x - s.width / 2 + sl.dx, top: s.top(floor) - bounce - sl.bob, filter: characterFilter(scene.time), ...idleStyle }}>{body}</div>
   );
   if (!actor.clip) return placed;
   // Duduk di balik meja: badan bawah dipotong sedikit di bawah permukaan meja.
@@ -210,7 +228,7 @@ export const focusPoint = (scene: DraftScene, who: CharacterId): { readonly x: n
 export const floorOf = (scene: DraftScene): number =>
   scene.backdrop === "ruangKerja" ? PORTRAIT_ANCHORS.floorY : scene.backdrop === "luarRuang" ? PORTRAIT_OUTDOOR_ANCHORS.floorY : PORTRAIT_PLAIN_ANCHORS.floorY;
 
-export const Stage: React.FC<{ readonly scene: DraftScene; readonly style: VisualStyle }> = ({ scene, style }) => {
+export const Stage: React.FC<{ readonly scene: DraftScene; readonly style: VisualStyle; readonly idle?: boolean }> = ({ scene, style, idle }) => {
   const { time } = scene;
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -248,13 +266,13 @@ export const Stage: React.FC<{ readonly scene: DraftScene; readonly style: Visua
         <RoomBack time={time} />
         <Chair time={time} />
         {seated.map((a) => (
-          <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} />
+          <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} idle={idle} />
         ))}
         <Desk time={time} />
         <Laptop time={time} />
         <Mug />
         {standing.map((a) => (
-          <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} />
+          <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} idle={idle} />
         ))}
       </AbsoluteFill>
     );
@@ -277,7 +295,7 @@ export const Stage: React.FC<{ readonly scene: DraftScene; readonly style: Visua
       {scene.backdrop === "kelas" ? <Board scene={scene} /> : null}
       {style === "rig" && actors.map((a) => <ContactShadow key={`shadow-${a.cue.character}`} x={a.x + slide(a.cue, frame / fps).dx} y={floor} width={a.cue.character === "ganjar" ? 300 : 240} opacity={shadow} />)}
       {actors.map((a) => (
-        <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} />
+        <ActorView key={a.cue.character} actor={a} scene={scene} style={style} xOf={xOf} idle={idle} />
       ))}
     </AbsoluteFill>
   );

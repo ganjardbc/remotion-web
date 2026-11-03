@@ -50,6 +50,10 @@ export type DraftLine = {
   // Bila satu karakter tidak punya `motions` di baris mana pun, `motion` di `cast` dipakai (sekali, di baris pertamanya).
   readonly motions?: Readonly<Partial<Record<CharacterId, string>>>;
   readonly motionAt?: Readonly<Partial<Record<CharacterId, number>>>;
+  // Ekspresi karakter yang berganti di tengah baris (`at` = detik sejak baris mulai), mis. pendengar kaget sebelum kalimat selesai.
+  readonly reactions?: readonly { readonly who: CharacterId; readonly expression: string; readonly at: number }[];
+  // Efek suara di baris ini: `name` = nama berkas di public/sfx/synth (tanpa .wav), `at` = detik sejak baris mulai (bawaan 0).
+  readonly sfx?: readonly { readonly name: string; readonly at?: number; readonly volume?: number }[];
   readonly id?: string;
   readonly vo?: string;
 };
@@ -70,6 +74,13 @@ export type DraftInsert = {
 // Nada scene: terang (putih, bawaan), biru (wash biru primary, kartu teks biru), gelap (kartu teks gelap; latar gelap diatur lewat `time: "malam"`).
 export type SceneTone = "terang" | "biru" | "gelap";
 
+// Transisi masuk scene: `potong` (bawaan), `geser` (isi meluncur dari kanan), `wipe` (panel biru menyapu ke kanan), `flash` (kilat putih).
+export type SceneTransition = "potong" | "geser" | "wipe" | "flash";
+
+// Dekorasi di dinding antara kartu atas dan karakter (di bawah kartu, di atas panggung): `laptopApp` = jendela aplikasi
+// dengan UI yang menyala; `chipMengambang` = tiga chip kecil (kode, kelas, app) melayang pelan. `at` = detik sejak scene mulai.
+export type DraftDecor = { readonly kind: "laptopApp" | "chipMengambang"; readonly at: number };
+
 export type DraftScene = {
   readonly id: string;
   // Durasi minimal (detik). Scene memanjang bila voice over lebih panjang.
@@ -79,6 +90,14 @@ export type DraftScene = {
   readonly cast: readonly CastCue[];
   readonly onScreenText: string;
   readonly tone?: SceneTone;
+  // Transisi saat scene ini mulai (bawaan `potong`).
+  readonly transisi?: SceneTransition;
+  // Kartu teks layar atas: perataan (bawaan tengah), kemiringan dalam derajat (tampilan stiker), dan gerak teks (`kata` = muncul kata demi kata).
+  readonly cardAlign?: "tengah" | "kiri" | "kanan";
+  readonly cardTilt?: number;
+  readonly cardMotion?: "blok" | "kata";
+  // Pengali volume musik latar selama scene ini (bawaan 1), mis. 0.3 untuk meredam di urgency.
+  readonly music?: number;
   // Isi tambahan di kartu teks layar atas: `profilFollow` = logo, handle, dan tombol Follow yang berubah jadi "Following".
   // `infoKelas` = nama kelas, harga, dan tombol Daftar (ringkasan landing page kelas).
   readonly screenExtra?: "profilFollow" | "infoKelas";
@@ -87,6 +106,7 @@ export type DraftScene = {
   readonly zoom?: { readonly from: number; readonly to: number; readonly focus?: CharacterId };
   readonly lines: readonly DraftLine[];
   readonly inserts?: readonly DraftInsert[];
+  readonly decor?: readonly DraftDecor[];
   // Arahan visual dari draft, untuk dipoles tangan; tidak dirender.
   readonly note?: string;
 };
@@ -95,6 +115,12 @@ export type DraftScene = {
 export type SubtitleStyle = "chat" | "caption";
 
 export type DraftMeta = {
+  // Pop pendek tiap giliran bicara ganti (pop_ganjar untuk Ganjar, pop_claude untuk lainnya); bawaan mati.
+  readonly speakerPop?: boolean;
+  // Whoosh antar scene lebih rendah (laju 0,75) bila latar berganti; bawaan semua whoosh sama.
+  readonly whooshVariants?: boolean;
+  // Gerak diam halus (napas dan miring tipis) pada karakter; bawaan mati.
+  readonly idleMotion?: boolean;
   readonly title: string;
   readonly delivery: Delivery;
   readonly style: VisualStyle;
