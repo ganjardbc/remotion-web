@@ -1,7 +1,7 @@
 // Kurikulum AI Engineer Gratis (reels 9:16, 30 fps). Durasi scene mengikuti audio voiceover (voiceover.json),
 // teks ucapan dari `spoken` di scenes.ts. Voiceover tidak diubah; waktu cue visual diperkirakan dari posisi frasa
 // di dalam teks ucapan (proporsional terhadap durasi audio).
-import { lineId, ttsText } from "../DraftKit";
+import { lineId, ttsText } from "../../draft-kit";
 import { BASE_SCENES } from "./scenes";
 import { VO_MANIFEST } from "./voiceover";
 import { VO_FILES } from "./voiceover-files";

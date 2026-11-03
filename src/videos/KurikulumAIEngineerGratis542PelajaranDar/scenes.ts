@@ -1,4 +1,4 @@
-import type { DraftMeta, DraftScene } from "../DraftKit";
+import type { DraftMeta, DraftScene } from "../../draft-kit";
 
 // Data scene video ini. Boleh diubah tangan:
 // tambah baris dialog, ubah ekspresi atau gerak, dan isi `spoken` bila teks yang diucapkan beda dari subtitle

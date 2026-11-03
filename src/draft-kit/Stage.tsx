@@ -17,7 +17,7 @@ import {
   PORTRAIT_OUTDOOR_ANCHORS,
   PORTRAIT_PLAIN_ANCHORS,
   RoomBack,
-} from "../../assets/backdrops";
+} from "../assets/backdrops";
 import {
   armGesture,
   ClaudeCode,
@@ -39,7 +39,7 @@ import {
   walk,
   type Gesture,
   type LookKey,
-} from "../../assets/characters";
+} from "../assets/characters";
 import type { CastCue, CharacterId, DraftLine, DraftScene, VisualStyle } from "./types";
 
 // Latar dan pemeran satu scene. Pemeran berdiri di garis lantai latar; di ruang kerja Ganjar duduk di balik meja

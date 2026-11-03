@@ -1,5 +1,5 @@
 import type React from "react";
-import { DraftVideo, fitScenes, totalFrames } from "../DraftKit";
+import { DraftVideo, fitScenes, totalFrames } from "../../draft-kit";
 import { BASE_SCENES, META } from "./scenes";
 import { VO_MANIFEST } from "./voiceover";
 import { VO_FILES } from "./voiceover-files";

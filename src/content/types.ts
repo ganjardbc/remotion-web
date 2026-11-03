@@ -1,4 +1,4 @@
-import type { CastCue, VisualStyle } from "../videos/DraftKit/types";
+import type { CastCue, VisualStyle } from "../draft-kit/types";
 
 // Skema konten carousel (Format B opini, Format C tutorial). Satu carousel = satu berkas `carousel.content.ts`
 // di folder videonya yang mengekspor `CAROUSEL: CarouselSpec`. Aturannya dicek oleh ./validate.ts

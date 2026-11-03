@@ -3,7 +3,7 @@ import voices from "./voices.json";
 
 // Voice over ElevenLabs untuk video DraftKit. Daftar suara, suara bawaan per karakter, model, dan speed ada di
 // voices.json; suara bisa diganti per video lewat `VO_VOICES` di voiceover.ts video itu.
-// scripts/vo-generate.mjs memanggil API-nya, scripts/vo-process.py mengolah hasilnya ke voiceover/<id>.mp3 di folder
+// scripts/vo-generate.mjs memanggil API-nya, scripts/vo-process.mjs mengolah hasilnya ke voiceover/<id>.mp3 di folder
 // video dan mencatatnya di voiceover.json.
 
 export type Voice = { readonly id: string; readonly name: string };
@@ -13,7 +13,7 @@ export const VO_SPEED: number = voices.speed;
 
 const voiceOf = (id: string): Voice => {
   const v = voices.voices.find((x) => x.id === id);
-  if (!v) throw new Error(`Suara ${id} tidak ada di DraftKit/voices.json`);
+  if (!v) throw new Error(`Suara ${id} tidak ada di src/draft-kit/voices.json`);
   return v;
 };
 

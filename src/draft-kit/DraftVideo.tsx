@@ -1,9 +1,9 @@
 import type React from "react";
 import { Audio } from "@remotion/media";
 import { interpolate, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
-import { BrandFooter } from "../../BrandFooter";
-import { getTheme, ThemeProvider, useTheme } from "../../themes";
-import { Enter } from "../OpenCode9Router/parts";
+import { BrandFooter } from "../BrandFooter";
+import { getTheme, ThemeProvider, useTheme } from "../themes";
+import { Enter } from "../motion";
 import { floorOf, Stage } from "./Stage";
 import type { DraftMeta, DraftScene } from "./types";
 import { sceneFrames } from "./voiceover";
