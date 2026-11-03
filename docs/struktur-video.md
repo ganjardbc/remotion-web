@@ -1,8 +1,8 @@
 # Struktur file video
 
-Aturan baku isi folder `src/videos/<Nama>/`. Berlaku untuk semua Reels baru (Format A dan C) dengan narator Claude Code, dan carousel baru (Format B dan C). Nama file harus persis seperti di bawah, tanpa variasi. Rujukan Reels: `src/videos/PromptPanjang`. Rujukan carousel: `src/videos/ModelMurah`.
+Aturan baku isi folder `src/videos/<Nama>/`. Berlaku untuk semua Reels baru (Format A dan C, narator Claude Code atau dialog), video dialog 16:9, dan carousel baru (Format B dan C). Nama file harus persis seperti di bawah, tanpa variasi. Rujukan Reels: `src/videos/PromptPanjang`. Rujukan carousel: `src/videos/ModelMurah`.
 
-Ada tiga jenis folder: **Reels** (narator Claude Code, 9:16), **video dialog** (Ganjar dan Claude, kamera 2D, 16:9, dibuat dengan `scripts/new-video.mjs`), dan **carousel**. Satu folder boleh memuat Reels dan carousel untuk topik yang sama, tapi tidak boleh mencampur Reels dengan video dialog.
+Ada empat jenis folder: **Reels** (narator Claude Code, 9:16), **Reels dialog** (dua karakter atau lebih bergantian bicara, 9:16, `new-reels.mjs --dialog`), **video dialog** (Ganjar dan Claude, kamera 2D, 16:9, `scripts/new-video.mjs`), dan **carousel**. Satu folder boleh memuat Reels dan carousel untuk topik yang sama, tapi tidak boleh mencampur Reels dengan Reels dialog atau video dialog. Jenis folder dikenali dari isinya: `carousel.content.ts` = carousel, `SceneRenderer.tsx` = video dialog, `config.ts` + `scenes.tsx` = Reels, `config.ts` + `scenes.ts` = Reels dialog.
 
 ## Nama
 
@@ -75,6 +75,27 @@ Bagian wajib, urut: judul `# <Nama>` dan satu paragraf (judul konten, format, ju
 - `voiceover.json` dimulai `{ "lines": {} }`. `voiceover-files.ts` dan folder `voiceover/` ditulis oleh `vo-process.mjs` saat klip pertama diolah, jadi untuk video yang belum bersuara folder `voiceover/` belum ada dan itu sah. Jangan diubah tangan.
 - Alur otomatis: `node scripts/vo-lines.mjs --video <Nama>` menampilkan status tiap scene (`baru`, `berubah`, `ok`), lalu `node scripts/vo-generate.mjs --video <Nama>` men-generate hanya yang belum ada atau berubah, memotong senyap, menormalkan, dan mencatatnya. Sebelum memanggil API, jumlah huruf (≈ kredit) ditampilkan dan konfirmasi diminta. Butuh `ELEVENLABS_API_KEY` di environment atau `.env.local`. Hash = sha1 `voiceId|model|SPOKEN[id]`; mengganti suara, model, atau speed di `vo-lines.mjs` mengubah hash semua scene.
 
+## Reels dialog: isi folder
+
+Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" --dialog [--cast ganjar,robot] [--style rig|stickman] [--scenes hook,relate,shift,urgency,closing,cta]`. Pemeran 1-3 dari `ganjar`, `robot`, `claudecode` (bawaan `ganjar,robot`), gaya `rig` atau `stickman`. Pembicara tiap scene dibuat bergantian, isinya `TODO`. Template di `scripts/templates/dialog-reels`.
+
+```
+src/videos/<Nama>/
+  README.md
+  <Nama>Video.tsx       fitScenes + <DraftVideo>, ekspor <Nama>Video, TOTAL_FRAMES, COMPOSITION
+  config.ts             META (judul, delivery "dialog", style), CAPTION, HASHTAGS, VO_MANIFEST
+  scenes.ts             BASE_SCENES: data scene (latar, waktu, pemeran, teks layar, baris ucapan)
+  voiceover.json
+  voiceover-files.ts
+  voiceover/<id-scene>-NN.mp3
+```
+
+- Mesin ada di `src/dialog-reels` (`DraftVideo`, `Stage`, `fitScenes`, `voiceover.ts`, `voices.json`). `DraftVideo` merender panggung, teks layar, subtitle baris yang sedang bicara, `BrandFooter` sekali di root, suara, whoosh, dan musik, jadi `<Nama>Video.tsx` tidak merender footer sendiri.
+- Satu scene = `id` (huruf kecil, satu kata; Format A: hook, relate, shift, urgency, closing, cta), `seconds` (batas bawah), `backdrop` (`ruangKerja`, `kosong`, `luarRuang`), `time` (`siang`, `sore`, `malam`), `cast` (karakter, ekspresi, gerak, posisi), `onScreenText`, dan `lines` (`who`, `from` detik sejak scene mulai, `dur` perkiraan, `text` subtitle, `spoken` bila ucapan beda dari subtitle).
+- Ekspresi: netral, senang, sedih, kaget, bingung, mikir, kesal, marah, serius, malu, mataTertutup. Gerak: Ganjar `headTurn`, `point`, `startle`; Robot dan Claude Code `armGesture`, `surprise`, `walk`.
+- Voiceover per baris ucapan, id baris = id scene + nomor urut (`hook-01`). Suara per karakter dari `src/dialog-reels/voices.json`: Ari Eko untuk Ganjar, Nilasari untuk Robot dan Claude Code; model `eleven_multilingual_v2`, `speed` 1.2. Alur: `node scripts/vo-lines.mjs --video <Nama>` lalu `node scripts/vo-generate.mjs --video <Nama>` (minta konfirmasi sebelum memanggil API). Durasi scene mengikuti audio. Hash = sha1 `voiceId|model|teks`.
+- Karakter Ganjar sudah final (jangan ubah tampilannya); Reels narator tetap memakai Claude Code. Reels dialog hanya untuk konten yang memang berupa percakapan.
+
 ## Video dialog: isi folder
 
 Dibuat dengan `node scripts/new-video.mjs <Nama> "<Judul>"`. Jangan buat folder dengan tangan.
@@ -142,8 +163,8 @@ Sesuai aturan: PromptPanjang, ClaudeMem, ReviewKodeAI, Haiku55, ModelTeam (Reels
 
 Dihapus 3 November 2026 karena tidak dipakai: ChatbotVsAIAgentPahamiBedanya, KurikulumAIEngineerGratis542PelajaranDar, ProgrammerBodoh, SejarahAIStory, SejarahAIStoryReels, AgenBodoh (Reels dan carousel), ClaudeMd, GratisMurah, OpenCode9Router, AIAgent, ClaudeLoop, FileDibajak, IzinPagar, PenulisUI, SejarahAI, SejarahAIV2, TigaFrameworkFrontend, TokenTips.
 
-DraftKit dipindah ke `src/draft-kit/` pada 3 November 2026. Setelah Reels berbasis DraftKit dihapus, hanya `Stage.tsx` dan `types.ts` (stiker karakter carousel) yang tersisa di sana; `DraftVideo`, `voiceover.ts`, dan `voices.json` ikut dihapus.
+Mesin Reels dialog ada di `src/dialog-reels/` (dulu DraftKit). `Stage` dan `types` juga dipakai stiker karakter carousel.
 
 Dikecualikan dari validator: CharacterRigDemo (prototipe karakter untuk Studio, bukan konten video).
 
-`vo-lines.mjs` dan `vo-generate.mjs` mendukung Reels dan video dialog; polanya dikenali dari isi folder (Reels = `config.ts` tanpa `voiceover.ts`).
+`vo-lines.mjs` dan `vo-generate.mjs` mendukung Reels, Reels dialog, dan video dialog; polanya dikenali dari isi folder (Reels = `config.ts` + `scenes.tsx`, Reels dialog = `config.ts` + `scenes.ts`, tanpa `voiceover.ts`).

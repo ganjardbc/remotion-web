@@ -21,6 +21,7 @@ const CONFIG_EXPORTS = ["FPS", "LEAD", "SCENE_IDS", "SPOKEN", "CAPTION", "HASHTA
 const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
 const REELS_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.tsx", "parts.tsx", "voiceover.json", "voiceover-files.ts"];
+const REELS_DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.ts", "voiceover.json", "voiceover-files.ts"];
 const CAROUSEL_FILES = (n) => [`${n}Carousel.tsx`, "carousel.content.ts"];
 const DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "scenes.tsx", "SceneRenderer.tsx", "world.tsx", "cards.tsx", "sfxTypes.ts", SFX_EXCEPTION[n] ?? `${n}Sfx.tsx`, "voiceover.ts", "voiceover.json", "voiceover-files.ts"];
 
@@ -42,10 +43,10 @@ const checkFolder = (name) => {
 
   if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) err("nama folder harus PascalCase.");
 
-  const type = has("carousel.content.ts") ? "carousel" : has("SceneRenderer.tsx") ? "dialog" : has("config.ts") && has("scenes.tsx") ? "reels" : null;
-  if (!type) return { type: "?", errors: ["jenis folder tidak dikenali (bukan carousel, dialog, atau Reels)."], warns };
+  const type = has("carousel.content.ts") ? "carousel" : has("SceneRenderer.tsx") ? "dialog" : has("config.ts") && has("scenes.tsx") ? "reels" : has("config.ts") && has("scenes.ts") ? "reels-dialog" : null;
+  if (!type) return { type: "?", errors: ["jenis folder tidak dikenali (bukan carousel, dialog, Reels, atau Reels dialog)."], warns };
 
-  const required = type === "carousel" ? CAROUSEL_FILES(name) : type === "dialog" ? DIALOG_FILES(name) : REELS_FILES(name);
+  const required = type === "carousel" ? CAROUSEL_FILES(name) : type === "dialog" ? DIALOG_FILES(name) : type === "reels-dialog" ? REELS_DIALOG_FILES(name) : REELS_FILES(name);
   for (const f of required) if (!has(f)) err(`berkas wajib tidak ada: ${f}`);
   const allowed = new Set([...required, "voiceover"]);
   for (const t of top) if (!allowed.has(t)) err(`berkas tidak diizinkan: ${t}`);
@@ -98,6 +99,38 @@ const checkFolder = (name) => {
       const r = read(join(dir, "README.md"));
       for (const h of ["## Voiceover", "## Caption"]) if (!r.includes(h)) err(`README.md tidak punya bagian "${h}".`);
     }
+  } else if (type === "reels-dialog") {
+    if (!registered(`${name}-Reels`, `${name}Video.tsx`)) err(`${name}Video.tsx tidak mengekspor COMPOSITION dengan id "${name}-Reels".`);
+    if (has("config.ts")) {
+      const cfg = read(join(dir, "config.ts"));
+      for (const e of ["META", "CAPTION", "HASHTAGS", "VO_MANIFEST"]) if (!new RegExp(`export const ${e}\\b`).test(cfg)) err(`config.ts tidak mengekspor ${e}.`);
+      const tagMatch = cfg.match(/export const HASHTAGS = \[([^\]]*)\]/);
+      if (tagMatch) {
+        const tags = [...tagMatch[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+        if (tags.length !== 5) err(`HASHTAGS harus tepat 5, ada ${tags.length}.`);
+        else if (tags.join(" ") !== HASHTAGS.join(" ")) err("HASHTAGS bukan set baku.");
+      }
+    }
+    if (has("scenes.ts")) {
+      const sc = read(join(dir, "scenes.ts"));
+      if (!/export const BASE_SCENES\b/.test(sc)) err("scenes.ts tidak mengekspor BASE_SCENES.");
+      const ids = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)].map((m) => m[1]);
+      if (ids.length === 0) err("scenes.ts tidak punya scene (id: \"...\" pada indentasi 4 spasi).");
+      for (const id of ids) if (!/^[a-z]+$/.test(id)) err(`id scene "${id}" harus huruf kecil, satu kata.`);
+      const order = FORMAT_A.map((x) => ids.indexOf(x));
+      if (order.some((i) => i < 0) || order.some((v, i) => i > 0 && v < order[i - 1])) warns.push("scene Format A (hook, relate, shift, urgency, closing, cta) tidak lengkap atau urutannya beda; abaikan kalau ini Format C.");
+    }
+    if (has(`${name}Video.tsx`)) {
+      const v = read(join(dir, `${name}Video.tsx`));
+      if (!new RegExp(`export const ${name}Video\\b`).test(v)) err(`${name}Video.tsx tidak mengekspor ${name}Video.`);
+      if (!/export const TOTAL_FRAMES\b|export \{ TOTAL_FRAMES \}/.test(v)) err(`${name}Video.tsx tidak mengekspor TOTAL_FRAMES.`);
+      if (!/\bDraftVideo\b/.test(v)) err(`${name}Video.tsx tidak memakai DraftVideo (mesin Reels dialog, merender BrandFooter).`);
+    }
+    if (has("README.md")) {
+      const r = read(join(dir, "README.md"));
+      for (const h of ["## Voiceover", "## Caption"]) if (!r.includes(h)) err(`README.md tidak punya bagian "${h}".`);
+    }
+    if (!top.has("voiceover") && /"file"/.test(read(join(dir, "voiceover.json")))) err("voiceover.json berisi klip tapi folder voiceover/ tidak ada.");
   } else if (type === "carousel") {
     if (!registered(`${name}-Carousel`, `${name}Carousel.tsx`)) err(`${name}Carousel.tsx tidak mengekspor COMPOSITION dengan id "${name}-Carousel".`);
     if (has(`${name}Carousel.tsx`) && !new RegExp(`export const ${name}Carousel\\b`).test(read(join(dir, `${name}Carousel.tsx`)))) err(`${name}Carousel.tsx tidak mengekspor ${name}Carousel.`);

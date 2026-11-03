@@ -7,7 +7,9 @@
 // Dua pola video dikenali dari isi folder:
 //   - Reels (config.ts + SPOKEN, tanpa voiceover.ts): satu baris per scene, id = id scene, teks = SPOKEN[id],
 //     suara Nilasari, model eleven_multilingual_v2, speed 1.2 (lihat docs/struktur-video.md).
-//   - video dialog (scenes.tsx + voiceover.ts): baris per dialog, suara per karakter.
+//   - Reels dialog (config.ts + scenes.ts, tanpa voiceover.ts): satu baris per baris ucapan, id = id scene + nomor urut
+//     (hook-01), suara per karakter dari src/dialog-reels/voices.json.
+//   - video dialog 16:9 (scenes.tsx + voiceover.ts): baris per dialog, suara per karakter.
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
@@ -38,10 +40,27 @@ const bundle = async (entry, name, external = ["remotion", "react", "react/*", "
 const sha = (voiceId, model, text) => createHash("sha1").update(`${voiceId}|${model}|${text}`).digest("hex").slice(0, 12);
 const statusOf = (entry, hash) => (!entry ? "baru" : entry.hash !== hash ? "berubah" : "ok");
 
-const isReels = existsSync(join(dir, "config.ts")) && !existsSync(join(dir, "voiceover.ts"));
+const noVoiceoverTs = !existsSync(join(dir, "voiceover.ts"));
+const isReelsDialog = existsSync(join(dir, "config.ts")) && existsSync(join(dir, "scenes.ts")) && noVoiceoverTs;
+const isReels = existsSync(join(dir, "config.ts")) && existsSync(join(dir, "scenes.tsx")) && noVoiceoverTs;
 const rows = [];
 
-if (isReels) {
+if (isReelsDialog) {
+  const scenes = await bundle(join(dir, "scenes.ts"), "scenes.mjs");
+  const vo = await bundle(join(root, "src/dialog-reels/voiceover.ts"), "dialog-vo.mjs", ["remotion", "react"]);
+  const manifestFile = join(dir, "voiceover.json");
+  const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, "utf8")).lines : {};
+  scenes.BASE_SCENES.forEach((sc) => {
+    sc.lines.forEach((l, i) => {
+      const id = vo.lineId(sc.id, i);
+      const text = vo.ttsText(l);
+      const voice = vo.VO_VOICES[l.who];
+      const hash = sha(voice.id, vo.VO_MODEL, text);
+      const entry = manifest[id];
+      rows.push({ id, scene: sc.id, who: l.who, voice: voice.name, voice_id: voice.id, model: vo.VO_MODEL, speed: vo.VO_SPEED ?? null, text, chars: text.length, hash, status: statusOf(entry, hash), slot: l.dur, duration: entry?.duration ?? null });
+    });
+  });
+} else if (isReels) {
   const cfg = await bundle(join(dir, "config.ts"), "config.mjs");
   if (!cfg.SCENE_IDS || !cfg.SPOKEN) {
     console.error(`src/videos/${video}/config.ts tidak mengekspor SCENE_IDS dan SPOKEN.`);
@@ -56,7 +75,7 @@ if (isReels) {
     rows.push({ id, scene: id, who: "narator", voice: REELS_VOICE.name, voice_id: REELS_VOICE.id, model: REELS_MODEL, speed: REELS_SPEED, text, chars: text.length, hash, status: statusOf(entry, hash), slot: cfg.VO[id].seconds, duration: entry?.duration ?? null });
   }
 } else {
-  // Video dialog berpola VueTutorial: scenes.tsx (BASE_SCENES) + voiceover.ts.
+  // Video dialog 16:9 berpola VueTutorial: scenes.tsx (BASE_SCENES) + voiceover.ts.
   const scenes = await bundle(join(dir, "scenes.tsx"), "lines.mjs");
   const vo = await bundle(join(dir, "voiceover.ts"), "vo.mjs", ["remotion", "react"]);
   scenes.BASE_SCENES.forEach((s) => {

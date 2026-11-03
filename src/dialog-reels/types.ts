@@ -1,6 +1,6 @@
 import type { TimeOfDay } from "../assets/backdrops";
 
-// Bentuk data video DraftKit (Reels 9:16). Satu scene = latar, pemeran, teks layar, dan
+// Bentuk data Reels dialog 9:16. Satu scene = latar, pemeran, teks layar, dan
 // baris ucapan. `narator`: semua baris diucapkan satu karakter; `dialog`: dua karakter atau lebih bergantian.
 
 export type CharacterId = "ganjar" | "robot" | "claudecode";

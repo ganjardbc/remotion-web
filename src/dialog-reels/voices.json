@@ -1,0 +1,13 @@
+{
+  "model": "eleven_multilingual_v2",
+  "speed": 1.2,
+  "voices": [
+    { "id": "Se50W0zoqlDUbFxvcN9h", "name": "Ari Eko" },
+    { "id": "NPDHDOOQCSyifTJZOe6J", "name": "Nilasari" }
+  ],
+  "defaults": {
+    "ganjar": "Se50W0zoqlDUbFxvcN9h",
+    "robot": "NPDHDOOQCSyifTJZOe6J",
+    "claudecode": "NPDHDOOQCSyifTJZOe6J"
+  }
+}

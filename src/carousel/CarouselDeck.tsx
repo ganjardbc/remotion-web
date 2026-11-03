@@ -4,8 +4,8 @@ import { ClaudeCode, ClaudeCodeStickman, Ganjar, GanjarStickman, Robot, RobotSti
 import type { CarouselSlide, CarouselSpec, SlideImage } from "../content/types";
 import { Icon } from "../icons";
 import { ThemeProvider, useTheme, type Theme } from "../themes";
-import { ganjarClip, HEIGHT, robotClip, size } from "../draft-kit/Stage";
-import type { CastCue, VisualStyle } from "../draft-kit/types";
+import { ganjarClip, HEIGHT, robotClip, size } from "../dialog-reels/Stage";
+import type { CastCue, VisualStyle } from "../dialog-reels/types";
 
 // Carousel 4:5 (Format B dan C), satu frame = satu slide (fps 1). Semua ukuran diukur per piksel dari sample
 // "Model Murah Bisa Menjebak" (1080x1350). Header: logo + judul seri + nomor. Hook dan shift di latar biru primary,

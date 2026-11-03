@@ -1,0 +1,17 @@
+import type { DraftMeta, VoEntry } from "../../dialog-reels";
+import manifest from "./voiceover.json";
+
+// __TITLE__. Reels dialog 9:16, 30 fps, pemeran: __CAST__. Data scene dan baris ucapan ada di scenes.ts.
+// Voiceover per baris ucapan (id baris = id scene + nomor urut, mis. hook-01), suara per karakter dari
+// src/dialog-reels/voices.json. Selama voiceover.json kosong, durasi scene mengikuti perkiraan di scenes.ts.
+
+export const META: DraftMeta = {
+  title: "__TITLE__",
+  delivery: "dialog",
+  style: "__STYLE__",
+};
+
+export const CAPTION = "TODO: caption pendek, 1-3 kalimat.";
+export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;
+
+export const VO_MANIFEST: Readonly<Record<string, VoEntry>> = (manifest as { lines: Record<string, VoEntry> }).lines;

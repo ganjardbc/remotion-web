@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 // Membuat folder Reels baru (Format A/C, narator Claude Code) sesuai docs/struktur-video.md.
 //   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]
+//   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" --dialog [--cast ganjar,robot] [--style rig|stickman] [--scenes ...]
+// Tanpa --dialog: Reels narator Claude Code (config, scenes.tsx, parts.tsx, Video). Dengan --dialog: Reels dialog dua
+// karakter atau lebih (config, scenes.ts berisi data scene dan baris ucapan, Video yang memanggil src/dialog-reels).
 // Menulis README.md, config.ts, scenes.tsx, <Nama>Video.tsx dari scripts/templates/reels, menyalin parts.tsx dari
 // src/videos/PromptPanjang (selalu versi terbaru), menyiapkan voiceover.json kosong dan voiceover-files.ts.
 // Komposisi <Nama>-Reels terdaftar otomatis dari export COMPOSITION di <Nama>Video.tsx (src/compositions.ts), jadi
@@ -12,12 +15,19 @@ import { fileURLToPath } from "node:url";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const argv = process.argv.slice(2);
-const si = argv.indexOf("--scenes");
-const sceneArg = si >= 0 ? argv[si + 1] : "hook,relate,shift,urgency,closing,cta";
-const args = argv.filter((a, i) => !a.startsWith("--") && !(si >= 0 && i === si + 1));
+const VALUE_FLAGS = ["--scenes", "--cast", "--style"];
+const flag = (n, fallback) => {
+  const i = argv.indexOf(n);
+  return i >= 0 ? argv[i + 1] : fallback;
+};
+const sceneArg = flag("--scenes", "hook,relate,shift,urgency,closing,cta");
+const dialog = argv.includes("--dialog");
+const castArg = flag("--cast", "ganjar,robot");
+const style = flag("--style", "rig");
+const args = argv.filter((a, i) => !a.startsWith("--") && !VALUE_FLAGS.includes(argv[i - 1]));
 const [name, title] = args;
 
-const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]';
+const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta] [--dialog [--cast ganjar,robot] [--style rig|stickman]]';
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
@@ -31,6 +41,13 @@ if (new Set(ids).size !== ids.length) fail("Id scene tidak boleh kembar.");
 const FORMAT_A = ["hook", "relate", "shift", "urgency", "closing", "cta"];
 const missing = FORMAT_A.filter((s) => !ids.includes(s));
 if (missing.length > 0) console.warn(`Peringatan: Format A butuh scene ${missing.join(", ")}. Lanjut kalau ini Format C (tutorial).`);
+
+const CHARACTERS = ["ganjar", "robot", "claudecode"];
+const cast = castArg.split(",").map((c) => c.trim());
+if (dialog) {
+  if (cast.length < 1 || cast.length > 3 || cast.some((c) => !CHARACTERS.includes(c)) || new Set(cast).size !== cast.length) fail(`--cast: 1-3 karakter berbeda dari ${CHARACTERS.join(", ")}.`);
+  if (!["rig", "stickman"].includes(style)) fail("--style harus rig atau stickman.");
+}
 
 const upper = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
 const dst = join(root, "src/videos", name);
@@ -66,6 +83,49 @@ const faces = ids.map((s) => `  ${s}: [[0, "netral"]],`).join("\n");
 
 mkdirSync(dst, { recursive: true });
 const write = (f, s) => writeFileSync(join(dst, f), s);
+
+if (dialog) {
+  // Reels dialog: data scene di scenes.ts, mesin di src/dialog-reels. Pembicara bergantian; baris berisi TODO.
+  const dtpl = join(root, "scripts/templates/dialog-reels");
+  const positions = { 1: ["tengah"], 2: ["kiri", "kanan"], 3: ["kiri", "tengah", "kanan"] }[cast.length];
+  const sceneBlocks = ids.map((s, i) => {
+    const who = cast[i % cast.length];
+    const castLines = cast.map((c, k) => `      { character: "${c}", expression: "netral", motion: null, position: "${positions[k]}" },`).join("\n");
+    return [
+      "  {",
+      `    id: "${s}",`,
+      "    seconds: 5,",
+      '    backdrop: "ruangKerja",',
+      '    time: "siang",',
+      "    cast: [",
+      castLines,
+      "    ],",
+      `    onScreenText: "TODO: teks layar scene ${s}",`,
+      "    lines: [",
+      `      { who: "${who}", from: 0.3, dur: 4.2, text: "TODO: ucapan scene ${s}." },`,
+      "    ],",
+      "  },",
+    ].join("\n");
+  });
+  const scenesTs = `import type { DraftScene } from "../../dialog-reels";\n\n// Data scene ${name}. Ubah tangan: tambah baris dialog (\`who\`, \`from\` detik sejak scene mulai, \`dur\` perkiraan), ekspresi,\n// gerak, dan isi \`spoken\` bila ucapan beda dari subtitle (angka dieja, singkatan dibaca utuh). Mengubah teks atau \`spoken\`\n// membuat baris itu perlu di-generate ulang. Id scene: huruf kecil, satu kata; Format A butuh hook, relate, shift, urgency, closing, cta.\n\nexport const BASE_SCENES: readonly DraftScene[] = [\n${sceneBlocks.join("\n")}\n];\n`;
+  const dfill = (t) =>
+    t
+      .replaceAll("__NAME__", name)
+      .replaceAll("__TITLE__", title)
+      .replaceAll("__COUNT__", String(ids.length))
+      .replaceAll("__FLOW__", ids.map(cap).join(", "))
+      .replaceAll("__CAST__", cast.join(", "))
+      .replaceAll("__STYLE__", style);
+  write("config.ts", dfill(read(join(dtpl, "config.ts.tmpl"))));
+  write("scenes.ts", scenesTs);
+  write(`${name}Video.tsx`, dfill(read(join(dtpl, "Video.tsx.tmpl"))));
+  write("README.md", dfill(read(join(dtpl, "README.md.tmpl"))));
+  write("voiceover.json", '{ "lines": {} }\n');
+  write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');
+  console.log(`Dibuat src/videos/${name} (Reels dialog: ${cast.join(", ")}, ${ids.length} scene). Berikutnya: isi teks TODO di scenes.ts dan CAPTION di config.ts, lihat src/videos/${name}/README.md.`);
+  process.exit(0);
+}
+
 write("config.ts", fill(read(join(tpl, "config.ts.tmpl")), { __SPOKEN__: spoken }));
 write("scenes.tsx", fill(read(join(tpl, "scenes.tsx.tmpl")), { __SCENES__: scenes }));
 write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl")), { __SCENES_MAP__: scenesMap, __FACES__: faces }));

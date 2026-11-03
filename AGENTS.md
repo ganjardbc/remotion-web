@@ -33,6 +33,7 @@ Konteks project untuk agent AI apa pun (Claude Code, Codex, Cursor, dll.). Baca 
 - `src/compositions.ts`: mendaftarkan komposisi otomatis dari `export const COMPOSITION` di `<Nama>Video.tsx` atau `<Nama>Carousel.tsx` tiap folder `src/videos`. `src/Root.tsx` tidak perlu diubah.
 - `src/videos/<Nama>/`: satu topik per folder. Nama dan isi file baku, lihat [docs/struktur-video.md](docs/struktur-video.md). Reels = `README.md`, `<Nama>Video.tsx`, `config.ts`, `scenes.tsx`, `parts.tsx`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`. Carousel = `carousel.content.ts` + `<Nama>Carousel.tsx`.
 - `src/carousel/CarouselDeck.tsx`: renderer carousel. `src/content/`: tipe dan validator konten.
+- `src/dialog-reels/`: mesin Reels dialog (`DraftVideo`, `Stage`, `fitScenes`, suara) dan stiker karakter carousel.
 - `src/assets/`: karakter, latar, kamera, layar. `src/themes/`: tema GH.
 
 ## Perintah

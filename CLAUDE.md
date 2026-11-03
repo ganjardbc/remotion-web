@@ -9,7 +9,7 @@ Aturan konten di bawah adalah salinan kerja dari Claude Project "personal brandi
 ## Keputusan yang sudah diambil
 - Integrasi content_studio (CrewAI) ke repo ini **dihapus**. Tidak ada lagi alur `draft.json` atau `from-draft.mjs`. Data video/carousel ditulis langsung di repo.
 - **Carousel dipegang remotion-web saja** (bukan `gh-content-pipeline` atau Canva).
-- Narator tetap seperti sekarang: karakter Claude Code (rig 2D) dipakai sebagai narator. Jangan diubah tanpa diminta.
+- Narator Reels tetap karakter Claude Code (rig 2D). Jangan diubah tanpa diminta. Reels dialog (dua karakter atau lebih bergantian bicara, `new-reels.mjs --dialog`) hanya untuk konten yang memang berupa percakapan, atas permintaan.
 - Gambar di carousel **opsional** dan posisinya bebas (atas, samping blok stat, bawah). Cover tidak lagi wajib memuat gambar.
 - Judul **Title Case** (`headlineTransform: "capitalize"` di tema), berlaku untuk Reels dan carousel agar gayanya sama. Bukan huruf kapital semua.
 - Acuan tampilan carousel: sample "Model Murah Bisa Menjebak" (`src/videos/ModelMurah`).
@@ -76,7 +76,7 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 ## Perintah
 - `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate + validate:structure. `npm run validate`: cek aturan konten carousel. `npm run validate:structure`: cek nama dan isi folder video terhadap `docs/struktur-video.md`.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: `--sequence --image-format=png`.
-- `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A) (komposisi terdaftar otomatis).
+- `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A; komposisi terdaftar otomatis). Tambah `--dialog [--cast ganjar,robot] [--style rig|stickman]` untuk Reels dialog.
 - `node scripts/new-carousel.mjs <NamaPascalCase> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`: scaffold carousel baru (kerangka slide berisi TODO) (komposisi terdaftar otomatis).
 - `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"`: scaffold video dialog berpola VueTutorial.
 - Voice over (ElevenLabs): `node scripts/vo-generate.mjs --video <Nama>` (meminta konfirmasi sebelum memanggil API).
