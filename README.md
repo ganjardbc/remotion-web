@@ -20,7 +20,8 @@ Repo ini hanya untuk akun personal branding. Konten edukasi ada di `edumotion-we
 | `npm run dev` | Buka Remotion Studio |
 | `npm run validate` | Cek aturan konten carousel |
 | `npm run alt -- <berkas>` | Buat alt text, caption, dan hashtag carousel |
-| `npm run lint` | eslint + tsc + validate |
+| `npm run validate:structure` | Cek struktur folder `src/videos/<Nama>` terhadap docs/struktur-video.md |
+| `npm run lint` | eslint + tsc + validate + validate:structure |
 | `npx remotion render src/index.ts <Id> out/<Nama>.mp4` | Render Reels |
 | `npx remotion render src/index.ts <Id> out/<Nama> --sequence --image-format=png` | Render carousel |
 | `node scripts/new-reels.mjs <Nama> "<Judul>"` | Scaffold Reels baru (narator Claude Code) |

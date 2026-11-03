@@ -15,4 +15,4 @@ Baca `CLAUDE.md` di root (aturan Format A/B/C, brand, keputusan proyek) dan `AGE
 5. Visual: warna dan huruf dari `src/themes/gh.ts` dan `design-system/gh-design-system`, jangan hardcode. Poppins saja, gerak ease-out `[0.2, 0.8, 0.2, 1]` tanpa bounce/spring. Karakter diimpor dari barrel `src/assets/characters`; tampilan Ganjar final.
 6. Teknik Remotion (animasi, urutan, audio) ikuti `remotion-best-practices`.
 7. Tulisan: ikuti skill `bahasa-indonesia` untuk ejaan; "aku-kamu", dilarang "gue/lo".
-8. Selesai: `npm run lint` (eslint + tsc + validate) harus bersih untuk berkas yang diubah, `npm run alt` untuk carousel. Jangan menjalankan `vo-generate` tanpa persetujuan Ganjar.
+8. Selesai: `npm run lint` (eslint + tsc + validate + validate:structure) harus bersih untuk berkas yang diubah, `npm run alt` untuk carousel. Jangan menjalankan `vo-generate` tanpa persetujuan Ganjar.

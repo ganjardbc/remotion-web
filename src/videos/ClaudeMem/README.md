@@ -7,16 +7,22 @@
 - `parts.tsx`: `Frame`, `Headline`, `Chip`, `PointTag`, `Card`, `Bar`, `Grow`, `GithubMark`, `useCue`.
 - `ClaudeMemVideo.tsx`: `Series` scene, karakter (ekspresi per scene), footer, suara.
 
-## Voiceover (belum dibuat)
+## Voiceover
 
-Selama `voiceover.json` kosong, durasi scene diperkirakan 15,3 huruf/detik (±58 detik) dan video tanpa suara narasi. Generate dengan ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene, lalu:
+Sudah dibuat: ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene (8 klip). Klip mentah di `out/vo-raw/ClaudeMem/` (tidak di-commit), hasil olahan di `voiceover/*.mp3`, dicatat di `voiceover.json` dan `voiceover-files.ts`. Durasi scene dan cue mengikuti audio.
+
+Kalau `SPOKEN` berubah, generate ulang klip scene itu dan olah dengan perintah di bawah, lalu cek frasa di `at(...)` dan `when(...)`.
 
 ```bash
 node scripts/vo-process.mjs <id> out/vo-raw/ClaudeMem/<id>.mp3 --hash <hash> --video ClaudeMem
 ```
 
-Setelah itu durasi scene dan cue ikut audio secara otomatis.
-
 ```bash
 npx remotion render src/index.ts ClaudeMem-Reels out/ClaudeMem-Reels.mp4
 ```
+
+## Caption
+
+Claude Code-mu lupa semuanya tiap sesi baru? Claude-Mem memberinya ingatan, dan hemat token sekitar 10x. Repo: https://github.com/thedotmack/claude-mem
+
+`#DeveloperIndonesia #AIForDeveloper #CareerDeveloper #ProgrammerIndonesia #TechMindset`

@@ -74,7 +74,7 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 - Pengaturan satu kali (struktur referensi, penyesuaian format) hanya berlaku untuk konten itu, tidak mengubah aturan baku.
 
 ## Perintah
-- `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate. `npm run validate`: cek aturan konten carousel.
+- `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate + validate:structure. `npm run validate`: cek aturan konten carousel. `npm run validate:structure`: cek nama dan isi folder video terhadap `docs/struktur-video.md`.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: `--sequence --image-format=png`.
 - `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A) dan daftarkan di `Root.tsx`.
 - `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"`: scaffold video dialog berpola VueTutorial.
@@ -84,5 +84,4 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 ## Belum dikerjakan
 - Tampilan carousel belum pernah dirender di sandbox Claude (tanpa Chrome); ukuran sudah dicocokkan dengan sample dan muat menurut metrik Poppins. Cek dengan `remotion still`.
 - Lengan stiker ClaudeCode di sample tampak lebih pendek (±1,5 unit) daripada rig (3 unit); rig tidak diubah.
-- Format A (Reels): belum ada validator, belum ada field caption dan 5 hashtag per video. Tema Title Case sudah berlaku untuk Reels yang memakai `headlineTransform`; render ulang untuk melihat dampaknya.
-- `npm run lint` gagal oleh error lama di `src/assets/camera/demo/ShotReel.tsx` (prop `from` bernilai 0 bisa dihapus, auto-fix tersedia).
+- Format A (Reels): struktur folder sudah dicek `npm run validate:structure` (termasuk 5 hashtag), tapi isi konten (panjang hook, urgency, dan seterusnya) belum ada validator. Tema Title Case sudah berlaku untuk Reels yang memakai `headlineTransform`; render ulang untuk melihat dampaknya.

@@ -118,6 +118,8 @@ Impor di `src/Root.tsx` sebagai `import { <Nama>Video, TOTAL_FRAMES as <NAMA>_FR
 
 ## Status kepatuhan (3 November 2026)
 
+`npm run validate:structure` memeriksa semua folder di atas (jenis folder, berkas wajib dan terlarang, impor lintas folder, ekspor `config.ts`, 5 hashtag, `BrandFooter` sekali, pendaftaran di `Root.tsx`, bagian README). Folder yang belum dimigrasi ada di daftar `LEGACY` di `scripts/validate-structure.mjs`; hapus dari daftar itu begitu sesuai.
+
 Sesuai aturan: PromptPanjang, ClaudeMem, ReviewKodeAI, Haiku55, ModelTeam (Reels); ModelMurah, JuniorHilang (carousel); VueTutorial (dialog, kecuali nama Sfx di atas).
 
 Dihapus 3 November 2026 karena tidak dipakai: AgenBodoh (Reels dan carousel), ClaudeMd, GratisMurah, OpenCode9Router, AIAgent, ClaudeLoop, FileDibajak, IzinPagar, PenulisUI, SejarahAI, SejarahAIV2, TigaFrameworkFrontend, TokenTips.
