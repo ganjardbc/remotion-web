@@ -14,7 +14,6 @@ import { PromptPanjangVideo, TOTAL_FRAMES as PROMPT_PANJANG_FRAMES } from "./vid
 import { RigDemoRoot } from "./videos/CharacterRigDemo/Root";
 import { CHATBOT_VS_AIAGENT_PAHAMI_BEDANYA_FRAMES, ChatbotVsAIAgentPahamiBedanyaVideo } from "./videos/ChatbotVsAIAgentPahamiBedanya/ChatbotVsAIAgentPahamiBedanyaVideo";
 import { KURIKULUM_AIENGINEER_GRATIS542_PELAJARAN_DAR_FRAMES, KurikulumAIEngineerGratis542PelajaranDarVideo } from "./videos/KurikulumAIEngineerGratis542PelajaranDar/KurikulumAIEngineerGratis542PelajaranDarVideo";
-import { AGEN_BODOH_CAROUSEL_SLIDES, AgenBodohCarousel } from "./videos/AgenBodoh/AgenBodohCarousel";
 import { MODEL_MURAH_CAROUSEL_SLIDES, ModelMurahCarousel } from "./videos/ModelMurah/ModelMurahCarousel";
 import { JUNIOR_HILANG_CAROUSEL_SLIDES, JuniorHilangCarousel } from "./videos/JuniorHilang/JuniorHilangCarousel";
 
@@ -90,7 +89,6 @@ export const RemotionRoot: React.FC = () => {
       </Folder>
       <Composition id="ChatbotVsAIAgentPahamiBedanya-Reels" component={ChatbotVsAIAgentPahamiBedanyaVideo} durationInFrames={CHATBOT_VS_AIAGENT_PAHAMI_BEDANYA_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "gh" }} />
       <Composition id="KurikulumAIEngineerGratis542PelajaranDar-Reels" component={KurikulumAIEngineerGratis542PelajaranDarVideo} durationInFrames={KURIKULUM_AIENGINEER_GRATIS542_PELAJARAN_DAR_FRAMES} fps={30} width={1080} height={1920} defaultProps={{ theme: "gh" }} />
-      <Composition id="AgenBodoh-Carousel" component={AgenBodohCarousel} durationInFrames={AGEN_BODOH_CAROUSEL_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "gh" }} />
       <Composition id="ModelMurah-Carousel" component={ModelMurahCarousel} durationInFrames={MODEL_MURAH_CAROUSEL_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "gh" }} />
       <Composition id="JuniorHilang-Carousel" component={JuniorHilangCarousel} durationInFrames={JUNIOR_HILANG_CAROUSEL_SLIDES} fps={1} width={1080} height={1350} defaultProps={{ theme: "gh" }} />
     </>
