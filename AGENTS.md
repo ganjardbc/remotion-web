@@ -38,7 +38,7 @@ Konteks project untuk agent AI apa pun (Claude Code, Codex, Cursor, dll.). Baca 
 ## Perintah
 - `npm i`, `npm run dev` (Remotion Studio).
 - `npm run validate`: validator aturan konten carousel, harus bebas ERROR. Butuh Node >= 22.18.
-- `npm run validate:structure`: cek nama dan isi folder `src/videos/<Nama>` terhadap [docs/struktur-video.md](docs/struktur-video.md). Folder lama ada di daftar `LEGACY` di skripnya.
+- `npm run validate:structure`: cek nama dan isi folder `src/videos/<Nama>` terhadap [docs/struktur-video.md](docs/struktur-video.md). Pengecualian (`EXEMPT`) ada di skripnya.
 - `npm run lint`: eslint + tsc + validate + validate:structure.
 - `npm run alt -- <berkas>`: alt text, caption, hashtag carousel.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: tambahkan `--sequence --image-format=png`.

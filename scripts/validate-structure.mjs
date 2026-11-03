@@ -2,7 +2,7 @@
 // Memeriksa struktur folder src/videos/<Nama> terhadap docs/struktur-video.md.
 //   node scripts/validate-structure.mjs [Nama...]
 // Jenis folder dikenali dari isinya: carousel (carousel.content.ts), video dialog (SceneRenderer.tsx), Reels
-// (config.ts + scenes.tsx). Folder di LEGACY dilewati sampai dimigrasi. Keluar dengan kode 1 bila ada ERROR.
+// (config.ts + scenes.tsx). Folder di EXEMPT dilewati. Keluar dengan kode 1 bila ada ERROR.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -11,15 +11,8 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const videos = join(root, "src/videos");
 const rootTsx = readFileSync(join(root, "src/Root.tsx"), "utf8");
 
-// Belum dimigrasi ke pola baku. Hapus dari daftar ini begitu foldernya sudah sesuai (atau dihapus).
-const LEGACY = new Set([
-  "ChatbotVsAIAgentPahamiBedanya",
-  "KurikulumAIEngineerGratis542PelajaranDar",
-  "ProgrammerBodoh",
-  "SejarahAIStory",
-  "SejarahAIStoryReels",
-  "CharacterRigDemo",
-]);
+// Bukan konten video (prototipe karakter untuk Studio), jadi tidak mengikuti pola folder.
+const EXEMPT = new Set(["CharacterRigDemo"]);
 // Pengecualian nama berkas yang sudah disepakati di docs/struktur-video.md.
 const SFX_EXCEPTION = { VueTutorial: "VueSfx.tsx" };
 
@@ -114,8 +107,8 @@ const only = process.argv.slice(2);
 const names = (only.length ? only : readdirSync(videos)).filter((n) => statSync(join(videos, n)).isDirectory() && existsSync(join(videos, n)));
 let bad = 0;
 for (const name of names) {
-  if (LEGACY.has(name)) {
-    console.log(`LEGACY ${name} (dilewati, belum dimigrasi)`);
+  if (EXEMPT.has(name)) {
+    console.log(`SKIP  ${name} (bukan konten video)`);
     continue;
   }
   const { type, errors, warns } = checkFolder(name);
@@ -124,5 +117,5 @@ for (const name of names) {
   for (const e of errors) console.log(`    ERROR ${e}`);
   for (const w of warns) console.log(`    warn  ${w}`);
 }
-for (const l of LEGACY) if (!existsSync(join(videos, l))) console.log(`warn  LEGACY berisi folder yang sudah tidak ada: ${l}`);
+for (const l of EXEMPT) if (!existsSync(join(videos, l))) console.log(`warn  EXEMPT berisi folder yang sudah tidak ada: ${l}`);
 process.exit(bad ? 1 : 0);

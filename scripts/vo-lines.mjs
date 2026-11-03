@@ -7,7 +7,7 @@
 // Dua pola video dikenali dari isi folder:
 //   - Reels (config.ts + SPOKEN, tanpa voiceover.ts): satu baris per scene, id = id scene, teks = SPOKEN[id],
 //     suara Nilasari, model eleven_multilingual_v2, speed 1.2 (lihat docs/struktur-video.md).
-//   - video dialog (scenes.tsx atau scenes.ts + voiceover.ts): baris per dialog, suara per karakter.
+//   - video dialog (scenes.tsx + voiceover.ts): baris per dialog, suara per karakter.
 import { build } from "esbuild";
 import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
@@ -56,8 +56,8 @@ if (isReels) {
     rows.push({ id, scene: id, who: "narator", voice: REELS_VOICE.name, voice_id: REELS_VOICE.id, model: REELS_MODEL, speed: REELS_SPEED, text, chars: text.length, hash, status: statusOf(entry, hash), slot: cfg.VO[id].seconds, duration: entry?.duration ?? null });
   }
 } else {
-  // Video dialog berpola VueTutorial memakai scenes.tsx; video dari draft (src/draft-kit) memakai scenes.ts.
-  const scenes = await bundle(join(dir, existsSync(join(dir, "scenes.tsx")) ? "scenes.tsx" : "scenes.ts"), "lines.mjs");
+  // Video dialog berpola VueTutorial: scenes.tsx (BASE_SCENES) + voiceover.ts.
+  const scenes = await bundle(join(dir, "scenes.tsx"), "lines.mjs");
   const vo = await bundle(join(dir, "voiceover.ts"), "vo.mjs", ["remotion", "react"]);
   scenes.BASE_SCENES.forEach((s) => {
     s.lines.forEach((l, i) => {

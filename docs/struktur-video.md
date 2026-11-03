@@ -118,14 +118,14 @@ Impor di `src/Root.tsx` sebagai `import { <Nama>Video, TOTAL_FRAMES as <NAMA>_FR
 
 ## Status kepatuhan (3 November 2026)
 
-`npm run validate:structure` memeriksa semua folder di atas (jenis folder, berkas wajib dan terlarang, impor lintas folder, ekspor `config.ts`, 5 hashtag, `BrandFooter` sekali, pendaftaran di `Root.tsx`, bagian README). Folder yang belum dimigrasi ada di daftar `LEGACY` di `scripts/validate-structure.mjs`; hapus dari daftar itu begitu sesuai.
+`npm run validate:structure` memeriksa semua folder di atas (jenis folder, berkas wajib dan terlarang, impor lintas folder, ekspor `config.ts`, 5 hashtag, `BrandFooter` sekali, pendaftaran di `Root.tsx`, bagian README). Pengecualian ada di daftar `EXEMPT` di `scripts/validate-structure.mjs`.
 
 Sesuai aturan: PromptPanjang, ClaudeMem, ReviewKodeAI, Haiku55, ModelTeam (Reels); ModelMurah, JuniorHilang (carousel); VueTutorial (dialog, kecuali nama Sfx di atas).
 
-Dihapus 3 November 2026 karena tidak dipakai: AgenBodoh (Reels dan carousel), ClaudeMd, GratisMurah, OpenCode9Router, AIAgent, ClaudeLoop, FileDibajak, IzinPagar, PenulisUI, SejarahAI, SejarahAIV2, TigaFrameworkFrontend, TokenTips.
+Dihapus 3 November 2026 karena tidak dipakai: ChatbotVsAIAgentPahamiBedanya, KurikulumAIEngineerGratis542PelajaranDar, ProgrammerBodoh, SejarahAIStory, SejarahAIStoryReels, AgenBodoh (Reels dan carousel), ClaudeMd, GratisMurah, OpenCode9Router, AIAgent, ClaudeLoop, FileDibajak, IzinPagar, PenulisUI, SejarahAI, SejarahAIV2, TigaFrameworkFrontend, TokenTips.
 
-DraftKit (mesin Reels dari data, dipakai juga oleh carousel) dipindah ke `src/draft-kit/` pada 3 November 2026 dan bukan folder video lagi.
+DraftKit dipindah ke `src/draft-kit/` pada 3 November 2026. Setelah Reels berbasis DraftKit dihapus, hanya `Stage.tsx` dan `types.ts` (stiker karakter carousel) yang tersisa di sana; `DraftVideo`, `voiceover.ts`, dan `voices.json` ikut dihapus.
 
-Belum sesuai, masih dipertahankan: ChatbotVsAIAgentPahamiBedanya, KurikulumAIEngineerGratis542PelajaranDar, ProgrammerBodoh, SejarahAIStory, SejarahAIStoryReels (pola menengah dengan `voiceover.ts` dan `scenes.ts`). Video yang belum sesuai juga belum punya `CAPTION` dan `HASHTAGS`.
+Dikecualikan dari validator: CharacterRigDemo (prototipe karakter untuk Studio, bukan konten video).
 
 `vo-lines.mjs` dan `vo-generate.mjs` mendukung Reels dan video dialog; polanya dikenali dari isi folder (Reels = `config.ts` tanpa `voiceover.ts`).
