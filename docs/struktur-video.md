@@ -20,6 +20,8 @@ Untuk Format A, id scene wajib memuat `hook`, `relate`, `shift`, `urgency`, `clo
 
 ## Reels: isi folder
 
+Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes hook,relate,shift,urgency,closing,cta]`. Jangan buat folder dengan tangan: skrip menulis semua berkas di bawah dengan nama yang benar, menyalin `parts.tsx` dari PromptPanjang, dan mendaftarkan `<Nama>-Reels` di `src/Root.tsx`. Template di `scripts/templates/reels`. Isi `SPOKEN` dan `CAPTION` di `config.ts` dan scene di `scenes.tsx` sesudahnya. Kalau `parts.tsx` PromptPanjang diperbarui, video baru otomatis memakai versi terbaru; video lama tidak ikut berubah.
+
 ```
 src/videos/<Nama>/
   README.md

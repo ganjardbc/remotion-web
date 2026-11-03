@@ -76,6 +76,7 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 ## Perintah
 - `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate. `npm run validate`: cek aturan konten carousel.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: `--sequence --image-format=png`.
+- `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A) dan daftarkan di `Root.tsx`.
 - `node scripts/new-video.mjs <NamaPascalCase> "<Judul>"`: scaffold video dialog berpola VueTutorial.
 - Voice over (ElevenLabs): `node scripts/vo-generate.mjs --video <Nama>` (meminta konfirmasi sebelum memanggil API).
 - Komposisi harus terdaftar di `src/Root.tsx` agar muncul di Studio.
