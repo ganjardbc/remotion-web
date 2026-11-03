@@ -90,6 +90,8 @@ export type DraftScene = {
   readonly cast: readonly CastCue[];
   readonly onScreenText: string;
   readonly tone?: SceneTone;
+  // Lampu sorot: tepi layar digelapkan dan kerucut cahaya hangat jatuh dari atas ke papan dan karakter (cocok untuk latar malam).
+  readonly spotlight?: boolean;
   // Transisi saat scene ini mulai (bawaan `potong`).
   readonly transisi?: SceneTransition;
   // Kartu teks layar atas: perataan (bawaan tengah), kemiringan dalam derajat (tampilan stiker), dan gerak teks (`kata` = muncul kata demi kata).

@@ -56,6 +56,76 @@ const BoardChat: React.FC<{ readonly lines: readonly string[] }> = ({ lines }) =
   );
 };
 
+// Baris `&alur|A|B|C` = diagram alur: kotak berurutan dengan panah yang digambar satu per satu (kotak terakhir hijau); `#teks` = bilah info.
+const BoardFlow: React.FC<{ readonly lines: readonly string[]; readonly instant?: boolean }> = ({ lines, instant }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const now = frame / fps;
+  const reveal = (at: number, len = 0.35): number => (instant ? 1 : EASE(interpolate(now, [at, at + len], [0, 1], clamp)));
+  const [title, ...rest] = lines;
+  const steps = (rest.find((l) => l.startsWith("&alur|")) ?? "").split("|").slice(1);
+  const info = rest.find((l) => l.startsWith("#"))?.slice(1);
+  return (
+    <div style={{ width: "100%", height: "100%", padding: "26px 16px 22px", boxSizing: "border-box", fontFamily: t.fonts.body, color: t.colors.ink, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ fontFamily: t.fonts.heading, fontWeight: t.type.headlineWeight, fontSize: 56, lineHeight: 1.1, textTransform: t.type.headlineTransform, textAlign: "center", opacity: reveal(0.1), transform: `translateY(${(1 - reveal(0.1)) * 20}px)` }}>{title}</div>
+      <div style={{ display: "flex", alignItems: "center", width: "100%", justifyContent: "center" }}>
+        {steps.map((x, i) => {
+          const last = i === steps.length - 1;
+          const r = reveal(0.4 + i * 0.7);
+          const arrow = reveal(0.4 + i * 0.7 + 0.4, 0.3);
+          return (
+            <div key={x} style={{ display: "flex", alignItems: "center" }}>
+              <div style={{ minWidth: 190, padding: "26px 18px", borderRadius: t.radius.card, textAlign: "center", fontWeight: 800, fontSize: 36, backgroundColor: last ? t.colors.success : t.colors.primaryTint, color: last ? t.colors.onPrimary : t.colors.primaryInk, border: `3px solid ${last ? t.colors.success : t.colors.primarySoft}`, opacity: r, transform: `translateY(${(1 - r) * 20}px)` }}>{last ? `${x} ✓` : x}</div>
+              {last ? null : (
+                <svg width="64" height="30" viewBox="0 0 64 30" style={{ margin: "0 4px" }}>
+                  <path d="M4 15 H52 M42 6 L54 15 L42 24" fill="none" stroke={t.colors.primaryDark} strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - arrow} />
+                </svg>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {info ? <div style={{ padding: "10px 28px", borderRadius: 999, backgroundColor: t.colors.primaryTint, fontWeight: 600, fontSize: 30, color: t.colors.primaryInk, opacity: reveal(2.1) }}>{info}</div> : null}
+    </div>
+  );
+};
+
+// Baris `&garis|Awal|Titik jatuh|Akhir` = garis waktu jatuh dan bangun: garis naik, turun tajam di titik jatuh (titik merah),
+// lalu naik lagi; garis digambar bertahap, label di tiap titik. Judul boleh memuat satu sorotan `*frasa*`.
+const BoardTimeline: React.FC<{ readonly lines: readonly string[]; readonly instant?: boolean }> = ({ lines, instant }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const now = frame / fps;
+  const reveal = (at: number, len = 0.35): number => (instant ? 1 : EASE(interpolate(now, [at, at + len], [0, 1], clamp)));
+  const [title, ...rest] = lines;
+  const [start = "", fall = "", end = ""] = (rest.find((l) => l.startsWith("&garis|")) ?? "").split("|").slice(1);
+  const draw = reveal(0.5, 2.2);
+  const mark = t.colors.accentDark ?? t.colors.accent;
+  return (
+    <div style={{ width: "100%", height: "100%", padding: "22px 16px 16px", boxSizing: "border-box", fontFamily: t.fonts.body, color: t.colors.ink, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ fontFamily: t.fonts.heading, fontWeight: t.type.headlineWeight, fontSize: 46, lineHeight: 1.1, textTransform: t.type.headlineTransform, textAlign: "center", opacity: reveal(0.1), transform: `translateY(${(1 - reveal(0.1)) * 20}px)` }}>{withHighlight(title, mark)}</div>
+      <svg width="760" height="270" viewBox="0 0 760 270" style={{ overflow: "visible" }}>
+        <line x1="10" y1="240" x2="750" y2="240" stroke={t.colors.border} strokeWidth="3" />
+        <path d="M20 205 C110 200 170 150 240 110 S340 60 410 52 L452 222 C520 226 610 150 740 46" fill="none" stroke={t.colors.primary} strokeWidth="9" strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray={1} strokeDashoffset={1 - draw} />
+        <g opacity={reveal(0.4)}>
+          <circle cx="20" cy="205" r="12" fill={t.colors.primary} />
+          <text x="20" y="262" fontFamily={t.fonts.body} fontWeight={600} fontSize="26" fill={t.colors.ink} textAnchor="start">{start}</text>
+        </g>
+        <g opacity={reveal(1.55)}>
+          <circle cx="452" cy="222" r="16" fill={t.colors.danger} />
+          <text x="452" y="262" fontFamily={t.fonts.body} fontWeight={700} fontSize="26" fill={t.colors.ink} textAnchor="middle">{fall}</text>
+        </g>
+        <g opacity={reveal(2.5)}>
+          <circle cx="740" cy="46" r="14" fill={t.colors.success} />
+          <text x="740" y="24" fontFamily={t.fonts.body} fontWeight={700} fontSize="26" fill={t.colors.ink} textAnchor="end">{end}</text>
+        </g>
+      </svg>
+    </div>
+  );
+};
+
 // Baris `||Judul|tanda|keterangan` = kartu kolom (kartu berurutan tampil berdampingan): lencana tanda di atas (`ok` = centang hijau,
 // `?` = tanda tanya oranye gelap, `...` = menunggu abu-abu), judul satu baris, dan keterangan kecil (opsional);
 // baris `#teks` = bilah info di dasar papan (angka "Rp ..." ditebalkan).
@@ -70,7 +140,7 @@ const BoardColumns: React.FC<{ readonly lines: readonly string[]; readonly insta
   const info = rest.find((l) => l.startsWith("#"))?.slice(1);
   const warn = t.colors.accentDark ?? t.colors.accent;
   return (
-    <div style={{ width: "100%", height: "100%", padding: "26px 16px 22px", boxSizing: "border-box", fontFamily: t.fonts.body, color: t.colors.ink, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "space-between" }}>
+    <div style={{ width: "100%", height: "100%", padding: "26px 16px 22px", boxSizing: "border-box", fontFamily: t.fonts.body, color: t.colors.ink, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: info ? "space-between" : "space-evenly" }}>
       <div style={{ fontFamily: t.fonts.heading, fontWeight: t.type.headlineWeight, fontSize: 58, lineHeight: 1.1, textTransform: t.type.headlineTransform, textAlign: "center", opacity: reveal(0.1), transform: `translateY(${(1 - reveal(0.1)) * 20}px)` }}>{title}</div>
       <div style={{ display: "flex", gap: 22, width: "100%", alignItems: "stretch" }}>
         {cols.map(([label, mark, note], i) => {
@@ -163,7 +233,11 @@ export const Board: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
           return (
             <Sequence key={`${i}-${seg.text}`} from={start} durationInFrames={end === undefined ? Infinity : end - start} layout="none">
               <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", padding: "0 56px" }}>
-                {seg.text.includes("\n$") ? (
+                {seg.text.includes("\n&alur|") ? (
+                  <BoardFlow lines={seg.text.split("\n")} instant={i > 0} />
+                ) : seg.text.includes("\n&garis|") ? (
+                  <BoardTimeline lines={seg.text.split("\n")} instant={i > 0} />
+                ) : seg.text.includes("\n$") ? (
                   <BoardChat lines={seg.text.split("\n")} />
                 ) : seg.text.includes("\n||") ? (
                   <BoardColumns lines={seg.text.split("\n")} instant={i > 0} />

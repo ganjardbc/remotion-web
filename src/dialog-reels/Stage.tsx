@@ -40,7 +40,10 @@ import {
   type Gesture,
   type LookKey,
 } from "../assets/characters";
-import { Board } from "./Board";
+import { Board, BOARD } from "./Board";
+
+// Dasar papan tulis (titik tuju tongkat penunjuk).
+const BOARD_BOTTOM = BOARD.top + BOARD.height + 30;
 import type { CastCue, CharacterId, DraftLine, DraftScene, VisualStyle } from "./types";
 
 // Latar dan pemeran satu scene. Pemeran berdiri di garis lantai latar; di ruang kerja Ganjar duduk di balik meja
@@ -82,7 +85,7 @@ export const ganjarClip = (motion: string | null | undefined, toward: number) =>
 
 // Robot dan Claude Code memakai klip Robot.
 export const robotClip = (motion: string | null | undefined) =>
-  motion === "armGesture" ? { clip: armGesture("R", 60, 130, 14), dur: 60 } : motion === "surprise" ? { clip: surprise, dur: 24 } : motion === "walk" ? { clip: walk(90), dur: 90 } : null;
+  motion === "armGesture" ? { clip: armGesture("R", 60, 130, 14), dur: 60 } : motion === "tunjuk" ? { clip: armGesture("R", 96, 120, 1.5), dur: 96 } : motion === "surprise" ? { clip: surprise, dur: 24 } : motion === "walk" ? { clip: walk(90), dur: 90 } : null;
 
 const SLOTS: Readonly<Record<number, readonly number[]>> = { 1: [540], 2: [300, 780], 3: [210, 540, 870] };
 const ORDER = { kiri: 0, tengah: 1, kanan: 2 } as const;
@@ -204,7 +207,26 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; r
   const placed = (
     <div style={{ position: "absolute", left: x - s.width / 2 + sl.dx, top: s.top(floor) - bounce - sl.bob, filter: characterFilter(scene.time), ...idleStyle }}>{body}</div>
   );
-  if (!actor.clip) return placed;
+  // Tongkat penunjuk (latar kelas, gerak `tunjuk`): tumbuh dari ujung lengan ke dasar papan, ditahan, lalu ditarik kembali.
+  let pointer: React.ReactNode = null;
+  if (scene.backdrop === "kelas" && who !== "ganjar" && style === "rig") {
+    const ev = events.find((e) => e.motion === "tunjuk" && frame >= e.start && frame < e.start + 96);
+    if (ev) {
+      const f = frame - ev.start;
+      const grow = Math.min(1, Math.max(0, (f - 8) / 14));
+      const back = Math.min(1, Math.max(0, (f - 82) / 12));
+      const p = (1 - Math.pow(1 - grow, 3)) * (1 - back);
+      const tip = { x: x + 0.47 * h, y: floor - 0.44 * h };
+      const aim = { x: x + 0.5 * h, y: BOARD_BOTTOM };
+      pointer = (
+        <svg width="1080" height="1920" viewBox="0 0 1080 1920" style={{ position: "absolute", left: 0, top: 0, pointerEvents: "none" }}>
+          <line x1={tip.x} y1={tip.y} x2={tip.x + (aim.x - tip.x) * p} y2={tip.y + (aim.y - tip.y) * p} stroke="#B98A52" strokeWidth="10" strokeLinecap="round" />
+          <circle cx={tip.x + (aim.x - tip.x) * p} cy={tip.y + (aim.y - tip.y) * p} r={9 * p} fill="#F2F3F7" />
+        </svg>
+      );
+    }
+  }
+  if (!actor.clip) return <>{placed}{pointer}</>;
   // Duduk di balik meja: badan bawah dipotong sedikit di bawah permukaan meja.
   return <div style={{ position: "absolute", left: 0, top: 0, width: 1080, height: PORTRAIT_ANCHORS.deskTop + 60, overflow: "hidden" }}>{placed}</div>;
 };

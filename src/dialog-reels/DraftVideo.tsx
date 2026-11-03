@@ -245,6 +245,20 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
   );
 };
 
+// Lampu sorot: tepi layar digelapkan, kerucut cahaya hangat dari atas tengah jatuh ke papan dan karakter. Menyala 0,6 dtk di awal scene.
+const Spotlight: React.FC<{ readonly on?: boolean }> = ({ on }) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  if (!on) return null;
+  const p = EASE(interpolate(frame / fps, [0, 0.6], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  return (
+    <div style={{ position: "absolute", inset: 0, opacity: p, pointerEvents: "none" }}>
+      <div style={{ position: "absolute", inset: 0, background: "radial-gradient(ellipse 62% 48% at 50% 38%, rgba(0,0,0,0) 0%, rgba(0,0,0,0.3) 100%)" }} />
+      <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 1400, clipPath: "polygon(38% 0, 62% 0, 96% 100%, 4% 100%)", background: "linear-gradient(to bottom, rgba(255,236,190,0.15), rgba(255,236,190,0.03))" }} />
+    </div>
+  );
+};
+
 // Wash biru primary untuk scene bernada "biru": dikalikan di atas panggung supaya dinding dan karakter ikut kebiruan.
 const Tint: React.FC<{ readonly tone: DraftScene["tone"] }> = ({ tone }) => {
   const t = useTheme();
@@ -541,6 +555,7 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
               <Camera scene={s} mode={meta.camera ?? "diam"}>
                 <Stage scene={s} style={meta.style} idle={meta.idleMotion} />
               </Camera>
+              <Spotlight on={s.spotlight} />
               <Tint tone={s.tone} />
               <Decor decor={s.decor ?? []} />
               <OnScreenText scene={s} />

@@ -37,7 +37,7 @@ const listFiles = (dir, prefix = "") =>
 const INSERT_KINDS = ["promptKode", "terminalError", "muridBertanya", "alarmProduction", "kartuFollow", "gitBlame", "landingKelas", "silabusBaru"];
 const EXPRESSIONS = ["netral", "senang", "sedih", "kaget", "bingung", "mikir", "kesal", "marah", "serius", "malu", "mataTertutup"];
 const TONES = ["terang", "biru", "gelap"];
-const MOTIONS = ["headTurn", "point", "startle", "armGesture", "surprise", "walk"];
+const MOTIONS = ["headTurn", "point", "startle", "armGesture", "tunjuk", "surprise", "walk"];
 const TAIL = 0.6;
 
 const checkDialogScenes = (sc, err, warns) => {
