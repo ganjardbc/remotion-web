@@ -1,0 +1,89 @@
+{
+  "lines": {
+    "closing-01": {
+      "hash": "1bfba3fe78a6",
+      "file": "voiceover/closing-01.mp3",
+      "duration": 3.06
+    },
+    "closing-02": {
+      "hash": "2e388710d132",
+      "file": "voiceover/closing-02.mp3",
+      "duration": 4.4
+    },
+    "closing-03": {
+      "hash": "f77445a3112c",
+      "file": "voiceover/closing-03.mp3",
+      "duration": 4.58
+    },
+    "cta-01": {
+      "hash": "6855232250c5",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 5.58
+    },
+    "hook-01": {
+      "hash": "bc2b8678b1bf",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 4.9
+    },
+    "jawab-01": {
+      "hash": "2ec1c473f885",
+      "file": "voiceover/jawab-01.mp3",
+      "duration": 2.6
+    },
+    "jawab-02": {
+      "hash": "8205a8d98016",
+      "file": "voiceover/jawab-02.mp3",
+      "duration": 4.77
+    },
+    "relate-01": {
+      "hash": "eea357fb1663",
+      "file": "voiceover/relate-01.mp3",
+      "duration": 2.5
+    },
+    "relate-02": {
+      "hash": "797e6416b5b7",
+      "file": "voiceover/relate-02.mp3",
+      "duration": 3.15
+    },
+    "relate-03": {
+      "hash": "a259b20220e6",
+      "file": "voiceover/relate-03.mp3",
+      "duration": 1.83
+    },
+    "relate-04": {
+      "hash": "0eb0034cdc0f",
+      "file": "voiceover/relate-04.mp3",
+      "duration": 0.92
+    },
+    "relate-05": {
+      "hash": "ff329e70d345",
+      "file": "voiceover/relate-05.mp3",
+      "duration": 2.19
+    },
+    "relate-06": {
+      "hash": "5ce04d477c2f",
+      "file": "voiceover/relate-06.mp3",
+      "duration": 1.88
+    },
+    "shift-01": {
+      "hash": "dfcb8140821c",
+      "file": "voiceover/shift-01.mp3",
+      "duration": 4.09
+    },
+    "shift-02": {
+      "hash": "683427f6637e",
+      "file": "voiceover/shift-02.mp3",
+      "duration": 1.88
+    },
+    "shift-03": {
+      "hash": "af87b310ea83",
+      "file": "voiceover/shift-03.mp3",
+      "duration": 5.61
+    },
+    "urgency-01": {
+      "hash": "1f08788d9e13",
+      "file": "voiceover/urgency-01.mp3",
+      "duration": 4.26
+    }
+  }
+}
