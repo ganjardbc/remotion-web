@@ -73,7 +73,7 @@ Bagian wajib, urut: judul `# <Nama>` dan satu paragraf (judul konten, format, ju
 - ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2. Satu klip per scene, id klip = id scene.
 - Klip mentah di `out/vo-raw/<Nama>/<id>.mp3` (tidak di-commit). Olah dengan `node scripts/vo-process.mjs <id> out/vo-raw/<Nama>/<id>.mp3 --hash <hash> --video <Nama>`.
 - `voiceover.json` dimulai `{ "lines": {} }`. `voiceover-files.ts` dan folder `voiceover/` ditulis oleh `vo-process.mjs` saat klip pertama diolah, jadi untuk video yang belum bersuara folder `voiceover/` belum ada dan itu sah. Jangan diubah tangan.
-- `scripts/vo-lines.mjs` dan `vo-generate.mjs` belum mendukung pola ini (masih membaca `voiceover.ts` dan `BASE_SCENES` pola VueTutorial).
+- Alur otomatis: `node scripts/vo-lines.mjs --video <Nama>` menampilkan status tiap scene (`baru`, `berubah`, `ok`), lalu `node scripts/vo-generate.mjs --video <Nama>` men-generate hanya yang belum ada atau berubah, memotong senyap, menormalkan, dan mencatatnya. Sebelum memanggil API, jumlah huruf (≈ kredit) ditampilkan dan konfirmasi diminta. Butuh `ELEVENLABS_API_KEY` di environment atau `.env.local`. Hash = sha1 `voiceId|model|SPOKEN[id]`; mengganti suara, model, atau speed di `vo-lines.mjs` mengubah hash semua scene.
 
 ## Video dialog: isi folder
 
@@ -128,4 +128,4 @@ DraftKit (mesin Reels dari data, dipakai juga oleh carousel) dipindah ke `src/dr
 
 Belum sesuai, masih dipertahankan: ChatbotVsAIAgentPahamiBedanya, KurikulumAIEngineerGratis542PelajaranDar, ProgrammerBodoh, SejarahAIStory, SejarahAIStoryReels (pola menengah dengan `voiceover.ts` dan `scenes.ts`). Video yang belum sesuai juga belum punya `CAPTION` dan `HASHTAGS`.
 
-`scripts/vo-lines.mjs` dan `vo-generate.mjs` hanya mendukung pola video dialog (membaca `voiceover.ts` dan `BASE_SCENES`). Untuk Reels, generate dan olah klip lewat konektor ElevenLabs dan `vo-process.mjs` secara manual.
+`vo-lines.mjs` dan `vo-generate.mjs` mendukung Reels dan video dialog; polanya dikenali dari isi folder (Reels = `config.ts` tanpa `voiceover.ts`).
