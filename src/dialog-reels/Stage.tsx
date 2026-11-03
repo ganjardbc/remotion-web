@@ -89,6 +89,13 @@ const ORDER = { kiri: 0, tengah: 1, kanan: 2 } as const;
 const speakingAt = (lines: readonly DraftLine[], who: CharacterId, t: number): boolean =>
   lines.some((l) => l.who === who && t >= l.from && t < l.from + l.dur - 0.15);
 
+// Ekspresi pada waktu t: pengaturan terakhir dari baris yang sudah mulai; bila belum ada, ekspresi dasar dari `cast`.
+const expressionAt = (lines: readonly DraftLine[], who: CharacterId, t: number, base: string): string => {
+  let e = base;
+  for (const l of lines) if (l.from <= t && l.expressions?.[who]) e = l.expressions[who] as string;
+  return e;
+};
+
 // Saat gerak dimainkan: awal baris pertama karakter itu, atau sesaat setelah scene mulai.
 const motionStart = (lines: readonly DraftLine[], who: CharacterId): number => lines.find((l) => l.who === who)?.from ?? 0.3;
 
@@ -120,7 +127,7 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: DraftScene; r
   const look = lookKeys(scene.lines, who, x, xOf);
   // Robot dan Claude Code tidak punya mulut: badan memantul saat bicara.
   const bounce = talking && who !== "ganjar" ? Math.abs(Math.sin(t * 12)) * 6 : 0;
-  const expression = cue.expression as never;
+  const expression = expressionAt(scene.lines, who, t, cue.expression) as never;
 
   let body: React.ReactNode;
   if (style === "stickman") {

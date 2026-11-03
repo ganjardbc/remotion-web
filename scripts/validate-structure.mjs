@@ -32,6 +32,51 @@ const listFiles = (dir, prefix = "") =>
     return statSync(p).isDirectory() ? listFiles(p, `${prefix}${f}/`) : [`${prefix}${f}`];
   });
 
+// Isi scenes.ts Reels dialog: urutan dan durasi baris, cutaway (`inserts`), ekspresi, teks layar, nada. Dibaca dengan regex
+// dari teks berkas (bukan dijalankan), jadi hanya mengenali bentuk yang dipakai scaffold dan JagoDikit.
+const INSERT_KINDS = ["promptKode", "terminalError", "muridBertanya", "alarmProduction", "kartuFollow"];
+const EXPRESSIONS = ["netral", "senang", "sedih", "kaget", "bingung", "mikir", "kesal", "marah", "serius", "malu", "mataTertutup"];
+const TONES = ["terang", "biru", "gelap"];
+const TAIL = 0.6;
+
+const checkDialogScenes = (sc, err, warns) => {
+  const starts = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)];
+  let total = 0;
+  starts.forEach((m, i) => {
+    const id = m[1];
+    const block = sc.slice(m.index, i + 1 < starts.length ? starts[i + 1].index : sc.length);
+    const seconds = Number(block.match(/^ {4}seconds:\s*([\d.]+)/m)?.[1] ?? 0);
+    const tone = block.match(/^ {4}tone:\s*"([^"]+)"/m)?.[1];
+    if (tone && !TONES.includes(tone)) err(`scene ${id}: tone "${tone}" tidak dikenal (${TONES.join(", ")}).`);
+    const lines = [...block.matchAll(/who:\s*"(\w+)",\s*from:\s*([\d.]+),\s*dur:\s*([\d.]+)/g)].map((x) => ({ who: x[1], from: Number(x[2]), dur: Number(x[3]) }));
+    lines.forEach((l, k) => {
+      const prev = lines[k - 1];
+      if (prev && l.from < prev.from + prev.dur) warns.push(`scene ${id}: baris ${k + 1} mulai ${l.from} dtk sebelum baris ${k} selesai (${(prev.from + prev.dur).toFixed(1)} dtk); mesin akan menggesernya.`);
+    });
+    const end = lines.reduce((mx, l) => Math.max(mx, l.from + l.dur), 0);
+    const length = Math.max(seconds, end + TAIL);
+    total += length;
+    for (const e of block.matchAll(/expressions:\s*\{([^}]*)\}/g))
+      for (const [, who, ex] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!EXPRESSIONS.includes(ex)) err(`scene ${id}: ekspresi "${ex}" (${who}) tidak ada di kosakata.`);
+    for (const t of block.matchAll(/(?:screenText|onScreenText):\s*"([^"]*)"/g)) {
+      const marks = (t[1].match(/\*/g) ?? []).length;
+      if (marks % 2 !== 0) err(`scene ${id}: teks layar "${t[1]}" punya tanda * yang tidak berpasangan.`);
+      else if (marks > 2) err(`scene ${id}: teks layar "${t[1]}" punya lebih dari satu sorotan (oranye hanya satu frasa per layar).`);
+    }
+    const inserts = [...block.matchAll(/kind:\s*"(\w+)",\s*from:\s*([\d.]+),\s*dur:\s*([\d.]+)/g)].map((x) => ({ kind: x[1], from: Number(x[2]), dur: Number(x[3]) }));
+    inserts.forEach((x, k) => {
+      if (!INSERT_KINDS.includes(x.kind)) err(`scene ${id}: cutaway "${x.kind}" tidak dikenal (${INSERT_KINDS.join(", ")}).`);
+      if (x.dur < 1.5) warns.push(`scene ${id}: cutaway ${x.kind} hanya ${x.dur} dtk; terlalu singkat untuk terbaca.`);
+      if (x.from + x.dur > length + 1e-6) err(`scene ${id}: cutaway ${x.kind} berakhir di ${(x.from + x.dur).toFixed(1)} dtk, melewati akhir scene (${length.toFixed(1)} dtk).`);
+      const prev = inserts[k - 1];
+      if (prev && x.from < prev.from + prev.dur) err(`scene ${id}: cutaway ${x.kind} tumpang tindih dengan ${prev.kind}.`);
+    });
+    if (/TODO/.test(block)) warns.push(`scene ${id}: masih ada teks TODO.`);
+    if (id === "hook" && lines.length !== 1) warns.push(`scene hook punya ${lines.length} baris ucapan; Format A: hook 1 kalimat dari satu baris.`);
+  });
+  if (total && (total < 30 || total > 60)) warns.push(`perkiraan durasi ${total.toFixed(0)} dtk di luar 30-60 dtk (Format A); angka pasti menunggu voiceover.`);
+};
+
 const checkFolder = (name) => {
   const dir = join(videos, name);
   const errors = [];
@@ -119,6 +164,7 @@ const checkFolder = (name) => {
       for (const id of ids) if (!/^[a-z]+$/.test(id)) err(`id scene "${id}" harus huruf kecil, satu kata.`);
       const order = FORMAT_A.map((x) => ids.indexOf(x));
       if (order.some((i) => i < 0) || order.some((v, i) => i > 0 && v < order[i - 1])) warns.push("scene Format A (hook, relate, shift, urgency, closing, cta) tidak lengkap atau urutannya beda; abaikan kalau ini Format C.");
+      checkDialogScenes(sc, err, warns);
     }
     if (has(`${name}Video.tsx`)) {
       const v = read(join(dir, `${name}Video.tsx`));

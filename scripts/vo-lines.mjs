@@ -48,6 +48,11 @@ const rows = [];
 if (isReelsDialog) {
   const scenes = await bundle(join(dir, "scenes.ts"), "scenes.mjs");
   const vo = await bundle(join(root, "src/dialog-reels/voiceover.ts"), "dialog-vo.mjs", ["remotion", "react"]);
+  // VO_SETTINGS di config.ts video menimpa model dan speed bawaan voices.json (speed null = tidak dikirim).
+  const cfg = await bundle(join(dir, "config.ts"), "dialog-config.mjs");
+  const set = cfg.VO_SETTINGS ?? {};
+  const model = set.model ?? vo.VO_MODEL;
+  const speed = "speed" in set ? set.speed : vo.VO_SPEED;
   const manifestFile = join(dir, "voiceover.json");
   const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, "utf8")).lines : {};
   scenes.BASE_SCENES.forEach((sc) => {
@@ -55,9 +60,9 @@ if (isReelsDialog) {
       const id = vo.lineId(sc.id, i);
       const text = vo.ttsText(l);
       const voice = vo.VO_VOICES[l.who];
-      const hash = sha(voice.id, vo.VO_MODEL, text);
+      const hash = sha(voice.id, model, text);
       const entry = manifest[id];
-      rows.push({ id, scene: sc.id, who: l.who, voice: voice.name, voice_id: voice.id, model: vo.VO_MODEL, speed: vo.VO_SPEED ?? null, text, chars: text.length, hash, status: statusOf(entry, hash), slot: l.dur, duration: entry?.duration ?? null });
+      rows.push({ id, scene: sc.id, who: l.who, voice: voice.name, voice_id: voice.id, model, speed: speed ?? null, text, chars: text.length, hash, status: statusOf(entry, hash), slot: l.dur, duration: entry?.duration ?? null });
     });
   });
 } else if (isReels) {

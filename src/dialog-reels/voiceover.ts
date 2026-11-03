@@ -30,7 +30,12 @@ export type VoEntry = { readonly hash: string; readonly file: string; readonly d
 // Id stabil baris: id scene + nomor urut (mulai 01).
 export const lineId = (sceneId: string, index: number): string => `${sceneId}-${String(index + 1).padStart(2, "0")}`;
 
-export const ttsText = (l: Pick<DraftLine, "spoken" | "text">): string => l.spoken ?? l.text;
+// Teks yang dikirim ke TTS: tag audio (bila ada) lalu teks yang diucapkan.
+export const ttsText = (l: Pick<DraftLine, "tag" | "spoken" | "text">): string => `${l.tag ? `[${l.tag}] ` : ""}${l.spoken ?? l.text}`;
+
+// Pengaturan voiceover per video (ekspor `VO_SETTINGS` dari config.ts video): model dan speed menimpa voices.json.
+// `speed: null` = tidak mengirim speed (bawaan model).
+export type VoSettings = { readonly model?: string; readonly speed?: number | null };
 
 // Jeda minimal antar baris, ekor setelah baris terakhir sebelum scene berganti.
 const GAP = 0.25;

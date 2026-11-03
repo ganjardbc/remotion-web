@@ -1,11 +1,13 @@
 import type React from "react";
 import { Audio } from "@remotion/media";
-import { interpolate, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { Easing, interpolate, Sequence, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandFooter } from "../BrandFooter";
 import { getTheme, ThemeProvider, useTheme } from "../themes";
 import { Enter } from "../motion";
+import { Inserts } from "./Inserts";
 import { floorOf, Stage } from "./Stage";
-import type { DraftMeta, DraftScene } from "./types";
+import { ClaudeCode, claudeCodeSize, Ganjar, ganjarSize, Robot, robotSize } from "../assets/characters";
+import type { CharacterId, DraftLine, DraftMeta, DraftScene } from "./types";
 import { sceneFrames } from "./voiceover";
 
 // Reels 9:16 dari data (Reels dialog): tiap scene = latar dan pemeran (Stage), teks layar di atas, subtitle baris
@@ -17,38 +19,234 @@ const MUSIC_VOLUME = 0.07;
 // Batas atas footer (BrandFooter tegak setinggi 128 px).
 const FOOTER_TOP = 1792;
 
-const OnScreenText: React.FC<{ readonly text: string }> = ({ text }) => {
+// Teks layar: `*frasa*` jadi sorotan oranye (satu per layar).
+const withHighlight = (text: string, color: string): React.ReactNode =>
+  text.split("*").map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} style={{ color }}>
+        {part}
+      </span>
+    ) : (
+      part
+    ),
+  );
+
+type Segment = { readonly text: string; readonly from: number };
+
+// Teks layar per waktu: awal scene memakai `onScreenText`, lalu berganti di baris yang punya `screenText`.
+const screenSegments = (scene: DraftScene): readonly Segment[] => {
+  const out: Segment[] = [{ text: scene.onScreenText, from: 0 }];
+  for (const l of scene.lines) {
+    const text = l.screenText;
+    if (text !== undefined && text !== out[out.length - 1].text) out.push({ text, from: l.from });
+  }
+  return out;
+};
+
+const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
   const t = useTheme();
-  if (!text) return null;
+  const { fps } = useVideoConfig();
+  const tone = scene.tone ?? "terang";
+  const dark = tone !== "terang";
+  const bg = tone === "biru" ? t.colors.primary : tone === "gelap" ? t.code.raised : t.colors.surface;
+  const fg = dark ? t.colors.onPrimary : t.colors.ink;
+  const mark = dark ? (t.colors.groundEmphasis ?? t.colors.accent) : (t.colors.accentDark ?? t.colors.accent);
+  const segs = screenSegments(scene);
   return (
-    <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: "center" }}>
-      <Enter
-        name="Teks layar"
-        delay={4}
-        y={40}
-        style={{
-          padding: "28px 44px",
-          borderRadius: t.radius.large,
-          backgroundColor: t.colors.surface,
-          boxShadow: t.shadows.md,
-          textAlign: "center",
-          textWrap: "balance",
-          fontFamily: t.fonts.heading,
-          fontWeight: t.type.headlineWeight,
-          fontSize: Math.round(68 * t.type.scale),
-          lineHeight: 1.15,
-          letterSpacing: `${t.type.tracking}em`,
-          textTransform: t.type.headlineTransform,
-          color: t.colors.ink,
-        }}
-      >
-        {text}
-      </Enter>
+    <>
+      {segs.map((seg, i) => {
+        if (!seg.text) return null;
+        const start = Math.round(seg.from * fps);
+        const end = i + 1 < segs.length ? Math.round(segs[i + 1].from * fps) : undefined;
+        return (
+          <Sequence key={`${i}-${seg.text}`} from={start} durationInFrames={end === undefined ? Infinity : end - start} layout="none">
+            <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: "center" }}>
+              <Enter
+                name="Teks layar"
+                delay={i === 0 ? 4 : 0}
+                y={40}
+                style={{
+                  padding: "28px 44px",
+                  borderRadius: t.radius.large,
+                  backgroundColor: bg,
+                  boxShadow: t.shadows.md,
+                  textAlign: "center",
+                  textWrap: "balance",
+                  fontFamily: t.fonts.heading,
+                  fontWeight: t.type.headlineWeight,
+                  fontSize: Math.round(68 * t.type.scale),
+                  lineHeight: 1.15,
+                  letterSpacing: `${t.type.tracking}em`,
+                  textTransform: t.type.headlineTransform,
+                  color: fg,
+                }}
+              >
+                {withHighlight(seg.text, mark)}
+              </Enter>
+            </div>
+          </Sequence>
+        );
+      })}
+    </>
+  );
+};
+
+// Wash biru primary untuk scene bernada "biru": dikalikan di atas panggung supaya dinding dan karakter ikut kebiruan.
+const Tint: React.FC<{ readonly tone: DraftScene["tone"] }> = ({ tone }) => {
+  const t = useTheme();
+  if (tone !== "biru") return null;
+  return <div style={{ position: "absolute", inset: 0, backgroundColor: t.colors.primarySoft, mixBlendMode: "multiply", opacity: 0.7 }} />;
+};
+
+const ENTER_SEC = 0.3;
+const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
+
+const AVATAR = 76;
+// Kotak avatar per karakter: tinggi render penuh dan titik (0..1) pada badan yang jadi pusat lingkaran.
+const AVATAR_FRAME: Readonly<Record<CharacterId, { readonly h: number; readonly cx: number; readonly cy: number }>> = {
+  ganjar: { h: 272, cx: 0.5, cy: 0.2 },
+  robot: { h: 96, cx: 0.5, cy: 0.37 },
+  claudecode: { h: 96, cx: 0.5, cy: 0.37 },
+};
+
+// Wajah karakter dalam lingkaran, ekspresinya mengikuti ekspresi karakter itu di scene.
+const Avatar: React.FC<{ readonly who: CharacterId; readonly expression: string }> = ({ who, expression }) => {
+  const t = useTheme();
+  const f = AVATAR_FRAME[who];
+  const s = who === "ganjar" ? ganjarSize(f.h) : who === "robot" ? robotSize(f.h) : claudeCodeSize(f.h);
+  const e = expression as never;
+  return (
+    <div
+      style={{
+        position: "relative",
+        flex: "none",
+        width: AVATAR,
+        height: AVATAR,
+        borderRadius: "50%",
+        overflow: "hidden",
+        backgroundColor: t.colors.primaryTint,
+        border: `3px solid ${t.colors.surface}`,
+        boxShadow: t.shadows.md,
+      }}
+    >
+      <div style={{ position: "absolute", left: AVATAR / 2 - s.width * f.cx, top: AVATAR / 2 - f.h * f.cy }}>
+        {who === "ganjar" ? <Ganjar height={f.h} expression={e} /> : who === "robot" ? <Robot height={f.h} expression={e} /> : <ClaudeCode height={f.h} expression={e} />}
+      </div>
     </div>
   );
 };
 
-const Subtitle: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
+// Subtitle berbentuk chat: tiap baris ucapan jadi bubble dan tetap ada sebagai riwayat, juga saat scene berganti.
+// Ganjar di kiri (biru primary), karakter lain di kanan (putih). Bila ruang habis, bubble paling atas memudar.
+type ChatItem = { readonly key: string; readonly who: CharacterId; readonly text: string; readonly expression: string; readonly from: number };
+
+// Baris scene jadi item chat; ekspresi avatar = ekspresi karakter itu saat baris diucapkan.
+const chatItems = (scene: DraftScene): readonly ChatItem[] =>
+  scene.lines.map((l, i) => {
+    let expression = scene.cast.find((c) => c.character === l.who)?.expression ?? "netral";
+    for (const prev of scene.lines.slice(0, i + 1)) expression = prev.expressions?.[l.who] ?? expression;
+    return { key: `${scene.id}-${i}`, who: l.who, text: l.text, expression, from: l.from };
+  });
+
+const Subtitle: React.FC<{ readonly scene: DraftScene; readonly history: readonly ChatItem[] }> = ({ scene, history }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const now = frame / fps;
+  const shown = [...history, ...chatItems(scene).filter((l) => now >= l.from)];
+  if (!shown.length) return null;
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 60,
+        right: 60,
+        top: floorOf(scene) + 40,
+        bottom: 1920 - FOOTER_TOP,
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "flex-end",
+        gap: 12,
+        overflow: "hidden",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0, black 64px)",
+        maskImage: "linear-gradient(to bottom, transparent 0, black 64px)",
+      }}
+    >
+      {shown.map((l, i) => {
+        const p = EASE(interpolate(now - l.from, [0, ENTER_SEC], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+        // Bubble lama meredup dan memburam saat baris berikutnya masuk; riwayat dari scene sebelumnya sudah penuh redup.
+        const next = shown[i + 1];
+        const d = next ? EASE(interpolate(now - next.from, [0, ENTER_SEC], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" })) : 0;
+        const left = l.who === "ganjar";
+        return (
+          <div
+            key={l.key}
+            style={{
+              display: "flex",
+              flexDirection: left ? "row" : "row-reverse",
+              alignItems: "flex-end",
+              gap: 14,
+              alignSelf: left ? "flex-start" : "flex-end",
+              maxWidth: "100%",
+              opacity: p * (1 - 0.55 * d),
+              filter: d > 0 ? `blur(${(d * 2.5).toFixed(2)}px)` : undefined,
+              transformOrigin: left ? "left bottom" : "right bottom",
+              transform: `translateY(${(1 - p) * 28}px) scale(${1 - 0.04 * d})`,
+            }}
+          >
+            <Avatar who={l.who} expression={l.expression} />
+            <div style={{ maxWidth: 800 }}>
+              <div
+                style={{
+                  padding: "14px 28px",
+                  borderRadius: t.radius.large,
+                  borderBottomLeftRadius: left ? 4 : t.radius.large,
+                  borderBottomRightRadius: left ? t.radius.large : 4,
+                  backgroundColor: left ? t.colors.primary : t.colors.surface,
+                  color: left ? t.colors.onPrimary : t.colors.ink,
+                  border: left ? "none" : `2px solid ${t.colors.border}`,
+                  boxShadow: d < 1 ? t.shadows.lift : t.shadows.md,
+                  fontFamily: t.fonts.body,
+                  fontWeight: 600,
+                  fontSize: 36,
+                  lineHeight: 1.3,
+                }}
+              >
+                {l.text}
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+};
+
+// Waktu mulai tiap kata (detik sejak baris mulai). Dari `wordTimes` bila lengkap, bila tidak diperkirakan dari panjang huruf
+// dengan jeda kecil setelah tanda baca.
+const wordStarts = (line: DraftLine, words: readonly string[]): readonly number[] => {
+  if (line.wordTimes && line.wordTimes.length === words.length) return line.wordTimes;
+  const weights = words.map((w) => w.length + 1 + (/[.?!]$/.test(w) ? 3 : /[,:;]$/.test(w) ? 1.5 : 0));
+  const total = weights.reduce((a, b) => a + b, 0);
+  const span = line.dur * 0.92;
+  let acc = 0;
+  return weights.map((w) => {
+    const at = (acc / total) * span;
+    acc += w;
+    return at;
+  });
+};
+
+const SPEAKER: Readonly<Record<CharacterId, { readonly name: string; readonly fill: "primary" | "surface" }>> = {
+  ganjar: { name: "Ganjar", fill: "primary" },
+  robot: { name: "Robot", fill: "surface" },
+  claudecode: { name: "Claude Code", fill: "surface" },
+};
+
+// Subtitle berbentuk caption: satu baris yang sedang diucapkan, rata tengah (horizontal dan vertikal) di area bawah lantai.
+// Mode karaoke: kata yang sedang diucapkan putih penuh, yang sudah lewat agak redup, yang belum redup; penanda pembicara
+// (titik berwarna per karakter dan nama kecil) di atas teks.
+const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke" | "none" }> = ({ scene, motion }) => {
   const t = useTheme();
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -56,37 +254,79 @@ const Subtitle: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
   const line = scene.lines.find((l) => now >= l.from && now < l.from + l.dur);
   if (!line) return null;
   const local = now - line.from;
-  const opacity = interpolate(local, [0, 0.15, line.dur - 0.15, line.dur], [0, 1, 1, 0], { extrapolateLeft: "clamp", extrapolateRight: "clamp" });
-  const top = floorOf(scene) + 40;
+  const clampOpts = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+  const opacity = EASE(interpolate(local, [0, 0.2], [0, 1], clampOpts)) * interpolate(local, [line.dur - 0.15, line.dur], [1, 0], clampOpts);
+  const words = line.text.split(" ");
+  const starts = wordStarts(line, words);
+  const karaoke = motion === "karaoke";
+  const sp = SPEAKER[line.who];
+  const white = t.colors.groundText ?? t.colors.onPrimary;
   return (
-    <div style={{ position: "absolute", left: 60, right: 60, top, bottom: 1920 - FOOTER_TOP, display: "flex", alignItems: "center", justifyContent: "center", opacity }}>
+    <div
+      style={{
+        position: "absolute",
+        left: 80,
+        right: 80,
+        top: floorOf(scene) + 40,
+        bottom: 1920 - FOOTER_TOP,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 18,
+        opacity,
+      }}
+    >
+      {karaoke ? (
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: t.fonts.body, fontWeight: 600, fontSize: 28, color: t.colors.groundTextMuted }}>
+          <div
+            style={{
+              width: 22,
+              height: 22,
+              borderRadius: 11,
+              backgroundColor: sp.fill === "primary" ? t.colors.primary : t.colors.surface,
+              border: `3px solid ${sp.fill === "primary" ? t.colors.primarySoft : t.colors.primary}`,
+            }}
+          />
+          {sp.name}
+        </div>
+      ) : null}
       <div
         style={{
-          padding: "18px 32px",
-          borderRadius: t.radius.card,
-          backgroundColor: t.code.bg,
-          border: `2px solid ${t.code.line}`,
-          color: t.code.text,
-          fontFamily: t.fonts.body,
-          fontWeight: 600,
-          fontSize: 44,
-          lineHeight: 1.3,
           textAlign: "center",
           textWrap: "balance",
+          fontFamily: t.fonts.body,
+          fontWeight: 700,
+          fontSize: 54,
+          lineHeight: 1.3,
+          color: white,
+          textShadow: "0 2px 12px rgba(0, 0, 0, 0.55)",
         }}
       >
-        {line.text}
+        {words.map((w, i) => {
+          // 0 = belum, 1 = sedang/aktif; berpindah halus selama 0,12 detik. Kata yang sudah lewat turun ke 0,75.
+          const on = karaoke ? EASE(interpolate(local, [starts[i], starts[i] + 0.12], [0, 1], clampOpts)) : 1;
+          const last = i + 1 >= words.length;
+          const past = karaoke && !last ? EASE(interpolate(local, [starts[i + 1], starts[i + 1] + 0.12], [0, 1], clampOpts)) : 0;
+          const o = karaoke ? 0.35 + 0.65 * on - 0.25 * past : 1;
+          return (
+            <span key={i} style={{ opacity: o }}>
+              {w}
+              {i < words.length - 1 ? " " : ""}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
 };
 
-const Sound: React.FC<{ readonly scenes: readonly DraftScene[]; readonly starts: readonly number[]; readonly total: number }> = ({ scenes, starts, total }) => (
+const Sound: React.FC<{ readonly scenes: readonly DraftScene[]; readonly starts: readonly number[]; readonly total: number; readonly sceneSfx: boolean }> = ({ scenes, starts, total, sceneSfx }) => (
   <>
     {scenes.flatMap((s, i) =>
       s.lines.flatMap((l) => (l.vo ? [<Audio key={l.id} src={l.vo} from={starts[i] + Math.round(l.from * FPS)} volume={1} />] : [])),
     )}
-    {starts.map((start, i) => (
+    {(sceneSfx ? starts : []).map((start, i) => (
       <Audio key={`whoosh-${i}`} src={staticFile("sfx/synth/whoosh.wav")} from={start} volume={0.3} />
     ))}
     <Audio
@@ -109,13 +349,15 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
         {scenes.map((s, i) => (
           <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
             <Stage scene={s} style={meta.style} />
-            <OnScreenText text={s.onScreenText} />
-            <Subtitle scene={s} />
+            <Tint tone={s.tone} />
+            <OnScreenText scene={s} />
+            <Inserts inserts={s.inserts ?? []} />
+            {meta.subtitle === "caption" ? <Caption scene={s} motion={meta.captionMotion ?? "karaoke"} /> : <Subtitle scene={s} history={scenes.slice(0, i).flatMap((x) => chatItems(x).map((c) => ({ ...c, from: -ENTER_SEC })))} />}
           </Series.Sequence>
         ))}
       </Series>
       <BrandFooter theme={theme} handle={getTheme(theme).handle} />
-      <Sound scenes={scenes} starts={starts} total={totalFrames(scenes)} />
+      <Sound scenes={scenes} starts={starts} total={totalFrames(scenes)} sceneSfx={meta.sceneSfx !== false} />
     </ThemeProvider>
   );
 };
