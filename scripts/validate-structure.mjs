@@ -34,9 +34,10 @@ const listFiles = (dir, prefix = "") =>
 
 // Isi scenes.ts Reels dialog: urutan dan durasi baris, cutaway (`inserts`), ekspresi, teks layar, nada. Dibaca dengan regex
 // dari teks berkas (bukan dijalankan), jadi hanya mengenali bentuk yang dipakai scaffold dan JagoDikit.
-const INSERT_KINDS = ["promptKode", "terminalError", "muridBertanya", "alarmProduction", "kartuFollow"];
+const INSERT_KINDS = ["promptKode", "terminalError", "muridBertanya", "alarmProduction", "kartuFollow", "gitBlame", "landingKelas", "silabusBaru"];
 const EXPRESSIONS = ["netral", "senang", "sedih", "kaget", "bingung", "mikir", "kesal", "marah", "serius", "malu", "mataTertutup"];
 const TONES = ["terang", "biru", "gelap"];
+const MOTIONS = ["headTurn", "point", "startle", "armGesture", "surprise", "walk"];
 const TAIL = 0.6;
 
 const checkDialogScenes = (sc, err, warns) => {
@@ -58,6 +59,10 @@ const checkDialogScenes = (sc, err, warns) => {
     total += length;
     for (const e of block.matchAll(/expressions:\s*\{([^}]*)\}/g))
       for (const [, who, ex] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!EXPRESSIONS.includes(ex)) err(`scene ${id}: ekspresi "${ex}" (${who}) tidak ada di kosakata.`);
+    for (const e of block.matchAll(/motions:\s*\{([^}]*)\}/g))
+      for (const [, who, mo] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!MOTIONS.includes(mo)) err(`scene ${id}: gerak "${mo}" (${who}) tidak dikenal (${MOTIONS.join(", ")}).`);
+    const zoom = block.match(/^ {4}zoom:\s*\{\s*from:\s*([\d.]+),\s*to:\s*([\d.]+)/m);
+    if (zoom && [zoom[1], zoom[2]].some((z) => Number(z) < 0.8 || Number(z) > 1.4)) err(`scene ${id}: zoom ${zoom[1]} ke ${zoom[2]} di luar 0,8-1,4 (kanvas tepi bisa terlihat atau terlalu dekat).`);
     for (const t of block.matchAll(/(?:screenText|onScreenText):\s*"([^"]*)"/g)) {
       const marks = (t[1].match(/\*/g) ?? []).length;
       if (marks % 2 !== 0) err(`scene ${id}: teks layar "${t[1]}" punya tanda * yang tidak berpasangan.`);

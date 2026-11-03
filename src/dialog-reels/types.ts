@@ -6,7 +6,8 @@ import type { TimeOfDay } from "../assets/backdrops";
 export type CharacterId = "ganjar" | "robot" | "claudecode";
 export type VisualStyle = "rig" | "stickman";
 export type Delivery = "narator" | "dialog";
-export type DraftBackdrop = "ruangKerja" | "kosong" | "luarRuang";
+// `kelas` = latar polos dengan papan tulis di belakang karakter; teks layar scene tampil di papan.
+export type DraftBackdrop = "ruangKerja" | "kosong" | "luarRuang" | "kelas";
 export type Position = "kiri" | "tengah" | "kanan";
 
 export type CastCue = {
@@ -16,6 +17,12 @@ export type CastCue = {
   // Rig: nama clip (headTurn, point, startle, armGesture, surprise, walk). Stickman: nama gesture.
   readonly motion?: string | null;
   readonly position: Position;
+  // Pengali tinggi karakter (bawaan 1), mis. 1.4 untuk Claude Code yang tampil sendirian sebagai pengajar.
+  readonly scale?: number;
+  // Karakter berdiri meluncur masuk dari sisi layar sejak `enterAt` (detik sejak scene mulai, bawaan 0) selama 0,7 dtk.
+  // Tidak berlaku untuk karakter yang duduk di ruang kerja.
+  readonly enterFrom?: "kiri" | "kanan";
+  readonly enterAt?: number;
 };
 
 export type DraftLine = {
@@ -38,6 +45,11 @@ export type DraftLine = {
   // Waktu mulai tiap kata (detik sejak baris mulai) untuk sorotan kata di caption; jumlahnya harus sama dengan jumlah kata `text`.
   // Bila kosong, waktu kata diperkirakan dari panjang huruf. Isi dari timestamp kata ElevenLabs setelah voiceover jadi.
   readonly wordTimes?: readonly number[];
+  // Gerak karakter yang dimainkan sejak baris ini mulai (rig: headTurn, point, startle untuk Ganjar; armGesture, surprise, walk
+  // untuk Robot dan Claude Code). `motionAt` = tunda (detik sejak baris mulai) per karakter, mis. untuk frasa di tengah baris.
+  // Bila satu karakter tidak punya `motions` di baris mana pun, `motion` di `cast` dipakai (sekali, di baris pertamanya).
+  readonly motions?: Readonly<Partial<Record<CharacterId, string>>>;
+  readonly motionAt?: Readonly<Partial<Record<CharacterId, number>>>;
   readonly id?: string;
   readonly vo?: string;
 };
@@ -45,7 +57,8 @@ export type DraftLine = {
 // Selipan (cutaway) di atas panggung: kartu layar penuh selama `dur` detik, voiceover dan chat tetap jalan.
 // promptKode: prompt diketik lalu kode muncul. terminalError: terminal dengan error. muridBertanya: chat murid dan Ganjar.
 // alarmProduction: dashboard production berubah merah. kartuFollow: kartu profil dengan tombol Follow.
-export type InsertKind = "promptKode" | "terminalError" | "muridBertanya" | "alarmProduction" | "kartuFollow";
+// gitBlame: riwayat commit, semua baris ditulis satu penulis. landingKelas: halaman jualan kelas. silabusBaru: daftar materi kelas.
+export type InsertKind = "promptKode" | "terminalError" | "muridBertanya" | "alarmProduction" | "kartuFollow" | "gitBlame" | "landingKelas" | "silabusBaru";
 
 export type DraftInsert = {
   readonly kind: InsertKind;
@@ -66,6 +79,12 @@ export type DraftScene = {
   readonly cast: readonly CastCue[];
   readonly onScreenText: string;
   readonly tone?: SceneTone;
+  // Isi tambahan di kartu teks layar atas: `profilFollow` = logo, handle, dan tombol Follow yang berubah jadi "Following".
+  // `infoKelas` = nama kelas, harga, dan tombol Daftar (ringkasan landing page kelas).
+  readonly screenExtra?: "profilFollow" | "infoKelas";
+  // Punch-in/zoom out: skala kamera dari `from` ke `to` (ease-out) sepanjang scene, berpusat di `focus` (bila kosong, tengah layar).
+  // Menggantikan kamera "ikuti" untuk scene ini.
+  readonly zoom?: { readonly from: number; readonly to: number; readonly focus?: CharacterId };
   readonly lines: readonly DraftLine[];
   readonly inserts?: readonly DraftInsert[];
   // Arahan visual dari draft, untuk dipoles tangan; tidak dirender.
@@ -83,5 +102,7 @@ export type DraftMeta = {
   // Gerak caption: `karaoke` (bawaan; kata yang diucapkan disorot, ada penanda pembicara) atau `none` (teks diam).
   // Whoosh di awal tiap scene; bawaan menyala, isi false untuk mematikan.
   readonly sceneSfx?: boolean;
+  // Kamera panggung: `ikuti` = zoom pelan dan geser ke karakter yang bicara; `diam` (bawaan) = tetap.
+  readonly camera?: "ikuti" | "diam";
   readonly captionMotion?: "karaoke" | "none";
 };

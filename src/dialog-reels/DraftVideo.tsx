@@ -1,10 +1,12 @@
 import type React from "react";
 import { Audio } from "@remotion/media";
-import { Easing, interpolate, Sequence, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { Easing, Img, interpolate, Sequence, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandFooter } from "../BrandFooter";
 import { getTheme, ThemeProvider, useTheme } from "../themes";
 import { Enter } from "../motion";
+import { Camera } from "./Camera";
 import { Inserts } from "./Inserts";
+import { screenSegments, withHighlight } from "./screenText";
 import { floorOf, Stage } from "./Stage";
 import { ClaudeCode, claudeCodeSize, Ganjar, ganjarSize, Robot, robotSize } from "../assets/characters";
 import type { CharacterId, DraftLine, DraftMeta, DraftScene } from "./types";
@@ -19,28 +21,84 @@ const MUSIC_VOLUME = 0.07;
 // Batas atas footer (BrandFooter tegak setinggi 128 px).
 const FOOTER_TOP = 1792;
 
-// Teks layar: `*frasa*` jadi sorotan oranye (satu per layar).
-const withHighlight = (text: string, color: string): React.ReactNode =>
-  text.split("*").map((part, i) =>
-    i % 2 === 1 ? (
-      <span key={i} style={{ color }}>
-        {part}
+// Profil di dalam kartu teks atas: logo, handle, dan tombol Follow yang berubah jadi "Following" 1,6 dtk setelah kartu muncul.
+const ProfilFollow: React.FC<{ readonly fg: string; readonly bg: string }> = ({ fg, bg }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const press = EASE(interpolate(frame / fps, [1.6, 1.9], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  const done = press > 0.5;
+  return (
+    <div style={{ marginTop: 22, display: "flex", alignItems: "center", justifyContent: "center", gap: 18, fontFamily: t.fonts.body }}>
+      <Img src={staticFile(t.logo.src)} style={{ width: 72, height: 72, borderRadius: 36, border: `4px solid ${fg}` }} />
+      <span style={{ fontWeight: 700, fontSize: 36, color: fg, textTransform: "none", letterSpacing: 0 }}>{t.handle}</span>
+      <span
+        style={{
+          padding: "10px 32px",
+          borderRadius: 999,
+          fontWeight: 800,
+          fontSize: 32,
+          textTransform: "none",
+          letterSpacing: 0,
+          backgroundColor: done ? t.colors.primaryDeep : fg,
+          color: done ? t.colors.onPrimary : bg,
+          border: `3px solid ${fg}`,
+        }}
+      >
+        {done ? "Following" : "Follow"}
       </span>
-    ) : (
-      part
-    ),
+    </div>
   );
+};
 
-type Segment = { readonly text: string; readonly from: number };
+// Info kelas di dalam kartu teks atas: nama kelas, harga, dan tombol Daftar (muncul 0,5 dtk setelah kartu).
+const InfoKelas: React.FC<{ readonly fg: string; readonly bg: string }> = ({ fg, bg }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = EASE(interpolate(frame / fps, [0.5, 0.9], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  return (
+    <div style={{ marginTop: 22, display: "flex", flexDirection: "column", alignItems: "center", gap: 14, fontFamily: t.fonts.body, textTransform: "none", letterSpacing: 0, opacity: p, transform: `translateY(${(1 - p) * 16}px)` }}>
+      <div style={{ fontWeight: 600, fontSize: 34, color: fg }}>Kelas Bikin Aplikasi Dengan AI</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+        <span style={{ fontWeight: 800, fontSize: 40, color: fg }}>Rp 499.000</span>
+        <span style={{ padding: "10px 32px", borderRadius: 999, backgroundColor: fg, color: bg, fontWeight: 800, fontSize: 30 }}>Daftar Sekarang</span>
+      </div>
+    </div>
+  );
+};
 
-// Teks layar per waktu: awal scene memakai `onScreenText`, lalu berganti di baris yang punya `screenText`.
-const screenSegments = (scene: DraftScene): readonly Segment[] => {
-  const out: Segment[] = [{ text: scene.onScreenText, from: 0 }];
-  for (const l of scene.lines) {
-    const text = l.screenText;
-    if (text !== undefined && text !== out[out.length - 1].text) out.push({ text, from: l.from });
-  }
-  return out;
+// Log error di dalam kartu teks atas (potongan terminal: perintah, TypeError merah, dan baris stack); muncul 0,5 dtk setelah kartu.
+const LogError: React.FC = () => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const p = EASE(interpolate(frame / fps, [0.4, 0.8], [0, 1], { extrapolateLeft: "clamp", extrapolateRight: "clamp" }));
+  return (
+    <div
+      style={{
+        marginTop: 20,
+        padding: "16px 22px",
+        borderRadius: t.radius.card,
+        backgroundColor: t.code.bg,
+        border: `2px solid ${t.colors.danger}`,
+        textAlign: "left",
+        fontFamily: t.fonts.mono,
+        fontWeight: 400,
+        fontSize: 26,
+        lineHeight: 1.45,
+        textTransform: "none",
+        letterSpacing: 0,
+        color: t.code.text,
+        opacity: p,
+        transform: `translateY(${(1 - p) * 14}px)`,
+      }}
+    >
+      <div style={{ color: t.code.muted }}>$ npm run start</div>
+      <div style={{ color: t.colors.danger }}>TypeError: Cannot read properties of undefined</div>
+      <div style={{ color: t.code.muted }}>  at hitungTotal (kasir.ts:42)</div>
+    </div>
+  );
 };
 
 const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
@@ -52,6 +110,8 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
   const fg = dark ? t.colors.onPrimary : t.colors.ink;
   const mark = dark ? (t.colors.groundEmphasis ?? t.colors.accent) : (t.colors.accentDark ?? t.colors.accent);
   const segs = screenSegments(scene);
+  // Di latar kelas teks layar tampil di papan tulis (Board), bukan di kartu atas.
+  if (scene.backdrop === "kelas") return null;
   return (
     <>
       {segs.map((seg, i) => {
@@ -81,7 +141,10 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
                   color: fg,
                 }}
               >
-                {withHighlight(seg.text, mark)}
+                {withHighlight(seg.text.split("\n").filter((l) => !l.startsWith("@")).join(" "), mark)}
+                {seg.text.split("\n").includes("@logError") ? <LogError /> : null}
+                {scene.screenExtra === "profilFollow" ? <ProfilFollow fg={fg} bg={bg} /> : null}
+                {scene.screenExtra === "infoKelas" ? <InfoKelas fg={fg} bg={bg} /> : null}
               </Enter>
             </div>
           </Sequence>
@@ -260,7 +323,11 @@ const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke"
   const starts = wordStarts(line, words);
   const karaoke = motion === "karaoke";
   const sp = SPEAKER[line.who];
-  const white = t.colors.groundText ?? t.colors.onPrimary;
+  // Latar kelas siang atau sore: lantai terang, jadi caption gelap tanpa bayangan; yang lain putih dengan bayangan tipis.
+  // Saat cutaway aktif, latar layar gelap penuh, jadi caption kembali putih.
+  const inCutaway = (scene.inserts ?? []).some((x) => now >= x.from && now < x.from + x.dur);
+  const onLight = scene.backdrop === "kelas" && scene.time !== "malam" && !inCutaway;
+  const white = onLight ? t.colors.ink : (t.colors.groundText ?? t.colors.onPrimary);
   return (
     <div
       style={{
@@ -278,7 +345,7 @@ const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke"
       }}
     >
       {karaoke ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: t.fonts.body, fontWeight: 600, fontSize: 28, color: t.colors.groundTextMuted }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: t.fonts.body, fontWeight: 600, fontSize: 28, color: onLight ? t.colors.muted : t.colors.groundTextMuted }}>
           <div
             style={{
               width: 22,
@@ -300,7 +367,7 @@ const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke"
           fontSize: 54,
           lineHeight: 1.3,
           color: white,
-          textShadow: "0 2px 12px rgba(0, 0, 0, 0.55)",
+          textShadow: onLight ? "none" : "0 2px 12px rgba(0, 0, 0, 0.55)",
         }}
       >
         {words.map((w, i) => {
@@ -348,7 +415,9 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
       <Series>
         {scenes.map((s, i) => (
           <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
-            <Stage scene={s} style={meta.style} />
+            <Camera scene={s} mode={meta.camera ?? "diam"}>
+              <Stage scene={s} style={meta.style} />
+            </Camera>
             <Tint tone={s.tone} />
             <OnScreenText scene={s} />
             <Inserts inserts={s.inserts ?? []} />

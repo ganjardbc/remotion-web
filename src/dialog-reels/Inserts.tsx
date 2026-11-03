@@ -289,12 +289,92 @@ const KartuFollow: React.FC<{ readonly t: Theme; readonly local: number }> = ({ 
   );
 };
 
+// ---------- gitBlame ----------
+const BLAME: readonly (readonly [string, string])[] = [
+  ["a41f9c2", "const items = keranjang;"],
+  ["a41f9c2", "const total = hitung(items);"],
+  ["7be03d1", ""],
+  ["7be03d1", "export function Kasir() {"],
+  ["c9d2a58", "  return <Bayar total={total} />;"],
+  ["e10b6f4", "}"],
+];
+
+const GitBlame: React.FC<{ readonly t: Theme; readonly local: number }> = ({ t, local }) => (
+  <Window t={t} title="git blame kasir.tsx">
+    <div style={{ fontSize: 26 }}>
+      {BLAME.map(([h, code], i) => (
+        <Line key={i} local={local} at={0.1 + i * 0.1}>
+          <span style={{ color: t.code.muted }}>{h}</span>
+          <span style={{ color: t.colors.primarySoft }}>{"  Claude Code  "}</span>
+          {code}
+        </Line>
+      ))}
+    </div>
+    <div style={{ marginTop: 40, opacity: prog(local, 0.9, 1.3), fontFamily: t.fonts.body }}>
+      <div style={{ fontWeight: 700, fontSize: 40, color: t.code.muted }}>Penulis baris kode</div>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 14, fontWeight: 800, fontSize: 56 }}>
+        <span style={{ color: t.colors.groundEmphasis }}>Claude Code</span>
+        <div style={{ flex: 1, height: 22, borderRadius: 11, backgroundColor: t.colors.primary, transform: `scaleX(${prog(local, 1.0, 1.6)})`, transformOrigin: "left" }} />
+        <span>100%</span>
+      </div>
+      <div style={{ display: "flex", alignItems: "center", gap: 20, marginTop: 14, fontWeight: 600, fontSize: 44, color: t.code.muted }}>
+        <span>Ganjar</span>
+        <div style={{ flex: 1, height: 22, borderRadius: 11, backgroundColor: t.code.line }} />
+        <span>0%</span>
+      </div>
+    </div>
+  </Window>
+);
+
+// ---------- landingKelas ----------
+const LandingKelas: React.FC<{ readonly t: Theme; readonly local: number }> = ({ t, local }) => (
+  <div style={{ width: "100%", height: "100%", borderRadius: t.radius.large, overflow: "hidden", backgroundColor: t.colors.surface, boxShadow: t.shadows.lift, display: "flex", flexDirection: "column" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "20px 28px", backgroundColor: t.colors.primaryTint, borderBottom: `2px solid ${t.colors.border}` }}>
+      {[t.colors.danger, t.colors.accent, t.colors.success].map((c) => (
+        <div key={c} style={{ width: 18, height: 18, borderRadius: 9, backgroundColor: c }} />
+      ))}
+      <div style={{ marginLeft: 12, flex: 1, padding: "8px 22px", borderRadius: 999, backgroundColor: t.colors.surface, fontFamily: t.fonts.mono, fontSize: 28, color: t.colors.muted }}>kelasganjar.id</div>
+    </div>
+    <div style={{ flex: 1, padding: "0 60px", display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", gap: 30, fontFamily: t.fonts.body, color: t.colors.ink }}>
+      <div style={{ padding: "10px 28px", borderRadius: 999, backgroundColor: t.colors.primaryTint, color: t.colors.primaryDark, fontWeight: 700, fontSize: 32, opacity: prog(local, 0.1, 0.5) }}>Pendaftaran dibuka</div>
+      <div style={{ fontFamily: t.fonts.heading, fontWeight: t.type.headlineWeight, fontSize: 82, lineHeight: 1.1, textWrap: "balance", opacity: prog(local, 0.2, 0.7), transform: `translateY(${(1 - prog(local, 0.2, 0.7)) * 24}px)` }}>Kelas Bikin Aplikasi Dengan AI</div>
+      <div style={{ fontWeight: 500, fontSize: 44, color: t.colors.muted, opacity: prog(local, 0.5, 0.9) }}>Tinggal prompt, aplikasi jadi.</div>
+      <div style={{ fontWeight: 800, fontSize: 76, color: t.colors.primary, opacity: prog(local, 0.8, 1.2) }}>Rp 499.000</div>
+      <div style={{ padding: "26px 90px", borderRadius: 999, backgroundColor: t.colors.primary, color: t.colors.onPrimary, fontWeight: 800, fontSize: 48, opacity: prog(local, 1.1, 1.5) }}>Daftar Sekarang</div>
+      <div style={{ fontWeight: 600, fontSize: 32, color: t.colors.muted, opacity: prog(local, 1.4, 1.8) }}>Sisa 12 dari 50 kursi</div>
+    </div>
+  </div>
+);
+
+// ---------- silabusBaru ----------
+const SILABUS = ["Kenapa aplikasinya jalan", "Kenapa bisa error", "Cara debug sendiri"];
+
+const SilabusBaru: React.FC<{ readonly t: Theme; readonly local: number }> = ({ t, local }) => (
+  <div style={{ width: "100%", height: "100%", borderRadius: t.radius.large, backgroundColor: t.colors.primaryTint, boxShadow: t.shadows.lift, padding: 56, display: "flex", flexDirection: "column", justifyContent: "center", gap: 36, fontFamily: t.fonts.body, color: t.colors.primaryInk }}>
+    <div style={{ fontFamily: t.fonts.heading, fontWeight: t.type.headlineWeight, fontSize: 64, lineHeight: 1.1, opacity: prog(local, 0, 0.4) }}>Silabus Kelas Baru</div>
+    <div>
+      {SILABUS.map((x, i) => (
+        <div key={x} style={{ display: "flex", alignItems: "center", gap: 22, padding: "18px 0", fontWeight: 600, fontSize: 50, opacity: prog(local, 0.4 + i * 0.35, 0.8 + i * 0.35), transform: `translateX(${(1 - prog(local, 0.4 + i * 0.35, 0.8 + i * 0.35)) * -30}px)` }}>
+          <div style={{ width: 46, height: 46, borderRadius: 10, backgroundColor: t.colors.success, color: t.colors.onPrimary, fontSize: 34, display: "flex", alignItems: "center", justifyContent: "center" }}>✓</div>
+          {x}
+        </div>
+      ))}
+    </div>
+    <div style={{ padding: "26px 34px", borderRadius: t.radius.card, backgroundColor: t.colors.surface, border: `2px solid ${t.colors.border}`, fontWeight: 700, fontSize: 46, lineHeight: 1.25, opacity: prog(local, 1.7, 2.2) }}>
+      Ajarin yang <span style={{ color: t.colors.accentDark ?? t.colors.accent }}>kamu paham</span>, bukan yang aku kerjain.
+    </div>
+  </div>
+);
+
 const BODY: Readonly<Record<InsertKind, React.FC<{ readonly t: Theme; readonly local: number }>>> = {
   promptKode: PromptKode,
   terminalError: TerminalError,
   muridBertanya: MuridBertanya,
   alarmProduction: AlarmProduction,
   kartuFollow: KartuFollow,
+  gitBlame: GitBlame,
+  landingKelas: LandingKelas,
+  silabusBaru: SilabusBaru,
 };
 
 const BACKDROP: Readonly<Record<InsertKind, (t: Theme) => string>> = {
@@ -303,6 +383,9 @@ const BACKDROP: Readonly<Record<InsertKind, (t: Theme) => string>> = {
   muridBertanya: (t) => t.colors.ground,
   alarmProduction: (t) => t.colors.ground,
   kartuFollow: (t) => t.colors.ground,
+  gitBlame: (t) => t.colors.ground,
+  landingKelas: (t) => t.colors.ground,
+  silabusBaru: (t) => t.colors.ground,
 };
 
 export const Inserts: React.FC<{ readonly inserts: readonly DraftInsert[] }> = ({ inserts }) => {
