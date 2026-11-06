@@ -1,5 +1,9 @@
 {
   "permissions": {
+    "allow": [
+      "Bash(node scripts/vo-check.mjs --video SeleraDesain --only hook)",
+      "Bash(node scripts/vo-check.mjs --video SeleraDesain)"
+    ],
     "ask": [
       "Bash(node scripts/vo-generate.mjs:*)",
       "Bash(node scripts/vo-words.mjs:*)"
@@ -9,13 +13,24 @@
     "PreToolUse": [
       {
         "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-files.py\"" }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-files.py\""
+          }
+        ]
       }
     ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
-        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-after-edit.py\"", "timeout": 120 }]
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-after-edit.py\"",
+            "timeout": 120
+          }
+        ]
       }
     ]
   }
