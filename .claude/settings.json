@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "ask": [
+      "Bash(node scripts/vo-generate.mjs:*)",
+      "Bash(node scripts/vo-words.mjs:*)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/guard-files.py\"" }]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [{ "type": "command", "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/lint-after-edit.py\"", "timeout": 120 }]
+      }
+    ]
+  }
+}
