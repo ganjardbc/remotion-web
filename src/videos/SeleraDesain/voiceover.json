@@ -1,0 +1,39 @@
+{
+  "lines": {
+    "cara": {
+      "hash": "3428f411c87f",
+      "file": "voiceover/cara.mp3",
+      "duration": 12.52
+    },
+    "closing": {
+      "hash": "5a69b1079683",
+      "file": "voiceover/closing.mp3",
+      "duration": 5.6
+    },
+    "cta": {
+      "hash": "0ff0224bc65c",
+      "file": "voiceover/cta.mp3",
+      "duration": 5.82
+    },
+    "hook": {
+      "hash": "e026870ada0c",
+      "file": "voiceover/hook.mp3",
+      "duration": 5.38
+    },
+    "relate": {
+      "hash": "1dc1652b6df4",
+      "file": "voiceover/relate.mp3",
+      "duration": 6.76
+    },
+    "shift": {
+      "hash": "2e7ebfe92522",
+      "file": "voiceover/shift.mp3",
+      "duration": 9.91
+    },
+    "urgency": {
+      "hash": "cc3b536f4263",
+      "file": "voiceover/urgency.mp3",
+      "duration": 4.73
+    }
+  }
+}
