@@ -94,7 +94,7 @@ export const InstallScene: React.FC = () => {
           Pasang
         </PointTag>,
       )}
-      <Monitor delay={cue(when("satu perintah"))} top={330} height={820}>
+      <Monitor delay={cue(when("satu perintah"))} top={300} height={760}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 26, marginBottom: 26, borderBottom: `2px solid ${t.code.line}` }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{ width: 22, height: 22, borderRadius: 999, backgroundColor: t.code.line }} />
@@ -118,7 +118,7 @@ export const InstallScene: React.FC = () => {
           <span style={{ color: t.colors.groundEmphasis }}>_</span>
         </div>
       </Monitor>
-      <Keyboard delay={cue(when("satu perintah") + 0.2)} top={1500} typeStart={start} typeDur={1.6} chars={INSTALL_CMD.length} />
+      <Keyboard delay={cue(when("satu perintah") + 0.2)} top={1335} typeStart={start} typeDur={1.6} chars={INSTALL_CMD.length} />
     </Frame>
   );
 };
@@ -138,7 +138,7 @@ export const PakaiScene: React.FC = () => {
           Tinggal <Accent>minta</Accent>
         </Headline>,
       )}
-      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={400} height={760}>
+      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={330} height={740}>
         <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "22px 26px", borderRadius: 999, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 32, color: t.code.text, whiteSpace: "nowrap" }}>
           <Icon name="messageCircle" size={44} color={t.colors.groundEmphasis} />
           <span>{typed}</span>
@@ -151,7 +151,7 @@ export const PakaiScene: React.FC = () => {
           <Bar value={scan} color={t.colors.primarySoft} height={44} />
         </div>
       </Monitor>
-      <Keyboard delay={cue(when("Lalu minta") + 0.3)} top={1500} typeStart={start} typeDur={1.6} chars={PROMPT_TEXT.length} />
+      <Keyboard delay={cue(when("Lalu minta") + 0.3)} top={1335} typeStart={start} typeDur={1.6} chars={PROMPT_TEXT.length} />
     </Frame>
   );
 };
@@ -180,7 +180,7 @@ export const HasilScene: React.FC = () => {
         <Headline delay={cue(when("satu sampai dua"))} size={74}>
           Tiap kategori, <Accent>1-2</Accent> pilihan
         </Headline>,
-        470,
+        400,
       )}
       <Cabinet delay={cue(0.3)} drawers={drawers} />
     </Frame>

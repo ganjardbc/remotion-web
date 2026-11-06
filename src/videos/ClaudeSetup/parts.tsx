@@ -28,7 +28,7 @@ export const useCue = (
 };
 
 // Meja kerja: satu permukaan yang sama di semua scene, tempat karakter dan benda berdiri.
-export const DESK_TOP = 1630;
+export const DESK_TOP = 1540;
 export const Desk: React.FC = () => {
   const t = useTheme();
   return (
@@ -342,7 +342,7 @@ export const Cabinet: React.FC<{ readonly delay: number; readonly drawers: reado
   const t = useTheme();
   const { p } = useCue("hasil");
   return (
-    <Enter name="Rak" delay={delay} y={60} style={{ position: "absolute", left: 60, top: 740, width: 480, height: 890 }}>
+    <Enter name="Rak" delay={delay} y={60} style={{ position: "absolute", left: 60, top: 650, width: 480, height: 890 }}>
       <div style={{ position: "absolute", left: 0, right: 0, top: 0, height: 830, borderRadius: 26, backgroundColor: t.code.raised, border: `3px solid ${t.code.line}`, padding: 20, display: "flex", flexDirection: "column", gap: 10 }}>
         {drawers.map((d) => {
           const out = p(d.open, 0.45) - (d.close === null ? 0 : p(d.close, 0.45));

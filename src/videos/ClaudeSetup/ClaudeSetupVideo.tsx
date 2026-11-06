@@ -71,15 +71,15 @@ const CLIPS: readonly PlacedClip[] = [
 // Pose karakter per scene: posisi tengah horizontal (0..1 dari lebar) dan tinggi. Kaki tetap menapak di atas footer.
 // Berpindah antar pose 0,5 dtk dengan ease-out di awal scene, tanpa pantulan.
 const POSES: Readonly<Record<SceneId, { readonly x: number; readonly h: number; readonly y: number }>> = {
-  hook: { x: 0.5, h: 540, y: 1730 },
-  konteks: { x: 0.68, h: 440, y: 1730 },
-  install: { x: 0.5, h: 440, y: 1650 },
-  pakai: { x: 0.5, h: 440, y: 1650 },
-  hasil: { x: 0.76, h: 400, y: 1730 },
-  cta: { x: 0.5, h: 560, y: 1730 },
+  hook: { x: 0.5, h: 540, y: 1640 },
+  konteks: { x: 0.68, h: 440, y: 1640 },
+  install: { x: 0.5, h: 440, y: 1485 },
+  pakai: { x: 0.5, h: 440, y: 1485 },
+  hasil: { x: 0.76, h: 400, y: 1640 },
+  cta: { x: 0.5, h: 560, y: 1640 },
 };
 // Posisi atas caption per scene: di bawah kaki karakter, di tepi depan meja, di atas footer.
-const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1752, konteks: 1752, install: 1752, pakai: 1752, hasil: 1752, cta: 1752 };
+const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1655, konteks: 1655, install: 1655, pakai: 1655, hasil: 1655, cta: 1655 };
 const MOVE_FRAMES = 15;
 const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
