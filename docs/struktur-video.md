@@ -75,6 +75,8 @@ Bagian wajib, urut: judul `# <Nama>` dan satu paragraf (judul konten, format, ju
 - Klip mentah di `out/vo-raw/<Nama>/<id>.mp3` (tidak di-commit). Olah dengan `node scripts/vo-process.mjs <id> out/vo-raw/<Nama>/<id>.mp3 --hash <hash> --video <Nama>`.
 - `voiceover.json` dimulai `{ "lines": {} }`. `voiceover-files.ts` dan folder `voiceover/` ditulis oleh `vo-process.mjs` saat klip pertama diolah, jadi untuk video yang belum bersuara folder `voiceover/` belum ada dan itu sah. Jangan diubah tangan.
 - Cek kualitas tanpa API: `node scripts/vo-check.mjs --video <Nama> [--only id,id]` mengukur tempo (huruf/detik, ideal 13-18,5), kenyaringan (-18 sampai -14 LUFS), variasi nada (rentang kurang dari 9 semitone = datar), dan nada akhir kalimat tanya (turun = peringatan). Pengukur kasar, hanya membandingkan take dan menangkap masalah yang jelas; telinga tetap hakim.
+- Ukur waktu kata dari audio asli: `node scripts/vo-words.mjs --video <Nama> [--only id,id]` (scribe, kredit kecil, minta konfirmasi) menulis `WORDS` di `config.ts`; respons disimpan per hash klip di `out/vo-scribe/`, jadi tanpa perubahan klip tidak memanggil API lagi. `at()`, cue, dan caption membaca `WORDS`.
+- Lihat hasilnya: `node scripts/reels-stills.mjs --video <Nama> [--per 1|2|3]` merender still per scene dan menggabungkannya jadi `out/still/<Nama>-sheet.png` (satu kolom per scene).
 - Hemat kredit: generate satu scene dulu (`node scripts/vo-generate.mjs --video <Nama> --only hook`), jalankan `vo-check`, dengarkan, baru generate sisanya. Untuk kalimat penting buat 2-3 take dan pilih yang terbaik. Mengganti model atau teks TTS mengubah hash semua klip, jadi putuskan modelnya sebelum generate semua.
 - Alur otomatis: `node scripts/vo-lines.mjs --video <Nama>` menampilkan status tiap scene (`baru`, `berubah`, `ok`), lalu `node scripts/vo-generate.mjs --video <Nama>` men-generate hanya yang belum ada atau berubah, memotong senyap, menormalkan, dan mencatatnya. Sebelum memanggil API, jumlah huruf (≈ kredit) ditampilkan dan konfirmasi diminta. Butuh `ELEVENLABS_API_KEY` di environment atau `.env.local`. Hash = sha1 `voiceId|model|SPOKEN[id]`; mengganti suara, model, atau speed di `vo-lines.mjs` mengubah hash semua scene.
 
@@ -115,9 +117,9 @@ Komponen dunia meja ada di `src/desk-world/` (impor dari `../../desk-world`): `D
 2. **Sorotan oranye**: tepat satu frasa atau satu kontrol oranye per layar (tombol dan avatar pakai biru primary).
 3. **Variasi**: hero visual, latar, dan pose karakter berbeda dari scene tetangganya; tulis jenis hero per scene dan cek.
 4. **Naskah**: kalimat tanya ya/tidak ditutup kata benda; singkatan Inggris dieja fonetis di `VO_TEXT`; istilah yang sering salah dibaca dicek lewat transkrip scribe.
-5. **Voiceover**: generate satu scene dulu (`--only`), `vo-check` tanpa catatan berat (tempo, kenyaringan, nada), baru sisanya. Setelah audio final, ukur ulang `WORDS` (scribe) sebelum cue dan caption dianggap benar.
+5. **Voiceover**: generate satu scene dulu (`--only`), `vo-check` tanpa catatan berat (tempo, kenyaringan, nada), baru sisanya. Setelah audio final, `vo-words` mengukur ulang `WORDS` sebelum cue dan caption dianggap benar. Skill `reels-voiceover` memuat alurnya.
 6. **Caption**: satu baris, tidak berdempetan dengan footer atau benda di meja; uji di tampilan aplikasi sebelum upload karena zona bawah bisa tertutup antarmuka.
-7. **Terakhir**: `npm run lint` bersih; `remotion still` untuk satu frame per scene (awal, tengah, akhir ketikan atau gerak); render penuh dan tonton sekali sebelum upload.
+7. **Terakhir**: `npm run lint` bersih; `reels-stills` (skill atau `scripts/reels-stills.mjs`) untuk contact sheet per scene; subagent `reels-reviewer` untuk tinjauan terhadap aturan; render penuh dan tonton sekali sebelum upload.
 
 ## Reels dialog: isi folder
 
@@ -226,3 +228,10 @@ Mesin Reels dialog ada di `src/dialog-reels/` (dulu DraftKit). `Stage` dan `type
 Dikecualikan dari validator: CharacterRigDemo (prototipe karakter untuk Studio, bukan konten video).
 
 `vo-lines.mjs` dan `vo-generate.mjs` mendukung Reels, Reels dialog, dan video dialog; polanya dikenali dari isi folder (Reels = `config.ts` + `scenes.tsx`, Reels dialog = `config.ts` + `scenes.ts`, tanpa `voiceover.ts`).
+
+## Otomasi Claude Code di proyek ini
+
+- **Hook** (`.claude/settings.json`, skrip di `.claude/hooks/`): `guard-files.py` menolak edit `.env.local` dan meminta konfirmasi untuk `voiceover.json`, `voiceover-files.ts`, `voiceover/*.mp3`, dan `src/assets/characters/ganjar/`; `lint-after-edit.py` menjalankan eslint pada `src/*.ts(x)` yang baru diubah dan melaporkan kesalahannya. Permission `ask` untuk `vo-generate` dan `vo-words` (memakai kredit).
+- **Skill**: `reels-voiceover` (alur voiceover, hanya dipanggil pengguna) dan `reels-stills` (contact sheet visual), selain `remotion-web-video`.
+- **Subagent**: `reels-reviewer` (read-only) meninjau satu Reels terhadap aturan proyek.
+- **CI**: `.github/workflows/lint.yml` menjalankan `npm run lint` pada push ke `main` dan pull request.
