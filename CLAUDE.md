@@ -38,6 +38,7 @@ Alur wajib: Hook, Relate, Shift, Closing, CTA.
 - **Closing**: kesimpulan tajam, ada kalimat yang layak jadi quote.
 - **CTA**: ajakan follow dengan alasan spesifik ke isi konten, bukan "follow untuk tips lainnya".
 - **Irama**: tidak ada dead time, hal baru di layar tiap ~4 dtk; scene bersuara lebih dari 8 dtk dipecah jadi beat. Pedoman (bukan aturan keras), rincian di bagian "Irama scene" di [docs/struktur-video.md](docs/struktur-video.md); `npm run validate:structure` memberi peringatan.
+- **Variasi visual**: tiap scene punya hero visual dan tata letak berbeda dari scene di sebelahnya (angka, bar, terminal, diagram, stempel, dua kolom, dan seterusnya), bukan templat kartu yang sama berulang. Latar (`ground`, `dark`, `primary`) dan posisi karakter juga berganti antar scene. Rincian di bagian "Variasi visual antar scene" di [docs/struktur-video.md](docs/struktur-video.md); berlaku untuk Format A dan C.
 - Referensi implementasi, alur, dan durasi: `src/videos/PromptPanjang` (hook 5 dtk, relate 7, shift 9, urgency 5, cara 9, closing 4, CTA 5). Struktur file lihat Struktur file video di bawah.
 
 ## Struktur file video

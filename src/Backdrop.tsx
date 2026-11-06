@@ -8,8 +8,8 @@ import {
 import { useTheme } from "./themes";
 
 type BackdropProps = {
-  // "ground" is the primary-colour field, "dark" the tech/terminal context.
-  readonly variant?: "canvas" | "ground" | "dark";
+  // "ground" is the near-black field, "dark" the tech/terminal context, "primary" the deep brand-blue field.
+  readonly variant?: "canvas" | "ground" | "dark" | "primary";
   // Mono scene marker shown top-left, e.g. "02 / 05".
   readonly label?: string;
   // One accent line sweeping down the frame on entry (use on hooks).
@@ -55,11 +55,14 @@ export const Backdrop: React.FC<BackdropProps> = ({
   const unit = width / 1080;
   const portrait = height > width;
 
-  const isGround = variant === "ground";
+  const isPrimary = variant === "primary";
+  const isGround = variant === "ground" || isPrimary;
   const isDark = variant === "dark";
   const base = isDark
     ? t.code.bg
-    : isGround
+    : isPrimary
+      ? t.colors.primaryDeep
+      : isGround
       ? t.colors.ground
       : t.colors.canvas;
   const line = isDark || isGround ? "#FFFFFF" : t.colors.ink;

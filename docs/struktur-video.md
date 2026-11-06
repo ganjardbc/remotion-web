@@ -86,6 +86,18 @@ Pedoman dari riset blog vendor (ClipFlip, Splice, Shortzly, Opus Pro; bukan doku
 - Subtitle wajib (banyak penonton tanpa suara). Zona aman atas sekitar 250 px dan bawah sekitar 350 px (perkiraan; antarmuka aplikasi berubah).
 - Pengecekan otomatis hanya durasi scene dari `voiceover.json`; jumlah beat visual dicek manual.
 
+## Variasi visual antar scene (Reels narator)
+
+Tiap scene harus terlihat beda dari scene di sebelahnya, supaya penonton merasa ada hal baru dan tidak sekadar mengganti teks di templat yang sama. Pedoman, dicek manual (belum ada validator).
+
+- **Satu hero visual per scene**, jenisnya berbeda dari scene sebelum dan sesudahnya. Pilihan: angka besar atau counter, bar progres, kartu bertumpuk, grid atau daftar bercentang, blok terminal atau code, diagram alur berpanah, stempel atau badge, perbandingan dua kolom, kartu repo atau profil. Kartu bertumpuk bukan bawaan untuk semua scene.
+- **Tidak ada dua scene berurutan dengan susunan sama** (tag, judul, lalu kartu bertumpuk). Ganti tata letak: hero di atas atau di tengah, judul kecil (`muted`) atau besar, satu elemen penuh lebar atau dua kolom.
+- **Gerak masuk dibedakan**: arah (`x` dan `y` di `Enter`), urutan (serentak, bergantian, atau digambar), dan ukuran judul (`size`) tidak diulang di scene berurutan. Easing tetap `[0.2, 0.8, 0.2, 1]`, tanpa bounce.
+- **Latar berganti antar scene**: `Frame` menerima `variant` (`ground` near-black, `dark` konteks terminal atau kode, `primary` biru primer gelap dari `Backdrop`). Jangan satu latar sepanjang video; selang-seling, dan jangan dua scene berurutan memakai latar sama. `sweep` hanya di hook dan scene kunci. Warna dan huruf tetap dari tema.
+- **Posisi karakter berpindah**: tiap scene punya pose karakter (`POSES` di `<Nama>Video.tsx`: `x` tengah 0-1 dari lebar, `h` tinggi). Pose berpindah 0,5 dtk ease-out di awal scene. Pose tengah (besar) untuk hook dan CTA, kiri atau kanan (kecil) untuk scene padat. Jaga tubuh dan lengan di dalam layar dan di luar braket sudut: `x` sekitar 0,32 dan 0,68 untuk `h` 440; kaki tetap di atas footer.
+- **Tetap berlaku**: satu sorotan oranye per layar, Poppins, kontras teks, zona aman atas dan bawah, ikon dari `src/icons.tsx`.
+- **Cek cepat sebelum selesai**: tulis jenis hero tiap scene berurutan (contoh `hook: counter, relate: terminal, shift: diagram`). Kalau ada dua yang sama berdampingan, ubah salah satunya. Render beberapa `remotion still` per scene untuk memastikan.
+
 ## Reels dialog: isi folder
 
 Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" --dialog [--cast ganjar,robot] [--style rig|stickman] [--scenes hook,relate,shift,urgency,closing,cta]`. Pemeran 1-3 dari `ganjar`, `robot`, `claudecode` (bawaan `ganjar,robot`), gaya `rig` atau `stickman`. Pembicara tiap scene dibuat bergantian, isinya `TODO`. Template di `scripts/templates/dialog-reels`.
