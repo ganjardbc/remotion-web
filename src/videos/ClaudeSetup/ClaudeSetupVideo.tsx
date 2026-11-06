@@ -8,9 +8,10 @@ import { envelope, kf } from "../../assets/characters/shared/motion";
 import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import type { VideoComposition } from "../../compositions";
 import { ThemeProvider } from "../../themes";
-import { Caption } from "./parts";
-import { at, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, type SceneId } from "./config";
-import { KATEGORI } from "./scenes";
+import { Caption } from "../../desk-world";
+import { FEET_ON_DESK, FEET_ON_KEYBOARD } from "../../reelsLayout";
+import { at, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, WORDS, type SceneId } from "./config";
+import { KATEGORI, TYPE_FRAMES } from "./scenes";
 import { HookScene, KonteksScene, InstallScene, PakaiScene, HasilScene, CtaScene } from "./scenes";
 
 export { TOTAL_FRAMES };
@@ -57,7 +58,6 @@ const stomp =
   };
 
 const sceneFrame = (id: SceneId, seconds: number): number => SCENE_START[SCENE_IDS.indexOf(id)] + LEAD + Math.round(seconds * FPS);
-const TYPE_FRAMES = Math.round(1.6 * FPS);
 const INSTALL_TYPE = sceneFrame("install", at("install", "di Claude Code") - 0.4);
 const PAKAI_TYPE = sceneFrame("pakai", at("pakai", "merekomendasikan") - 0.8);
 
@@ -71,15 +71,13 @@ const CLIPS: readonly PlacedClip[] = [
 // Pose karakter per scene: posisi tengah horizontal (0..1 dari lebar) dan tinggi. Kaki tetap menapak di atas footer.
 // Berpindah antar pose 0,5 dtk dengan ease-out di awal scene, tanpa pantulan.
 const POSES: Readonly<Record<SceneId, { readonly x: number; readonly h: number; readonly y: number }>> = {
-  hook: { x: 0.5, h: 540, y: 1640 },
-  konteks: { x: 0.68, h: 440, y: 1640 },
-  install: { x: 0.5, h: 440, y: 1485 },
-  pakai: { x: 0.5, h: 440, y: 1485 },
-  hasil: { x: 0.76, h: 400, y: 1640 },
-  cta: { x: 0.5, h: 560, y: 1640 },
+  hook: { x: 0.5, h: 540, y: FEET_ON_DESK },
+  konteks: { x: 0.68, h: 440, y: FEET_ON_DESK },
+  install: { x: 0.5, h: 440, y: FEET_ON_KEYBOARD },
+  pakai: { x: 0.5, h: 440, y: FEET_ON_KEYBOARD },
+  hasil: { x: 0.76, h: 400, y: FEET_ON_DESK },
+  cta: { x: 0.5, h: 560, y: FEET_ON_DESK },
 };
-// Posisi atas caption per scene: di bawah kaki karakter, di tepi depan meja, di atas footer.
-const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1655, konteks: 1655, install: 1655, pakai: 1655, hasil: 1655, cta: 1655 };
 const MOVE_FRAMES = 15;
 const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
@@ -148,7 +146,7 @@ export const ClaudeSetupVideo: React.FC<Props> = ({ theme }) => {
         })}
       </Series>
       <Character />
-      <Caption y={CAPTION_Y} />
+      <Caption sceneStarts={SCENE_START} words={SCENE_IDS.map((id) => WORDS[id])} lead={LEAD} />
       <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
       <Sound />
     </ThemeProvider>

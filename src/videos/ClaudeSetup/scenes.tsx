@@ -3,8 +3,10 @@ import { Interactive } from "remotion";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
 import { Enter } from "../../motion";
-import { INSTALL_CMD, PROMPT_TEXT } from "./config";
-import { Accent, Bar, Cabinet, Frame, Headline, Keyboard, Lamp, Monitor, Mug, Plant, PointTag, cue, useCue, type DrawerSpec } from "./parts";
+import { Cabinet, Keyboard, Lamp, Monitor, Mug, Plant, type DrawerSpec } from "../../desk-world";
+import { KEYBOARD_TOP, ZONES } from "../../reelsLayout";
+import { FPS, INSTALL_CMD, PROMPT_TEXT } from "./config";
+import { Accent, Bar, Frame, Headline, PointTag, cue, useCue } from "./parts";
 
 // Cue ditulis sebagai frasa dari SPOKEN (config.ts); `when` mengubahnya ke detik sejak suara mulai.
 // Hero visual per scene (docs/struktur-video.md, "Variasi visual"): hook perbandingan dua kolom, konteks stempel + angka,
@@ -75,7 +77,9 @@ export const KonteksScene: React.FC = () => {
 
 // ---------- 3. Install: monitor dan keyboard, Claude menginjak tuts ----------
 
-const top = (child: React.ReactNode, y = 250): React.ReactNode => (
+export const TYPE_FRAMES = Math.round(1.6 * FPS);
+
+const top = (child: React.ReactNode, y: number = ZONES.contentTop): React.ReactNode => (
   <div style={{ position: "absolute", left: 0, right: 0, top: y, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>{child}</div>
 );
 
@@ -94,7 +98,7 @@ export const InstallScene: React.FC = () => {
           Pasang
         </PointTag>,
       )}
-      <Monitor delay={cue(when("satu perintah"))} top={390} height={680}>
+      <Monitor delay={cue(when("satu perintah"))} top={ZONES.contentTop + 140} height={680}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 26, marginBottom: 26, borderBottom: `2px solid ${t.code.line}` }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{ width: 22, height: 22, borderRadius: 999, backgroundColor: t.code.line }} />
@@ -118,7 +122,7 @@ export const InstallScene: React.FC = () => {
           <span style={{ color: t.colors.groundEmphasis }}>_</span>
         </div>
       </Monitor>
-      <Keyboard delay={cue(when("satu perintah") + 0.2)} top={1335} typeStart={start} typeDur={1.6} chars={INSTALL_CMD.length} />
+      <Keyboard delay={cue(when("satu perintah") + 0.2)} top={KEYBOARD_TOP} startFrame={cue(start)} durFrames={TYPE_FRAMES} chars={INSTALL_CMD.length} />
     </Frame>
   );
 };
@@ -138,7 +142,7 @@ export const PakaiScene: React.FC = () => {
           Tinggal <Accent>minta</Accent>
         </Headline>,
       )}
-      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={420} height={650}>
+      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={ZONES.contentTop + 170} height={650}>
         <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "22px 26px", borderRadius: 999, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 32, color: t.code.text, whiteSpace: "nowrap" }}>
           <Icon name="messageCircle" size={44} color={t.colors.groundEmphasis} />
           <span>{typed}</span>
@@ -151,7 +155,7 @@ export const PakaiScene: React.FC = () => {
           <Bar value={scan} color={t.colors.primarySoft} height={44} />
         </div>
       </Monitor>
-      <Keyboard delay={cue(when("Lalu minta") + 0.3)} top={1335} typeStart={start} typeDur={1.6} chars={PROMPT_TEXT.length} />
+      <Keyboard delay={cue(when("Lalu minta") + 0.3)} top={KEYBOARD_TOP} startFrame={cue(start)} durFrames={TYPE_FRAMES} chars={PROMPT_TEXT.length} />
     </Frame>
   );
 };
@@ -171,8 +175,9 @@ export const HasilScene: React.FC = () => {
   const drawers: readonly DrawerSpec[] = KATEGORI.map((k, i) => ({
     icon: k.icon,
     label: k.label,
-    open: when(k.phrase),
-    close: i < KATEGORI.length - 1 ? when(KATEGORI[i + 1].phrase) : null,
+    badge: "1-2",
+    openFrame: cue(when(k.phrase)),
+    closeFrame: i < KATEGORI.length - 1 ? cue(when(KATEGORI[i + 1].phrase)) : null,
   }));
   return (
     <Frame id="hasil" variant="primary" bare>
@@ -180,7 +185,7 @@ export const HasilScene: React.FC = () => {
         <Headline delay={cue(when("satu sampai dua"))} size={74}>
           Tiap kategori, <Accent>1-2</Accent> pilihan
         </Headline>,
-        400,
+        ZONES.contentTop + 150,
       )}
       <Cabinet delay={cue(0.3)} drawers={drawers} />
     </Frame>
