@@ -39,6 +39,7 @@ Alur wajib: Hook, Relate, Shift, Closing, CTA.
 - **CTA**: ajakan follow dengan alasan spesifik ke isi konten, bukan "follow untuk tips lainnya".
 - **Irama**: tidak ada dead time, hal baru di layar tiap ~4 dtk; scene bersuara lebih dari 8 dtk dipecah jadi beat. Pedoman (bukan aturan keras), rincian di bagian "Irama scene" di [docs/struktur-video.md](docs/struktur-video.md); `npm run validate:structure` memberi peringatan.
 - **Variasi visual**: tiap scene punya hero visual dan tata letak berbeda dari scene di sebelahnya (angka, bar, terminal, diagram, stempel, dua kolom, dan seterusnya), bukan templat kartu yang sama berulang. Latar (`ground`, `dark`, `primary`) dan posisi karakter juga berganti antar scene. Rincian di bagian "Variasi visual antar scene" di [docs/struktur-video.md](docs/struktur-video.md); berlaku untuk Format A dan C.
+- **Layout dan komponen**: posisi vertikal Reels dari `src/reelsLayout.ts` (jangan menulis angka y sendiri); dunia meja (meja, monitor, keyboard, rak, caption karaoke) ada di `src/desk-world/`. Daftar periksa sebelum render di [docs/struktur-video.md](docs/struktur-video.md), bagian "Daftar periksa Reels sebelum render".
 - Referensi implementasi, alur, dan durasi: `src/videos/PromptPanjang` (hook 5 dtk, relate 7, shift 9, urgency 5, cara 9, closing 4, CTA 5). Struktur file lihat Struktur file video di bawah.
 
 ## Struktur file video
@@ -88,7 +89,7 @@ Aturan lengkap carousel (isi, field berkas konten, ukuran huruf, warna, komponen
 - Pengaturan satu kali (struktur referensi, penyesuaian format) hanya berlaku untuk konten itu, tidak mengubah aturan baku.
 
 ## Perintah
-- `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate + validate:structure. `npm run validate`: cek aturan konten carousel. `npm run validate:structure`: cek nama dan isi folder video terhadap `docs/struktur-video.md`.
+- `npm run dev`: Remotion Studio. `npm run lint`: eslint + tsc + validate + validate:structure. `npm run validate`: cek aturan konten carousel. `npm run validate:structure`: cek nama dan isi folder video terhadap `docs/struktur-video.md`. `npm run validate:layout`: cek peta zona layout Reels (`src/reelsLayout.ts`). `node scripts/vo-check.mjs --video <Nama>`: cek tempo, kenyaringan, nada voiceover tanpa API.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: `--sequence --image-format=png`.
 - `node scripts/new-reels.mjs <NamaPascalCase> "<Judul>" [--scenes a,b,c]`: scaffold Reels baru (narator Claude Code, default scene Format A; komposisi terdaftar otomatis). Tambah `--dialog [--cast ganjar,robot] [--style rig|stickman]` untuk Reels dialog.
 - `node scripts/new-carousel.mjs <NamaPascalCase> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`: scaffold carousel baru (kerangka slide berisi TODO) (komposisi terdaftar otomatis).

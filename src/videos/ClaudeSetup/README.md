@@ -4,7 +4,7 @@
 
 - `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`.
 - `scenes.tsx`: 6 scene. Cue ditulis sebagai frasa dari `SPOKEN`.
-- `parts.tsx`: salinan komponen dari PromptPanjang (`Frame`, `Headline`, `Chip`, `Card`, `PointTag`, `Bar`, `Grow`, `GithubMark`, `useCue`) plus dunia meja (`Desk`, `Mug`, `Lamp`, `Plant`, `Monitor`, `Keyboard`, `Cabinet`) dan `Caption`.
+- `parts.tsx`: salinan komponen dari PromptPanjang (`Frame`, `Headline`, `Chip`, `Card`, `PointTag`, `Bar`, `Grow`, `GithubMark`, `useCue`) (`Frame` memakai `Desk` dari `src/desk-world`). Dunia meja (`Desk`, `Mug`, `Lamp`, `Plant`, `Monitor`, `Keyboard`, `Cabinet`, `Caption`) ada di `src/desk-world/`, posisi vertikal dari `src/reelsLayout.ts`.
 - `ClaudeSetupVideo.tsx`: `Series` scene, karakter (ekspresi per scene), `BrandFooter` sekali di root, suara.
 
 ## Voiceover

@@ -74,6 +74,8 @@ Bagian wajib, urut: judul `# <Nama>` dan satu paragraf (judul konten, format, ju
 - Opsional per video, di `config.ts`: `VO_SETTINGS` (`{ model, speed }`, `speed: null` = tidak dikirim) dan `VO_TEXT` (teks TTS per scene; `SPOKEN` tetap teks caption dan cue). Pakai untuk intonasi: `eleven_v4` dengan tag emosi Inggris di depan kalimat (`[curious]`, `[excited]`, `[warm]`, `[confident]`, `[friendly]`); `eleven_v4` mengabaikan `speed`. Rujukan ClaudeSetup: rentang nada per klip naik dari sekitar 6-9 ke 11-15 semitone dibanding `eleven_multilingual_v2` speed 1.2 yang terdengar datar. Mengubah model atau teks TTS mengubah hash, jadi semua klip video itu di-generate ulang. Intonasi pertanyaan: kalimat tanya ya/tidak yang ditutup kata kerja atau kata ulang ("...masih nebak-nebak?") dibaca turun di semua model, termasuk dengan tag `[questioning]`; susun ulang agar ditutup kata benda atau nama ("Masih nebak-nebak waktu setup Claude Code?"), hasilnya naik sekitar +9 semitone (diukur di ClaudeSetup). Untuk kalimat penting, buat 2-3 take dan pilih yang intonasinya paling sesuai.
 - Klip mentah di `out/vo-raw/<Nama>/<id>.mp3` (tidak di-commit). Olah dengan `node scripts/vo-process.mjs <id> out/vo-raw/<Nama>/<id>.mp3 --hash <hash> --video <Nama>`.
 - `voiceover.json` dimulai `{ "lines": {} }`. `voiceover-files.ts` dan folder `voiceover/` ditulis oleh `vo-process.mjs` saat klip pertama diolah, jadi untuk video yang belum bersuara folder `voiceover/` belum ada dan itu sah. Jangan diubah tangan.
+- Cek kualitas tanpa API: `node scripts/vo-check.mjs --video <Nama> [--only id,id]` mengukur tempo (huruf/detik, ideal 13-18,5), kenyaringan (-18 sampai -14 LUFS), variasi nada (rentang kurang dari 9 semitone = datar), dan nada akhir kalimat tanya (turun = peringatan). Pengukur kasar, hanya membandingkan take dan menangkap masalah yang jelas; telinga tetap hakim.
+- Hemat kredit: generate satu scene dulu (`node scripts/vo-generate.mjs --video <Nama> --only hook`), jalankan `vo-check`, dengarkan, baru generate sisanya. Untuk kalimat penting buat 2-3 take dan pilih yang terbaik. Mengganti model atau teks TTS mengubah hash semua klip, jadi putuskan modelnya sebelum generate semua.
 - Alur otomatis: `node scripts/vo-lines.mjs --video <Nama>` menampilkan status tiap scene (`baru`, `berubah`, `ok`), lalu `node scripts/vo-generate.mjs --video <Nama>` men-generate hanya yang belum ada atau berubah, memotong senyap, menormalkan, dan mencatatnya. Sebelum memanggil API, jumlah huruf (≈ kredit) ditampilkan dan konfirmasi diminta. Butuh `ELEVENLABS_API_KEY` di environment atau `.env.local`. Hash = sha1 `voiceId|model|SPOKEN[id]`; mengganti suara, model, atau speed di `vo-lines.mjs` mengubah hash semua scene.
 
 ## Irama scene (Reels narator)
@@ -100,6 +102,22 @@ Tiap scene harus terlihat beda dari scene di sebelahnya, supaya penonton merasa 
 - **Satu dunia, bukan hanya panel**: boleh membuat satu dunia konsisten (contoh meja kerja di ClaudeSetup: `Desk` di `Frame`, benda di `extras`) tempat karakter berinteraksi dengan benda sesuai isi scene. Scene perintah memakai monitor dan keyboard (tuts menyala per huruf, kaki karakter menginjak bergantian lewat clip `stomp`, suara `typing_bed`), scene daftar memakai rak laci (laci ditarik tepat saat frasanya diucapkan). Injakan memakai ease-out tajam, tanpa pantulan. Gaya kartun hanya dipakai pada scene yang punya aksi fisik, bukan di semua scene. Ekspresi karakter berganti mengikuti isi kalimat (`FACES` dengan `at(...)`).
 - **Tetap berlaku**: satu sorotan oranye per layar, Poppins, kontras teks, zona aman atas dan bawah, ikon dari `src/icons.tsx`.
 - **Cek cepat sebelum selesai**: tulis jenis hero tiap scene berurutan (contoh `hook: counter, relate: terminal, shift: diagram`). Kalau ada dua yang sama berdampingan, ubah salah satunya. Render beberapa `remotion still` per scene untuk memastikan.
+
+## Peta zona layout dan dunia meja (Reels narator)
+
+Semua posisi vertikal Reels 9:16 diturunkan dari satu peta: `src/reelsLayout.ts` (`ZONES`: `headerBottom`, `contentTop`, `contentBottom`, `deskTop`, `captionTop`, `footerTop`, `safeBottom`; turunan `FEET_ON_DESK`, `KEYBOARD_TOP`, `FEET_ON_KEYBOARD`). Jangan menulis angka y sendiri di `scenes.tsx` atau `<Nama>Video.tsx`: pakai peta, supaya satu perubahan (misalnya tinggi meja) tidak memaksa mengubah empat tempat lain. `npm run validate:layout` (bagian dari `npm run lint`) memeriksa peta itu masuk akal dan memberi peringatan untuk posisi tulis-tangan di zona atas atau caption di luar meja pada video yang mengimpor `reelsLayout`. Video lama yang belum mengimpornya dilewati.
+
+Komponen dunia meja ada di `src/desk-world/` (impor dari `../../desk-world`): `Desk`, benda (`Mug`, `Lamp`, `Plant`), `Monitor`, `Keyboard` (tuts menyala per huruf, jendela mengetik dalam frame), `Cabinet` (laci dengan `openFrame` dan `closeFrame` dalam frame lokal), dan `Caption` (karaoke satu baris, `sceneStarts`, `words`, `lead`). Semuanya memakai frame lokal dan props, tanpa impor dari folder video, jadi Reels mana pun bisa memakainya. Contoh pemakaian: ClaudeSetup.
+
+## Daftar periksa Reels sebelum render
+
+1. **Zona**: judul dan konten di bawah `contentTop`; tidak ada yang menimpa pita caption; karakter dan benda menapak di meja; tubuh dan lengan di dalam layar dan di luar braket sudut. `npm run validate:layout` bersih.
+2. **Sorotan oranye**: tepat satu frasa atau satu kontrol oranye per layar (tombol dan avatar pakai biru primary).
+3. **Variasi**: hero visual, latar, dan pose karakter berbeda dari scene tetangganya; tulis jenis hero per scene dan cek.
+4. **Naskah**: kalimat tanya ya/tidak ditutup kata benda; singkatan Inggris dieja fonetis di `VO_TEXT`; istilah yang sering salah dibaca dicek lewat transkrip scribe.
+5. **Voiceover**: generate satu scene dulu (`--only`), `vo-check` tanpa catatan berat (tempo, kenyaringan, nada), baru sisanya. Setelah audio final, ukur ulang `WORDS` (scribe) sebelum cue dan caption dianggap benar.
+6. **Caption**: satu baris, tidak berdempetan dengan footer atau benda di meja; uji di tampilan aplikasi sebelum upload karena zona bawah bisa tertutup antarmuka.
+7. **Terakhir**: `npm run lint` bersih; `remotion still` untuk satu frame per scene (awal, tengah, akhir ketikan atau gerak); render penuh dan tonton sekali sebelum upload.
 
 ## Reels dialog: isi folder
 
