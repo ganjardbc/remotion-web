@@ -1,5 +1,5 @@
 import type React from "react";
-import type { Gesture } from "./gestures";
+import type { Gesture, GestureKey } from "./gestures";
 
 // Ekspresi berwaktu: `at` dalam detik, urut naik. Bentuknya sama dengan `face` di rig 2D.
 export type FaceKey<E extends string> = { readonly at: number; readonly expression: E };
@@ -18,8 +18,10 @@ export type CharacterProps<E extends string> = {
 export type PropDrivenProps<E extends string> = CharacterProps<E> & {
   readonly walk?: boolean;
   readonly wave?: boolean;
-  // Gerak tangan; menimpa `wave`. Block hanya mendukung gerak lengan lurus (lihat blockArms).
+  // Gerak tangan; menimpa `wave`. Block meniru lewat lengan lurus, condong badan, dan kepala (lihat blockPoseAt).
   readonly gesture?: Gesture;
+  // Gesture berwaktu (detik, urut naik), dihaluskan antar gesture; menimpa `gesture`. Block saja.
+  readonly gestures?: readonly GestureKey[];
 };
 
 // Ekspresi aktif pada frame ini: entri `face` terakhir yang sudah lewat, atau `fallback` sebelum entri pertama.

@@ -1,6 +1,6 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { blockArms } from "../../shared/gestures";
+import { blockPoseAt, type GestureKey } from "../../shared/gestures";
 import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
 import type { RobotExpression } from "../rig/face";
@@ -129,6 +129,8 @@ export type RobotBlockProps = PropDrivenProps<RobotExpression> & {
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
+  // Sudut pandang kamera (derajat, rotateX): -9 bawaan = sedikit dari atas; positif = dari bawah (low angle), -30 = dari atas, -70 = tegak lurus (bird's eye).
+  readonly pitch?: number;
 };
 
 export const robotBlockSize = (height: number): { width: number; height: number } => ({
@@ -141,8 +143,10 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   expression: expressionProp = "netral",
   face,
   gesture,
+  gestures,
   yaw = 24,
   spin = 0,
+  pitch = -9,
   walk = false,
   wave = false,
   style,
@@ -151,7 +155,6 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const expression = expressionAt(face, expressionProp, frame, fps);
-  const arms = blockArms(gesture, t, true);
   const u = height / 23;
   const { width } = robotBlockSize(height);
 
@@ -163,8 +166,12 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
   const wobble = (k: number) => Math.sin(t * 3.1 + k) * (walk ? 9 : 4);
 
-  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1]}deg)` : wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${-(1 + idle)}deg)`;
-  const armMinus = arms[0] !== null ? `rotateZ(${arms[0]}deg)` : `rotateX(${swing}deg) rotateZ(${1 + idle}deg)`;
+  const keys: readonly GestureKey[] = gestures ?? (gesture ? [{ at: 0, gesture }] : []);
+  const pose = blockPoseAt(keys, t, 1 + idle, true);
+  const free = keys.length === 0;
+  const walkSwing = walk && free ? swing : 0;
+  const armPlus = free && wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${pose.r.fwd - walkSwing}deg) rotateZ(${-pose.r.out}deg)`;
+  const armMinus = `rotateX(${pose.l.fwd + walkSwing}deg) rotateZ(${pose.l.out}deg)`;
 
   return (
     <div style={{ position: "relative", width, height, perspective: u * 70, perspectiveOrigin: "50% 45%", ...style }}>
@@ -180,8 +187,9 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
           background: "radial-gradient(closest-side, rgba(0,0,0,0.26), rgba(0,0,0,0))",
         }}
       />
-      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: "rotateX(-9deg)" }}>
-        <Joint transform={`translate(${width / 2}px, ${u * 16.2 + bob}px) rotateY(${yaw + spin * t}deg) rotateZ(${roll}deg)`}>
+      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: `rotateX(${pitch}deg)` }}>
+        <Joint transform={`translate(${width / 2}px, ${u * 16.2 + bob - pose.lift * u}px) rotateY(${yaw + spin * t}deg) rotateZ(${roll}deg)`}>
+          <Joint transform={`rotateX(${pose.lean}deg) rotateZ(${pose.tilt}deg)`}>
           <Cube w={14} h={11} d={8} u={u} faces={{ ...BODY, front: bodyFront(expression) }} transform={`translateY(${-5.5 * u}px)`} />
 
           {([-1, 1] as const).map((side) => (
@@ -197,9 +205,10 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
           <Joint transform={`translate(${-8.4 * u}px, ${-8.2 * u}px) ${armMinus}`}>
             <Cube w={2.4} h={6.4} d={3} u={u} faces={ARM} transform={`translateY(${3.2 * u}px)`} />
           </Joint>
+          </Joint>
 
           {([1, -1] as const).map((side) => (
-            <Joint key={side} transform={`translate(${side * 3.2 * u}px, ${-0.2 * u}px) rotateX(${-side * swing}deg)`}>
+            <Joint key={side} transform={`translate(${side * 3.2 * u}px, ${-0.2 * u}px) rotateX(${(side === 1 ? pose.legR : pose.legL) - side * swing}deg) rotateZ(${-side * pose.spread}deg)`}>
               <Cube w={3.4} h={3.9} d={3.4} u={u} faces={LEG} transform={`translateY(${1.95 * u}px)`} />
               <Cube w={3.9} h={1.5} d={4.8} u={u} faces={FOOT} transform={`translate3d(0, ${4.65 * u}px, ${0.5 * u}px)`} />
             </Joint>

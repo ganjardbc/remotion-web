@@ -1,6 +1,6 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { blockArms } from "../../shared/gestures";
+import { blockPoseAt, type GestureKey } from "../../shared/gestures";
 import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, Joint, type Faces, type Paint } from "../../shared/blockKit";
 import type { RobotExpression } from "../../robot/rig/face";
@@ -43,6 +43,8 @@ export type ClaudeCodeBlockProps = PropDrivenProps<RobotExpression> & {
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
+  // Sudut pandang kamera (derajat, rotateX): -9 bawaan = sedikit dari atas; positif = dari bawah (low angle), -30 = dari atas, -70 = tegak lurus (bird's eye).
+  readonly pitch?: number;
 };
 
 export const claudeCodeBlockSize = (height: number): { width: number; height: number } => ({
@@ -55,8 +57,10 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   expression: expressionProp = "netral",
   face,
   gesture,
+  gestures,
   yaw = 24,
   spin = 0,
+  pitch = -9,
   walk = false,
   wave = false,
   style,
@@ -65,7 +69,6 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const expression = expressionAt(face, expressionProp, frame, fps);
-  const arms = blockArms(gesture, t, true);
   const u = height / 17;
   const { width } = claudeCodeBlockSize(height);
 
@@ -77,8 +80,15 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
 
   // Lengan: kiri keluar = rotateZ positif, kanan keluar = negatif. Ayun jalan lewat rotateY (maju mundur).
-  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1] - 90}deg)` : wave ? `rotateZ(-${150 + flap}deg)` : `rotateY(${swing}deg) rotateZ(${-(1 + idle)}deg)`;
-  const armMinus = arms[0] !== null ? `rotateZ(${arms[0] - 90}deg)` : `rotateY(${-swing}deg) rotateZ(${1 + idle}deg)`;
+  // Lengan menjulur ke samping saat diam (rotateZ 0). Sudut gesture (dari tergantung, skala manusia) dipetakan relatif
+  // ke posisi diam dan tanpa diperkecil.
+  const keys: readonly GestureKey[] = gestures ?? (gesture ? [{ at: 0, gesture }] : []);
+  const pose = blockPoseAt(keys, t, -4 + (1 + idle), true);
+  const free = keys.length === 0;
+  const walkSwing = walk && free ? swing : 0;
+  const K = 1;
+  const armPlus = free && wave ? `rotateZ(-${150 + flap}deg)` : `rotateY(${-pose.r.fwd * K + walkSwing}deg) rotateZ(${-(pose.r.out + 4) * K}deg)`;
+  const armMinus = `rotateY(${pose.l.fwd * K - walkSwing}deg) rotateZ(${(pose.l.out + 4) * K}deg)`;
   const shoulderY = (ARM.y + ARM.h / 2 - (BODY.y + BODY.h)) * u;
 
   return (
@@ -95,8 +105,9 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
           background: "radial-gradient(closest-side, rgba(0,0,0,0.26), rgba(0,0,0,0))",
         }}
       />
-      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: "rotateX(-9deg)" }}>
-        <Joint transform={`translate(${width / 2}px, ${u * 14.1 + bob}px) rotateY(${yaw + spin * t}deg) rotateZ(${roll}deg)`}>
+      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: `rotateX(${pitch}deg)` }}>
+        <Joint transform={`translate(${width / 2}px, ${u * 14.1 + bob - pose.lift * u}px) rotateY(${yaw + spin * t}deg) rotateZ(${roll}deg)`}>
+          <Joint transform={`rotateX(${pose.lean}deg) rotateZ(${pose.tilt}deg)`}>
           <Cube w={BODY.w} h={BODY.h} d={BODY_DEPTH} u={u} faces={{ ...SOLID, front: bodyFront(expression) }} transform={`translateY(${(-BODY.h / 2) * u}px)`} />
 
           <Joint transform={`translate(${(BODY.w / 2) * u}px, ${shoulderY}px) ${armPlus}`}>
@@ -105,13 +116,14 @@ export const ClaudeCodeBlock: React.FC<ClaudeCodeBlockProps> = ({
           <Joint transform={`translate(${(-BODY.w / 2) * u}px, ${shoulderY}px) ${armMinus}`}>
             <Cube w={ARM.w} h={ARM.h} d={ARM_DEPTH} u={u} faces={SOLID} transform={`translateX(${(-ARM.w / 2) * u}px)`} />
           </Joint>
+          </Joint>
 
           {LEG_X.map((x, i) => {
             const side = i < 2 ? -1 : 1;
             return (
               <Joint
                 key={x}
-                transform={`translate(${(x + LEG.w / 2 - CENTER_X) * u}px, ${-0.3 * u}px) rotateX(${-side * swing}deg)`}
+                transform={`translate(${(x + LEG.w / 2 - CENTER_X) * u}px, ${-0.3 * u}px) rotateX(${(side === 1 ? pose.legR : pose.legL) - side * swing}deg) rotateZ(${-side * pose.spread}deg)`}
               >
                 <Cube w={LEG.w} h={LEG_H + 0.3} d={LEG_DEPTH} u={u} faces={SOLID} transform={`translateY(${((LEG_H + 0.3) / 2) * u}px)`} />
               </Joint>

@@ -1,18 +1,27 @@
 import type React from "react";
 import { useCurrentFrame, useVideoConfig } from "remotion";
-import { blockArms } from "../../shared/gestures";
+import { blockPoseAt, type GestureKey } from "../../shared/gestures";
 import { expressionAt, type PropDrivenProps } from "../../shared/props";
 import { Cube, flip, Joint, stroke, type Faces, type Paint } from "../../shared/blockKit";
 import { EXPRESSIONS, type FaceState, type GanjarExpression } from "../rig/face";
 
 // Ganjar versi balok: kubus CSS 3D asli, tiap sisi digambar vektor halus (bukan piksel)
 // dengan warna (kaos dan celana hitam lembut, rambut cokelat gelap) dan wajah yang sama seperti rig SVG Ganjar. Satuan model: U; 1 U = 10 unit viewBox sisi.
-// Proporsi: kepala 10x9x9, badan 9x10x5, lengan 3.6x10x3.6, kaki 4.6x11x4.6, rambut berupa kubus tersendiri.
+// Proporsi: kepala 10x9x9 (diskala HEAD_SCALE), badan 9x10x5, lengan 3.6x10x3.6, kaki 4.6x11x4.6, rambut berupa kubus tersendiri.
 
 // Ekspresi sama dengan rig 2D: wajah blok digambar dari angka FaceState yang sama (alis, mata, mulut, pipi).
 export type GanjarBlockExpression = GanjarExpression;
 
 export const GANJAR_BLOCK_EXPRESSIONS = Object.keys(EXPRESSIONS) as readonly GanjarBlockExpression[];
+
+// Kepala diperkecil dari pangkal leher supaya selebar badan (kepala 10 U, badan 9 U): 0,8 = kepala 8 x 7,2 x 7,2 U.
+const HEAD_SCALE = 0.9;
+// Kedalaman kepala (depan ke belakang) dipendekkan dari 9 U; rambut 0,6 U lebih dalam.
+const HEAD_DEPTH = 7;
+// Lengan dikecilkan dari 3,6 x 10 x 3,6 U; bahu (ARM_X) ikut merapat ke badan 9 U.
+const ARM_W = 3;
+const ARM_LEN = 10;
+const ARM_X = 6.1;
 
 const C = {
   skin: "#f2b98c",
@@ -80,10 +89,15 @@ const mouth = (f: FaceState): React.ReactNode => {
   return <path d={`M${x0} 68 Q50 ${68 + f.smile * 4} ${x1} 68 Q50 ${68 + depth * 2} ${x0} 68 Z`} fill={C.mouth} />;
 };
 
+// `mods`: kedip (mata menutup sesaat) dan `mouthOpen` (mulut dibuka saat bicara) menimpa ekspresi.
+type FaceMods = { readonly blink?: boolean; readonly mouthOpen?: number };
+
 const headFront =
-  (e: GanjarBlockExpression): Paint =>
+  (e: GanjarBlockExpression, mods: FaceMods = {}): Paint =>
   (w, h) => {
-    const f = EXPRESSIONS[e];
+    let f: FaceState = EXPRESSIONS[e];
+    if (mods.blink && f.eyeOpen > 0.2) f = { ...f, eyeOpen: 0.1, eyeArc: -1 };
+    if (mods.mouthOpen !== undefined) f = { ...f, mouthOpen: mods.mouthOpen, smile: Math.abs(f.smile) < 0.3 ? 0.5 : f.smile };
     return (
       <>
         <rect width={w} height={h} fill={C.skin} />
@@ -213,8 +227,8 @@ const soleBottom: Paint = (w, h) => <rect width={w} height={h} fill={C.sole} />;
 
 // ---------- Karakter ----------
 
-const headFaces = (e: GanjarBlockExpression): Faces => ({
-  front: headFront(e),
+const headFaces = (e: GanjarBlockExpression, mods?: FaceMods): Faces => ({
+  front: headFront(e, mods),
   back: skinFlat,
   left: headSide,
   right: flip(headSide),
@@ -238,6 +252,10 @@ export type GanjarBlockProps = PropDrivenProps<GanjarBlockExpression> & {
   readonly yaw?: number;
   // Putaran terus-menerus, derajat per detik.
   readonly spin?: number;
+  // Sudut pandang kamera (derajat, rotateX): -9 bawaan = sedikit dari atas; positif = dari bawah (low angle), -30 = dari atas, -70 = tegak lurus (bird's eye).
+  readonly pitch?: number;
+  // Mulut membuka-menutup (menimpa mulut ekspresi).
+  readonly talking?: boolean;
 };
 
 export const ganjarBlockSize = (height: number): { width: number; height: number } => ({
@@ -250,8 +268,11 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   expression: expressionProp = "netral",
   face,
   gesture,
+  gestures,
+  talking = false,
   yaw = 24,
   spin = 0,
+  pitch = -9,
   walk = false,
   wave = false,
   style,
@@ -260,7 +281,6 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   const { fps } = useVideoConfig();
   const t = frame / fps;
   const expression = expressionAt(face, expressionProp, frame, fps);
-  const arms = blockArms(gesture, t, false);
   const u = height / 34;
   const { width } = ganjarBlockSize(height);
 
@@ -273,8 +293,13 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
   const nod = Math.sin(t * 1.3 + 1) * 3;
   const flap = Math.sin(t * Math.PI * 2 * 2.2) * 14;
 
-  const armPlus = arms[1] !== null ? `rotateZ(-${arms[1]}deg)` : wave ? `rotateX(0deg) rotateZ(-${150 + flap}deg)` : `rotateX(${-swing}deg) rotateZ(${4 + idle * 1.5}deg)`;
-  const armMinus = arms[0] !== null ? `rotateZ(${arms[0]}deg)` : `rotateX(${swing}deg) rotateZ(${-4 - idle * 1.5}deg)`;
+  const keys: readonly GestureKey[] = gestures ?? (gesture ? [{ at: 0, gesture }] : []);
+  const pose = blockPoseAt(keys, t, -4 - idle * 1.5);
+  const free = keys.length === 0;
+  const walkSwing = walk && free ? swing : 0;
+  const armPlus = free && wave ? `rotateZ(-${150 + flap}deg)` : `rotateX(${pose.r.fwd - walkSwing}deg) rotateZ(${-pose.r.out}deg)`;
+  const armMinus = `rotateX(${pose.l.fwd + walkSwing}deg) rotateZ(${pose.l.out}deg)`;
+  const mods = { blink: frame % Math.round(3.4 * fps) < 4, mouthOpen: talking ? 0.12 + Math.abs(Math.sin(t * 12.5)) * 0.55 : undefined };
 
   return (
     <div
@@ -299,26 +324,28 @@ export const GanjarBlock: React.FC<GanjarBlockProps> = ({
           background: "radial-gradient(closest-side, rgba(0,0,0,0.28), rgba(0,0,0,0))",
         }}
       />
-      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: "rotateX(-9deg)" }}>
-        <Joint transform={`translate(${width / 2}px, ${u * 22 + bob}px) rotateY(${yaw + spin * t}deg)`}>
+      <div style={{ position: "absolute", left: 0, top: 0, width, height, transformStyle: "preserve-3d", transform: `rotateX(${pitch}deg)` }}>
+        <Joint transform={`translate(${width / 2}px, ${u * 22 + bob - pose.lift * u}px) rotateY(${yaw + spin * t}deg)`}>
+          <Joint transform={`rotateX(${pose.lean}deg) rotateZ(${pose.tilt}deg)`}>
           <Cube w={9} h={10} d={5} u={u} faces={TORSO} transform={`translateY(${-5 * u}px)`} />
 
-          <Joint transform={`translateY(${-10 * u}px) rotateY(${headTurn}deg) rotateX(${nod}deg)`}>
-            <Cube w={10} h={9} d={9} u={u} faces={headFaces(expression)} transform={`translateY(${-4.5 * u}px)`} />
-            <Cube w={10.6} h={5} d={9.6} u={u} faces={HAIR_FACES} transform={`translateY(${-6.9 * u}px)`} />
+          <Joint transform={`translateY(${-10 * u}px) rotateY(${headTurn + pose.headYaw}deg) rotateX(${nod + pose.nod}deg) rotateZ(${pose.headTilt}deg) scale(${HEAD_SCALE})`}>
+            <Cube w={10} h={9} d={HEAD_DEPTH} u={u} faces={headFaces(expression, mods)} transform={`translateY(${-4.5 * u}px)`} />
+            <Cube w={10.6} h={5} d={HEAD_DEPTH + 0.6} u={u} faces={HAIR_FACES} transform={`translateY(${-6.9 * u}px)`} />
           </Joint>
 
-          <Joint transform={`translate(${6.4 * u}px, ${-9.4 * u}px) ${armPlus}`}>
-            <Cube w={3.6} h={10} d={3.6} u={u} faces={ARM} transform={`translateY(${5 * u}px)`} />
+          <Joint transform={`translate(${ARM_X * u}px, ${-9.4 * u}px) ${armPlus}`}>
+            <Cube w={ARM_W} h={ARM_LEN} d={ARM_W} u={u} faces={ARM} transform={`translateY(${(ARM_LEN / 2) * u}px)`} />
           </Joint>
-          <Joint transform={`translate(${-6.4 * u}px, ${-9.4 * u}px) ${armMinus}`}>
-            <Cube w={3.6} h={10} d={3.6} u={u} faces={ARM} transform={`translateY(${5 * u}px)`} />
+          <Joint transform={`translate(${-ARM_X * u}px, ${-9.4 * u}px) ${armMinus}`}>
+            <Cube w={ARM_W} h={ARM_LEN} d={ARM_W} u={u} faces={ARM} transform={`translateY(${(ARM_LEN / 2) * u}px)`} />
+          </Joint>
           </Joint>
 
-          <Joint transform={`translate(${2.4 * u}px, 0) rotateX(${-swing}deg)`}>
+          <Joint transform={`translate(${2.4 * u}px, 0) rotateX(${pose.legR - swing}deg) rotateZ(${-pose.spread}deg)`}>
             <Cube w={4.6} h={11} d={4.6} u={u} faces={LEG} transform={`translateY(${5.5 * u}px)`} />
           </Joint>
-          <Joint transform={`translate(${-2.4 * u}px, 0) rotateX(${swing}deg)`}>
+          <Joint transform={`translate(${-2.4 * u}px, 0) rotateX(${pose.legL + swing}deg) rotateZ(${pose.spread}deg)`}>
             <Cube w={4.6} h={11} d={4.6} u={u} faces={LEG} transform={`translateY(${5.5 * u}px)`} />
           </Joint>
         </Joint>
