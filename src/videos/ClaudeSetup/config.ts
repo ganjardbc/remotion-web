@@ -16,7 +16,7 @@ export const SCENE_IDS = ["hook", "konteks", "install", "pakai", "hasil", "cta"]
 export type SceneId = (typeof SCENE_IDS)[number];
 
 export const SPOKEN: Readonly<Record<SceneId, string>> = {
-  hook: "Setup Claude Code-mu masih nebak-nebak? Ada plugin resmi yang membaca proyekmu dulu, baru kasih saran.",
+  hook: "Masih nebak-nebak waktu setup Claude Code? Ada plugin resmi yang membaca proyekmu dulu, baru kasih saran.",
   konteks: "Namanya Claude Code Setup. Cuma membaca, tidak mengubah satu file pun.",
   install: "Pasang lewat satu perintah, di Claude Code.",
   pakai: "Lalu minta Claude merekomendasikan otomasi untuk proyekmu.",
@@ -28,7 +28,9 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
 // eleven_v4 mengabaikan speed. VO_TEXT = teks yang dikirim ke TTS; SPOKEN tetap teks caption dan cue.
 export const VO_SETTINGS = { model: "eleven_v4", speed: null } as const;
 export const VO_TEXT: Readonly<Record<SceneId, string>> = {
-  hook: "[curious] Setup Claude Code-mu masih nebak-nebak? [excited] Ada plugin resmi yang membaca proyekmu dulu, baru kasih saran.",
+  // Pertanyaan yang ditutup "nebak-nebak?" selalu dibaca turun (diuji 5 varian, termasuk tag [questioning] dan
+  // multilingual_v2); ditutup kata benda ("...Claude Code?") nadanya naik.
+  hook: "[curious] Masih nebak-nebak waktu setup Claude Code? [excited] Ada plugin resmi yang membaca proyekmu dulu, baru kasih saran.",
   konteks: "[warm] Namanya Claude Code Setup. [reassuring] Cuma membaca, tidak mengubah satu file pun.",
   install: "[confident] Pasang lewat satu perintah, di Claude Code.",
   pakai: "[casual] Lalu minta Claude merekomendasikan otomasi untuk proyekmu.",
@@ -39,7 +41,7 @@ export const VO_TEXT: Readonly<Record<SceneId, string>> = {
 // Waktu tiap kata SPOKEN (detik sejak klip suara mulai), dari timestamp kata ElevenLabs scribe pada klip olahan.
 // Dipakai caption karaoke dan at(). Ukur ulang kalau SPOKEN atau klip suara berubah.
 export const WORDS: Readonly<Record<SceneId, readonly (readonly [string, number])[]>> = {
-  hook: [["Setup", 0.12], ["Claude", 0.48], ["Code-mu", 0.78], ["masih", 1.38], ["nebak-nebak?", 1.66], ["Ada", 2.78], ["plugin", 3.02], ["resmi", 3.36], ["yang", 3.82], ["membaca", 3.94], ["proyekmu", 4.36], ["dulu,", 4.84], ["baru", 5.48], ["kasih", 5.88], ["saran.", 6.16]],
+  hook: [["Masih", 0.08], ["nebak-nebak", 0.34], ["waktu", 1.1], ["setup", 1.38], ["Claude", 1.76], ["Code?", 2.08], ["Ada", 2.78], ["plugin", 2.96], ["resmi", 3.32], ["yang", 3.78], ["membaca", 3.9], ["proyekmu", 4.3], ["dulu,", 4.78], ["baru", 5.44], ["kasih", 5.86], ["saran.", 6.14]],
   konteks: [["Namanya", 0.1], ["Claude", 0.86], ["Code", 1.3], ["Setup.", 1.62], ["Cuma", 2.46], ["membaca,", 2.74], ["tidak", 3.76], ["mengubah", 4.02], ["satu", 4.46], ["file", 4.76], ["pun.", 5.1]],
   install: [["Pasang", 0.06], ["lewat", 0.46], ["satu", 0.82], ["perintah,", 1.18], ["di", 1.98], ["Claude", 2.12], ["Code.", 2.46]],
   pakai: [["Lalu", 0.1], ["minta", 0.58], ["Claude", 0.94], ["merekomendasikan", 1.28], ["otomasi", 2.18], ["untuk", 2.8], ["proyekmu.", 3.04]],
