@@ -130,7 +130,7 @@ export const PakaiScene: React.FC = () => {
   const { when, p } = useCue("pakai");
   const start = when("merekomendasikan") - 0.8;
   const typed = PROMPT_TEXT.slice(0, Math.round(PROMPT_TEXT.length * p(start, 1.6)));
-  const scan = p(when("untuk proyekmu"), 1.8);
+  const scan = p(when("merekomendasikan") + 0.4, 2.4);
   return (
     <Frame id="pakai" bare>
       {top(

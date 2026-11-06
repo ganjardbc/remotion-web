@@ -4,7 +4,7 @@ import { Backdrop } from "../../Backdrop";
 import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
 import { Enter } from "../../motion";
-import { at, FPS, LEAD, SCENE_IDS, type SceneId } from "./config";
+import { at, FPS, LEAD, SCENE_IDS, SCENE_START, WORDS, type SceneId } from "./config";
 
 type IconName = React.ComponentProps<typeof Icon>["name"];
 
@@ -261,7 +261,7 @@ export const Mug: React.FC<{ readonly left: number }> = ({ left }) => {
 export const Lamp: React.FC<{ readonly left: number }> = ({ left }) => {
   const t = useTheme();
   return (
-    <svg width={330} height={520} viewBox="0 0 330 520" style={{ position: "absolute", left, top: DESK_TOP + 18 - 520 }}>
+    <svg width={198} height={312} viewBox="0 0 330 520" style={{ position: "absolute", left, top: DESK_TOP + 18 - 312 }}>
       <polygon points="150,150 300,150 330,500 90,500" fill={t.colors.primarySoft} opacity={0.14} />
       <rect x={20} y={490} width={110} height={22} rx={11} fill={t.code.line} />
       <path d="M75 490 L75 270 L140 140" fill="none" stroke={t.code.line} strokeWidth={14} strokeLinecap="round" strokeLinejoin="round" />
@@ -379,5 +379,86 @@ export const Cabinet: React.FC<{ readonly delay: number; readonly drawers: reado
       <div style={{ position: "absolute", left: 40, width: 60, top: 828, height: 62, backgroundColor: t.code.line }} />
       <div style={{ position: "absolute", right: 40, width: 60, top: 828, height: 62, backgroundColor: t.code.line }} />
     </Enter>
+  );
+};
+
+// ---------- Caption (subtitle karaoke) ----------
+
+const CAPTION_MAX_CHARS = 28;
+
+// Bagi kata satu scene jadi potongan pendek (satu baris): maksimal CAPTION_MAX_CHARS huruf, putus lebih awal setelah tanda baca.
+const chunksOf = (id: SceneId): readonly (readonly number[])[] => {
+  const chunks: number[][] = [];
+  let current: number[] = [];
+  let len = 0;
+  WORDS[id].forEach(([word], i) => {
+    if (current.length > 0 && len + 1 + word.length > CAPTION_MAX_CHARS) {
+      chunks.push(current);
+      current = [];
+      len = 0;
+    }
+    current.push(i);
+    len += (len > 0 ? 1 : 0) + word.length;
+    if (/[.,?:!]$/.test(word) && len >= 12) {
+      chunks.push(current);
+      current = [];
+      len = 0;
+    }
+  });
+  if (current.length > 0) chunks.push(current);
+  return chunks;
+};
+
+const CHUNKS: Readonly<Record<SceneId, readonly (readonly number[])[]>> = Object.fromEntries(SCENE_IDS.map((id) => [id, chunksOf(id)])) as Record<SceneId, readonly (readonly number[])[]>;
+
+// Subtitle satu baris rata tengah di root video. Kata yang sedang diucapkan putih penuh, yang sudah lewat agak redup, yang belum
+// redup (tanpa oranye: satu sorotan oranye per layar). `y` = posisi atas per scene (hindari zona aman bawah dan benda di scene).
+export const Caption: React.FC<{ readonly y: Readonly<Record<SceneId, number>> }> = ({ y }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const sceneIndex = SCENE_START.reduce((acc, start, idx) => (start <= frame ? idx : acc), 0);
+  const id = SCENE_IDS[sceneIndex];
+  const now = (frame - SCENE_START[sceneIndex] - LEAD) / FPS;
+  const words = WORDS[id];
+  const chunks = CHUNKS[id];
+  const chunkIndex = chunks.reduce((acc, ids, k) => (now >= words[ids[0]][1] - 0.05 ? k : acc), -1);
+  if (chunkIndex < 0) return null;
+  const ids = chunks[chunkIndex];
+  const clamp = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
+  const enter = interpolate(now, [words[ids[0]][1] - 0.05, words[ids[0]][1] + 0.12], [0, 1], { ...clamp, easing: EASE });
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: 60,
+        right: 60,
+        top: y[id],
+        height: 84,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        whiteSpace: "nowrap",
+        opacity: enter,
+        translate: `0 ${(1 - enter) * 12}px`,
+        fontFamily: t.fonts.body,
+        fontWeight: 700,
+        fontSize: 54,
+        color: t.colors.groundText,
+        textShadow: "0 2px 14px rgba(0, 0, 0, 0.7)",
+      }}
+    >
+      {ids.map((wi, k) => {
+        const start = words[wi][1];
+        const nextStart = k + 1 < ids.length ? words[ids[k + 1]][1] : Number.POSITIVE_INFINITY;
+        const on = interpolate(now, [start, start + 0.1], [0, 1], { ...clamp, easing: EASE });
+        const past = Number.isFinite(nextStart) ? interpolate(now, [nextStart, nextStart + 0.1], [0, 1], { ...clamp, easing: EASE }) : 0;
+        return (
+          <span key={wi} style={{ opacity: 0.4 + 0.6 * on - 0.2 * past }}>
+            {words[wi][0]}
+            {k < ids.length - 1 ? "\u00A0" : ""}
+          </span>
+        );
+      })}
+    </div>
   );
 };

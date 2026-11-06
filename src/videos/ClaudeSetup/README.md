@@ -4,19 +4,19 @@
 
 - `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`.
 - `scenes.tsx`: 6 scene. Cue ditulis sebagai frasa dari `SPOKEN`.
-- `parts.tsx`: salinan komponen dari PromptPanjang (`Frame`, `Headline`, `Chip`, `Card`, `PointTag`, `Bar`, `Grow`, `GithubMark`, `useCue`).
+- `parts.tsx`: salinan komponen dari PromptPanjang (`Frame`, `Headline`, `Chip`, `Card`, `PointTag`, `Bar`, `Grow`, `GithubMark`, `useCue`) plus dunia meja (`Desk`, `Mug`, `Lamp`, `Plant`, `Monitor`, `Keyboard`, `Cabinet`) dan `Caption`.
 - `ClaudeSetupVideo.tsx`: `Series` scene, karakter (ekspresi per scene), `BrandFooter` sekali di root, suara.
 
-## Voiceover (belum dibuat)
+## Voiceover
 
-Selama `voiceover.json` kosong, durasi scene diperkirakan 15,3 huruf/detik dan video tanpa suara narasi. Setelah `SPOKEN` final:
+Sudah dibuat: ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene (6 klip, 437 huruf, total sekitar 29 detik). Klip mentah di `out/vo-raw/ClaudeSetup/` (tidak di-commit), hasil olahan di `voiceover/*.mp3`, dicatat di `voiceover.json`. Durasi scene mengikuti audio.
+
+Waktu tiap kata ada di `WORDS` (`config.ts`), dari timestamp kata ElevenLabs scribe (`scribe_v1`, bahasa `ind`) pada klip olahan. `WORDS` dipakai caption karaoke (`Caption` di `parts.tsx`, satu baris di root video, posisi per scene di `CAPTION_Y`) dan `at(scene, frasa)`. Kalau `SPOKEN` atau klip berubah: generate ulang klip scene itu, olah, lalu ukur ulang `WORDS` scene itu.
 
 ```bash
 node scripts/vo-lines.mjs --video ClaudeSetup      # status tiap scene
 node scripts/vo-generate.mjs --video ClaudeSetup   # generate yang baru/berubah (minta konfirmasi dulu)
 ```
-
-Suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene. Klip mentah di `out/vo-raw/ClaudeSetup/`, hasil olahan di `voiceover/*.mp3`. Setelah itu durasi scene dan cue ikut audio secara otomatis; cek ulang frasa di `at(...)`. Untuk satu scene saja: `node scripts/vo-process.mjs <id> out/vo-raw/ClaudeSetup/<id>.mp3 --hash <hash> --video ClaudeSetup`.
 
 ```bash
 npx remotion render src/index.ts ClaudeSetup-Reels out/ClaudeSetup-Reels.mp4

@@ -8,6 +8,7 @@ import { envelope, kf } from "../../assets/characters/shared/motion";
 import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import type { VideoComposition } from "../../compositions";
 import { ThemeProvider } from "../../themes";
+import { Caption } from "./parts";
 import { at, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, type SceneId } from "./config";
 import { KATEGORI } from "./scenes";
 import { HookScene, KonteksScene, InstallScene, PakaiScene, HasilScene, CtaScene } from "./scenes";
@@ -70,13 +71,16 @@ const CLIPS: readonly PlacedClip[] = [
 // Pose karakter per scene: posisi tengah horizontal (0..1 dari lebar) dan tinggi. Kaki tetap menapak di atas footer.
 // Berpindah antar pose 0,5 dtk dengan ease-out di awal scene, tanpa pantulan.
 const POSES: Readonly<Record<SceneId, { readonly x: number; readonly h: number; readonly y: number }>> = {
-  hook: { x: 0.5, h: 620, y: 1730 },
+  hook: { x: 0.5, h: 540, y: 1730 },
   konteks: { x: 0.68, h: 440, y: 1730 },
   install: { x: 0.5, h: 440, y: 1650 },
   pakai: { x: 0.5, h: 440, y: 1650 },
   hasil: { x: 0.76, h: 400, y: 1730 },
-  cta: { x: 0.5, h: 660, y: 1730 },
+  cta: { x: 0.5, h: 560, y: 1730 },
 };
+// Posisi atas caption per scene (zona aman bawah mulai sekitar y 1570). Di scene hasil rak laci menutupi pita bawah, jadi caption
+// naik ke ruang di antara judul dan rak.
+const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1235, konteks: 1235, install: 1235, pakai: 1235, hasil: 625, cta: 1235 };
 const MOVE_FRAMES = 15;
 const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
@@ -145,6 +149,7 @@ export const ClaudeSetupVideo: React.FC<Props> = ({ theme }) => {
         })}
       </Series>
       <Character />
+      <Caption y={CAPTION_Y} />
       <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
       <Sound />
     </ThemeProvider>
