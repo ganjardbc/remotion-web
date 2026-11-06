@@ -177,7 +177,7 @@ export const HasilScene: React.FC = () => {
   return (
     <Frame id="hasil" variant="primary" bare>
       {top(
-        <Headline delay={cue(when("satu sampai dua"))} size={84}>
+        <Headline delay={cue(when("satu sampai dua"))} size={74}>
           Tiap kategori, <Accent>1-2</Accent> pilihan
         </Headline>,
         470,
