@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Membuat voice over yang belum ada (atau teks/suara/modelnya berubah) untuk satu video lewat API ElevenLabs.
-//   node scripts/vo-generate.mjs --video <Video> [--yes]
+//   node scripts/vo-generate.mjs --video <Video> [--only id1,id2] [--yes]
+// --only membatasi ke baris tertentu (uji satu scene dulu, cek dengan scripts/vo-check.mjs, baru sisanya).
 // Daftar baris dari `scripts/vo-lines.mjs --pending`. Sebelum memanggil API, jumlah baris dan huruf (≈ kredit)
 // ditampilkan dan diminta konfirmasi; --yes melewatinya. Tiap klip mentah disimpan di out/vo-raw/<Video>/<id>.mp3,
 // lalu diolah scripts/vo-process.mjs ke folder video. Butuh ELEVENLABS_API_KEY (environment atau .env.local).
@@ -14,11 +15,13 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const vi = process.argv.indexOf("--video");
 const video = vi > 0 ? process.argv[vi + 1] : undefined;
 if (!video) {
-  console.error("Pakai: node scripts/vo-generate.mjs --video <Video> [--yes]");
+  console.error("Pakai: node scripts/vo-generate.mjs --video <Video> [--only id1,id2] [--yes]");
   process.exit(1);
 }
 
-const pending = JSON.parse(execFileSync("node", [join(root, "scripts/vo-lines.mjs"), "--video", video, "--pending"], { encoding: "utf8" }));
+const onlyIdx = process.argv.indexOf("--only");
+const only = onlyIdx > 0 ? process.argv[onlyIdx + 1].split(",") : undefined;
+const pending = JSON.parse(execFileSync("node", [join(root, "scripts/vo-lines.mjs"), "--video", video, "--pending"], { encoding: "utf8" })).filter((r) => !only || only.includes(r.id));
 if (!pending.length) {
   console.log(`${video}: semua baris voice over sudah ada.`);
   process.exit(0);
