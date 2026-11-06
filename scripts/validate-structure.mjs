@@ -39,6 +39,9 @@ const EXPRESSIONS = ["netral", "senang", "sedih", "kaget", "bingung", "mikir", "
 const TONES = ["terang", "biru", "gelap"];
 const MOTIONS = ["headTurn", "point", "startle", "armGesture", "tunjuk", "surprise", "walk"];
 const TAIL = 0.6;
+// Pedoman irama Reels narator (peringatan saja, bukan error).
+const BEAT_MAX_SCENE = 8;
+const BEAT_EVERY = 4;
 
 const checkDialogScenes = (sc, err, warns) => {
   const starts = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)];
@@ -133,6 +136,13 @@ const checkFolder = (name) => {
       }
       const order = FORMAT_A.map((s) => ids.indexOf(s));
       if (order.some((i) => i < 0) || order.some((v, i) => i > 0 && v < order[i - 1])) warns.push("scene Format A (hook, relate, shift, urgency, closing, cta) tidak lengkap atau urutannya beda; abaikan kalau ini Format C.");
+      // Irama visual (docs/struktur-video.md, "Irama scene"): scene lebih dari BEAT_MAX_SCENE detik perlu beat visual baru tiap ~4 dtk.
+      if (has("voiceover.json")) {
+        const lines = JSON.parse(read(join(dir, "voiceover.json"))).lines ?? {};
+        for (const [id, e] of Object.entries(lines)) {
+          if (typeof e?.duration === "number" && e.duration > BEAT_MAX_SCENE) warns.push(`scene ${id}: ${e.duration.toFixed(1)} dtk (> ${BEAT_MAX_SCENE}). Pastikan ada perubahan visual baru tiap ~${BEAT_EVERY} dtk, jangan ada dead time.`);
+        }
+      }
       if (top.has("voiceover") === false && /"file"/.test(read(join(dir, "voiceover.json")))) err("voiceover.json berisi klip tapi folder voiceover/ tidak ada.");
     }
     if (has(`${name}Video.tsx`)) {

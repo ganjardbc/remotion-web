@@ -75,6 +75,17 @@ Bagian wajib, urut: judul `# <Nama>` dan satu paragraf (judul konten, format, ju
 - `voiceover.json` dimulai `{ "lines": {} }`. `voiceover-files.ts` dan folder `voiceover/` ditulis oleh `vo-process.mjs` saat klip pertama diolah, jadi untuk video yang belum bersuara folder `voiceover/` belum ada dan itu sah. Jangan diubah tangan.
 - Alur otomatis: `node scripts/vo-lines.mjs --video <Nama>` menampilkan status tiap scene (`baru`, `berubah`, `ok`), lalu `node scripts/vo-generate.mjs --video <Nama>` men-generate hanya yang belum ada atau berubah, memotong senyap, menormalkan, dan mencatatnya. Sebelum memanggil API, jumlah huruf (≈ kredit) ditampilkan dan konfirmasi diminta. Butuh `ELEVENLABS_API_KEY` di environment atau `.env.local`. Hash = sha1 `voiceId|model|SPOKEN[id]`; mengganti suara, model, atau speed di `vo-lines.mjs` mengubah hash semua scene.
 
+## Irama scene (Reels narator)
+
+Pedoman dari riset blog vendor (ClipFlip, Splice, Shortzly, Opus Pro; bukan dokumentasi resmi Instagram atau TikTok, angkanya saling berbeda), jadi berlaku sebagai **peringatan**, bukan error. Uji dengan data Insights akun sendiri lalu sesuaikan.
+
+- Tidak ada dead time: tiap ~4 detik harus ada hal baru di layar (objek masuk, sorotan pindah, ganti ekspresi, kartu baru). Kisaran sumber: cut 1-3 dtk, beat visual 5-8 dtk untuk narasi.
+- Scene dengan suara lebih dari 8 detik (`BEAT_MAX_SCENE` di `scripts/validate-structure.mjs`) diberi peringatan. Pecah jadi beat di dalam scene lewat `useCue`, jangan dipotong jadi scene baru.
+- Hook harus menahan scroll dalam 1-3 detik pertama; objek kunci tetap ditahan minimal 24 frame (0,8 dtk) agar terbaca.
+- Completion rate lebih penting dari durasi. Reels 7-15 dtk untuk jangkauan, 30-60 dtk untuk simpan dan bagikan.
+- Subtitle wajib (banyak penonton tanpa suara). Zona aman atas sekitar 250 px dan bawah sekitar 350 px (perkiraan; antarmuka aplikasi berubah).
+- Pengecekan otomatis hanya durasi scene dari `voiceover.json`; jumlah beat visual dicek manual.
+
 ## Reels dialog: isi folder
 
 Dibuat dengan `node scripts/new-reels.mjs <Nama> "<Judul>" --dialog [--cast ganjar,robot] [--style rig|stickman] [--scenes hook,relate,shift,urgency,closing,cta]`. Pemeran 1-3 dari `ganjar`, `robot`, `claudecode` (bawaan `ganjar,robot`), gaya `rig` atau `stickman`. Pembicara tiap scene dibuat bergantian, isinya `TODO`. Template di `scripts/templates/dialog-reels`.
