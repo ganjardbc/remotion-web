@@ -24,6 +24,6 @@ npx remotion render src/index.ts TokenHabis-Reels out/TokenHabis-Reels.mp4
 
 ## Caption
 
-TODO: caption pendek.
+Limit AI habis, tiba-tiba aku lupa cara nulis for loop. Bukan lambat, cuma belum pernah latihan tanpa AI. Berapa lama kamu bisa kerja tanpa dia? Follow kalau mau tahu cara tetap jago saat limit habis.
 
 `#DeveloperIndonesia #AIForDeveloper #CareerDeveloper #ProgrammerIndonesia #TechMindset`

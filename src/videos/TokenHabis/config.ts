@@ -16,7 +16,7 @@ export const META: DraftMeta = {
 // Voiceover dialog: eleven_v4 membaca tag emosi `[tag]` per baris (lihat scenes.ts); speed bawaan model, tidak dipercepat.
 export const VO_SETTINGS: VoSettings = { model: "eleven_v4", speed: null };
 
-export const CAPTION = "Limit habis jam sebelas, produktivitas ikut habis. Kamu masih bisa kerja tanpa AI, atau cuma bisa menunggu reset?";
+export const CAPTION = "Limit AI habis, tiba-tiba aku lupa cara nulis for loop. Bukan lambat, cuma belum pernah latihan tanpa AI. Berapa lama kamu bisa kerja tanpa dia? Follow kalau mau tahu cara tetap jago saat limit habis.";
 export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;
 
 export const VO_MANIFEST: Readonly<Record<string, VoEntry>> = (manifest as { lines: Record<string, VoEntry> }).lines;
