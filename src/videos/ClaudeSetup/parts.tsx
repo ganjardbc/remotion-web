@@ -32,7 +32,7 @@ export const DESK_TOP = 1630;
 export const Desk: React.FC = () => {
   const t = useTheme();
   return (
-    <div style={{ position: "absolute", left: 0, right: 0, top: DESK_TOP, height: 170, backgroundColor: t.code.raised, borderTop: `8px solid ${t.code.line}`, boxShadow: "0 -20px 40px rgba(0,0,0,0.25)" }}>
+    <div style={{ position: "absolute", left: 0, right: 0, top: DESK_TOP, height: 190, backgroundColor: t.code.raised, borderTop: `8px solid ${t.code.line}`, boxShadow: "0 -20px 40px rgba(0,0,0,0.25)" }}>
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 26, backgroundColor: t.code.line, opacity: 0.55 }} />
     </div>
   );
@@ -433,7 +433,7 @@ export const Caption: React.FC<{ readonly y: Readonly<Record<SceneId, number>> }
         left: 60,
         right: 60,
         top: y[id],
-        height: 84,
+        height: 70,
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -442,7 +442,7 @@ export const Caption: React.FC<{ readonly y: Readonly<Record<SceneId, number>> }
         translate: `0 ${(1 - enter) * 12}px`,
         fontFamily: t.fonts.body,
         fontWeight: 700,
-        fontSize: 54,
+        fontSize: 50,
         color: t.colors.groundText,
         textShadow: "0 2px 14px rgba(0, 0, 0, 0.7)",
       }}

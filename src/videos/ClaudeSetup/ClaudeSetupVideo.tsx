@@ -78,9 +78,8 @@ const POSES: Readonly<Record<SceneId, { readonly x: number; readonly h: number; 
   hasil: { x: 0.76, h: 400, y: 1730 },
   cta: { x: 0.5, h: 560, y: 1730 },
 };
-// Posisi atas caption per scene (zona aman bawah mulai sekitar y 1570). Di scene hasil rak laci menutupi pita bawah, jadi caption
-// naik ke ruang di antara judul dan rak.
-const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1235, konteks: 1235, install: 1235, pakai: 1235, hasil: 625, cta: 1235 };
+// Posisi atas caption per scene: di bawah kaki karakter, di tepi depan meja, di atas footer.
+const CAPTION_Y: Readonly<Record<SceneId, number>> = { hook: 1752, konteks: 1752, install: 1752, pakai: 1752, hasil: 1752, cta: 1752 };
 const MOVE_FRAMES = 15;
 const EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
 
