@@ -9,7 +9,7 @@
 
 ## Voiceover
 
-Sudah dibuat: ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene (6 klip, 437 huruf, total sekitar 29 detik). Klip mentah di `out/vo-raw/ClaudeSetup/` (tidak di-commit), hasil olahan di `voiceover/*.mp3`, dicatat di `voiceover.json`. Durasi scene mengikuti audio.
+Sudah dibuat: ElevenLabs, suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_v4` dengan tag emosi per kalimat (`VO_SETTINGS` dan `VO_TEXT` di `config.ts`; versi pertama `eleven_multilingual_v2` speed 1.2 terdengar datar), satu klip per scene dengan id = id scene (6 klip, 524 huruf, total sekitar 32 detik). Klip mentah di `out/vo-raw/ClaudeSetup/` (tidak di-commit), hasil olahan di `voiceover/*.mp3`, dicatat di `voiceover.json`. Durasi scene mengikuti audio.
 
 Waktu tiap kata ada di `WORDS` (`config.ts`), dari timestamp kata ElevenLabs scribe (`scribe_v1`, bahasa `ind`) pada klip olahan. `WORDS` dipakai caption karaoke (`Caption` di `parts.tsx`, satu baris di root video, posisi per scene di `CAPTION_Y`) dan `at(scene, frasa)`. Kalau `SPOKEN` atau klip berubah: generate ulang klip scene itu, olah, lalu ukur ulang `WORDS` scene itu.
 

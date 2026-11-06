@@ -32,7 +32,7 @@ export const DESK_TOP = 1540;
 export const Desk: React.FC = () => {
   const t = useTheme();
   return (
-    <div style={{ position: "absolute", left: 0, right: 0, top: DESK_TOP, height: 190, backgroundColor: t.code.raised, borderTop: `8px solid ${t.code.line}`, boxShadow: "0 -20px 40px rgba(0,0,0,0.25)" }}>
+    <div style={{ position: "absolute", left: 0, right: 0, top: DESK_TOP, height: 260, backgroundColor: t.code.raised, borderTop: `8px solid ${t.code.line}`, boxShadow: "0 -20px 40px rgba(0,0,0,0.25)" }}>
       <div style={{ position: "absolute", left: 0, right: 0, bottom: 0, height: 26, backgroundColor: t.code.line, opacity: 0.55 }} />
     </div>
   );

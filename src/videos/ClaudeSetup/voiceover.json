@@ -1,34 +1,34 @@
 {
   "lines": {
     "cta": {
-      "hash": "f720ed241e1f",
+      "hash": "63f5f0e020ea",
       "file": "voiceover/cta.mp3",
-      "duration": 4.37
+      "duration": 4.7
     },
     "hasil": {
-      "hash": "295e22f4e5c3",
+      "hash": "61c3609ad4f0",
       "file": "voiceover/hasil.mp3",
-      "duration": 7.71
+      "duration": 8.03
     },
     "hook": {
-      "hash": "007e74e79c52",
+      "hash": "e96452f4f9ed",
       "file": "voiceover/hook.mp3",
-      "duration": 6.55
+      "duration": 6.71
     },
     "install": {
-      "hash": "b43d30daca57",
+      "hash": "4637ff7d25f7",
       "file": "voiceover/install.mp3",
-      "duration": 2.51
+      "duration": 2.99
     },
     "konteks": {
-      "hash": "448e689361f0",
+      "hash": "fe1532340e73",
       "file": "voiceover/konteks.mp3",
-      "duration": 4.64
+      "duration": 5.57
     },
     "pakai": {
-      "hash": "34bc1592a112",
+      "hash": "96555f8ce7be",
       "file": "voiceover/pakai.mp3",
-      "duration": 3.39
+      "duration": 3.74
     }
   }
 }

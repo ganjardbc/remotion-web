@@ -24,15 +24,27 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
   cta: "Follow kalau mau aku bahas cara memilih hook yang benar-benar terpakai.",
 };
 
+// Voiceover memakai eleven_v4 dengan tag emosi per kalimat supaya intonasi mengikuti naskah (multilingual_v2 terdengar datar).
+// eleven_v4 mengabaikan speed. VO_TEXT = teks yang dikirim ke TTS; SPOKEN tetap teks caption dan cue.
+export const VO_SETTINGS = { model: "eleven_v4", speed: null } as const;
+export const VO_TEXT: Readonly<Record<SceneId, string>> = {
+  hook: "[curious] Setup Claude Code-mu masih nebak-nebak? [excited] Ada plugin resmi yang membaca proyekmu dulu, baru kasih saran.",
+  konteks: "[warm] Namanya Claude Code Setup. [reassuring] Cuma membaca, tidak mengubah satu file pun.",
+  install: "[confident] Pasang lewat satu perintah, di Claude Code.",
+  pakai: "[casual] Lalu minta Claude merekomendasikan otomasi untuk proyekmu.",
+  hasil: "[enthusiastic] Hasilnya satu sampai dua pilihan per kategori: MCP, skill, hook, subagent, dan slash command.",
+  cta: "[friendly] Follow kalau mau aku bahas cara memilih hook yang benar-benar terpakai.",
+};
+
 // Waktu tiap kata SPOKEN (detik sejak klip suara mulai), dari timestamp kata ElevenLabs scribe pada klip olahan.
 // Dipakai caption karaoke dan at(). Ukur ulang kalau SPOKEN atau klip suara berubah.
 export const WORDS: Readonly<Record<SceneId, readonly (readonly [string, number])[]>> = {
-  hook: [["Setup", 0.08], ["Claude", 0.46], ["Code-mu", 0.7], ["masih", 1.06], ["nebak-nebak?", 1.28], ["Ada", 2.54], ["plugin", 2.76], ["resmi", 3.12], ["yang", 3.5], ["membaca", 3.66], ["proyekmu", 4.06], ["dulu,", 4.48], ["baru", 5.28], ["kasih", 5.52], ["saran.", 5.8]],
-  konteks: [["Namanya", 0.08], ["Claude", 0.6], ["Code", 0.84], ["Setup.", 1.02], ["Cuma", 1.86], ["membaca,", 2.12], ["tidak", 3.04], ["mengubah", 3.26], ["satu", 3.56], ["file", 3.82], ["pun.", 4.1]],
-  install: [["Pasang", 0.1], ["lewat", 0.46], ["satu", 0.66], ["perintah,", 0.88], ["di", 1.58], ["Claude", 1.68], ["Code.", 1.94]],
-  pakai: [["Lalu", 0.08], ["minta", 0.36], ["Claude", 0.66], ["merekomendasikan", 0.9], ["otomasi", 1.76], ["untuk", 2.34], ["proyekmu.", 2.56]],
-  hasil: [["Hasilnya", 0.06], ["satu", 0.52], ["sampai", 0.78], ["dua", 1.08], ["pilihan", 1.7], ["per", 2.1], ["kategori:", 2.22], ["MCP,", 3.22], ["skill,", 4.16], ["hook,", 4.98], ["subagent,", 5.58], ["dan", 6.56], ["slash", 6.78], ["command.", 7.06]],
-  cta: [["Follow", 0.08], ["kalau", 0.86], ["mau", 1.08], ["aku", 1.3], ["bahas", 1.5], ["cara", 1.96], ["memilih", 2.18], ["hook", 2.6], ["yang", 2.84], ["benar-benar", 2.98], ["terpakai.", 3.5]],
+  hook: [["Setup", 0.12], ["Claude", 0.48], ["Code-mu", 0.78], ["masih", 1.38], ["nebak-nebak?", 1.66], ["Ada", 2.78], ["plugin", 3.02], ["resmi", 3.36], ["yang", 3.82], ["membaca", 3.94], ["proyekmu", 4.36], ["dulu,", 4.84], ["baru", 5.48], ["kasih", 5.88], ["saran.", 6.16]],
+  konteks: [["Namanya", 0.1], ["Claude", 0.86], ["Code", 1.3], ["Setup.", 1.62], ["Cuma", 2.46], ["membaca,", 2.74], ["tidak", 3.76], ["mengubah", 4.02], ["satu", 4.46], ["file", 4.76], ["pun.", 5.1]],
+  install: [["Pasang", 0.06], ["lewat", 0.46], ["satu", 0.82], ["perintah,", 1.18], ["di", 1.98], ["Claude", 2.12], ["Code.", 2.46]],
+  pakai: [["Lalu", 0.1], ["minta", 0.58], ["Claude", 0.94], ["merekomendasikan", 1.28], ["otomasi", 2.18], ["untuk", 2.8], ["proyekmu.", 3.04]],
+  hasil: [["Hasilnya", 0.08], ["satu", 0.74], ["sampai", 1.16], ["dua", 1.5], ["pilihan", 1.88], ["per", 2.32], ["kategori:", 2.48], ["MCP,", 3.56], ["skill,", 4.5], ["hook,", 5.34], ["subagent,", 5.92], ["dan", 6.82], ["slash", 7.08], ["command.", 7.48]],
+  cta: [["Follow", 0.14], ["kalau", 0.76], ["mau", 1.04], ["aku", 1.28], ["bahas", 1.5], ["cara", 1.94], ["memilih", 2.24], ["hook", 2.68], ["yang", 2.98], ["benar-benar", 3.26], ["terpakai.", 4.02]],
 };
 
 export const CAPTION = "Jangan setup Claude Code sambil menebak. Plugin resmi claude-code-setup membaca proyekmu dulu, lalu merekomendasikan MCP, skill, hook, subagent, dan slash command yang cocok. Sumber: https://github.com/anthropics/claude-plugins-official/tree/main/plugins/claude-code-setup";
