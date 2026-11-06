@@ -75,8 +75,8 @@ export const KonteksScene: React.FC = () => {
 
 // ---------- 3. Install: monitor dan keyboard, Claude menginjak tuts ----------
 
-const top = (child: React.ReactNode): React.ReactNode => (
-  <div style={{ position: "absolute", left: 0, right: 0, top: 170, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>{child}</div>
+const top = (child: React.ReactNode, y = 170): React.ReactNode => (
+  <div style={{ position: "absolute", left: 0, right: 0, top: y, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>{child}</div>
 );
 
 export const InstallScene: React.FC = () => {
@@ -177,9 +177,10 @@ export const HasilScene: React.FC = () => {
   return (
     <Frame id="hasil" variant="primary" bare>
       {top(
-        <Headline delay={cue(when("satu sampai dua"))} size={64} muted>
+        <Headline delay={cue(when("satu sampai dua"))} size={84}>
           Tiap kategori, <Accent>1-2</Accent> pilihan
         </Headline>,
+        470,
       )}
       <Cabinet delay={cue(0.3)} drawers={drawers} />
     </Frame>
