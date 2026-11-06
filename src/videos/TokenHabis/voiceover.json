@@ -1,0 +1,64 @@
+{
+  "lines": {
+    "bantah-01": {
+      "hash": "491019b8b880",
+      "file": "voiceover/bantah-01.mp3",
+      "duration": 1.17
+    },
+    "bantah-02": {
+      "hash": "7854904fc666",
+      "file": "voiceover/bantah-02.mp3",
+      "duration": 5.1
+    },
+    "closing-01": {
+      "hash": "1d9f3d305726",
+      "file": "voiceover/closing-01.mp3",
+      "duration": 2.44
+    },
+    "closing-02": {
+      "hash": "c932a506643b",
+      "file": "voiceover/closing-02.mp3",
+      "duration": 4.08
+    },
+    "cta-01": {
+      "hash": "195220c4d63e",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.81
+    },
+    "hook-01": {
+      "hash": "073bfb501251",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 3.24
+    },
+    "hook-02": {
+      "hash": "80ea40d32325",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 1.31
+    },
+    "lupa-01": {
+      "hash": "534e211a4774",
+      "file": "voiceover/lupa-01.mp3",
+      "duration": 2.88
+    },
+    "relate-01": {
+      "hash": "a10a80d71815",
+      "file": "voiceover/relate-01.mp3",
+      "duration": 2.59
+    },
+    "shift-01": {
+      "hash": "ead6a0a7c32b",
+      "file": "voiceover/shift-01.mp3",
+      "duration": 3.95
+    },
+    "tanya-01": {
+      "hash": "8f58ff37d4c3",
+      "file": "voiceover/tanya-01.mp3",
+      "duration": 0.91
+    },
+    "urgency-01": {
+      "hash": "3e2ca2a188f6",
+      "file": "voiceover/urgency-01.mp3",
+      "duration": 5.58
+    }
+  }
+}
