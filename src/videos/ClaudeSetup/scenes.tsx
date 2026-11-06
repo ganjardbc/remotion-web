@@ -75,7 +75,7 @@ export const KonteksScene: React.FC = () => {
 
 // ---------- 3. Install: monitor dan keyboard, Claude menginjak tuts ----------
 
-const top = (child: React.ReactNode, y = 170): React.ReactNode => (
+const top = (child: React.ReactNode, y = 250): React.ReactNode => (
   <div style={{ position: "absolute", left: 0, right: 0, top: y, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>{child}</div>
 );
 
@@ -94,7 +94,7 @@ export const InstallScene: React.FC = () => {
           Pasang
         </PointTag>,
       )}
-      <Monitor delay={cue(when("satu perintah"))} top={300} height={760}>
+      <Monitor delay={cue(when("satu perintah"))} top={390} height={680}>
         <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 26, marginBottom: 26, borderBottom: `2px solid ${t.code.line}` }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{ width: 22, height: 22, borderRadius: 999, backgroundColor: t.code.line }} />
@@ -138,7 +138,7 @@ export const PakaiScene: React.FC = () => {
           Tinggal <Accent>minta</Accent>
         </Headline>,
       )}
-      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={330} height={740}>
+      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={420} height={650}>
         <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "22px 26px", borderRadius: 999, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 32, color: t.code.text, whiteSpace: "nowrap" }}>
           <Icon name="messageCircle" size={44} color={t.colors.groundEmphasis} />
           <span>{typed}</span>
