@@ -73,11 +73,16 @@ if (isReelsDialog) {
   }
   const manifestFile = join(dir, "voiceover.json");
   const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, "utf8")).lines : {};
+  // Opsional per video: VO_SETTINGS (model, speed; speed null = tidak dikirim) dan VO_TEXT (teks TTS per scene, mis. dengan
+  // tag emosi eleven_v4 "[excited] ..."; SPOKEN tetap teks tampilan). Tanpa keduanya, bawaan REELS_* dan SPOKEN dipakai.
+  const set = cfg.VO_SETTINGS ?? {};
+  const model = set.model ?? REELS_MODEL;
+  const speed = "speed" in set ? set.speed : REELS_SPEED;
   for (const id of cfg.SCENE_IDS) {
-    const text = cfg.SPOKEN[id];
-    const hash = sha(REELS_VOICE.id, REELS_MODEL, text);
+    const text = cfg.VO_TEXT?.[id] ?? cfg.SPOKEN[id];
+    const hash = sha(REELS_VOICE.id, model, text);
     const entry = manifest[id];
-    rows.push({ id, scene: id, who: "narator", voice: REELS_VOICE.name, voice_id: REELS_VOICE.id, model: REELS_MODEL, speed: REELS_SPEED, text, chars: text.length, hash, status: statusOf(entry, hash), slot: cfg.VO[id].seconds, duration: entry?.duration ?? null });
+    rows.push({ id, scene: id, who: "narator", voice: REELS_VOICE.name, voice_id: REELS_VOICE.id, model, speed: speed ?? null, text, chars: text.length, hash, status: statusOf(entry, hash), slot: cfg.VO[id].seconds, duration: entry?.duration ?? null });
   }
 } else {
   // Video dialog 16:9 berpola VueTutorial: scenes.tsx (BASE_SCENES) + voiceover.ts.
