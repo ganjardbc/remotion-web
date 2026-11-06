@@ -4,7 +4,7 @@ import { Icon } from "../../icons";
 import { useTheme } from "../../themes";
 import { Enter } from "../../motion";
 import { INSTALL_CMD, PROMPT_TEXT } from "./config";
-import { Accent, Bar, Frame, Headline, PointTag, cue, useCue } from "./parts";
+import { Accent, Bar, Cabinet, Frame, Headline, Keyboard, Lamp, Monitor, Mug, Plant, PointTag, cue, useCue, type DrawerSpec } from "./parts";
 
 // Cue ditulis sebagai frasa dari SPOKEN (config.ts); `when` mengubahnya ke detik sejak suara mulai.
 // Hero visual per scene (docs/struktur-video.md, "Variasi visual"): hook perbandingan dua kolom, konteks stempel + angka,
@@ -17,7 +17,7 @@ export const HookScene: React.FC = () => {
   const { when } = useCue("hook");
   const col = { flex: "1 1 0", minWidth: 0, display: "flex", flexDirection: "column", alignItems: "center", gap: 22, padding: "44px 20px", borderRadius: t.radius.large, textAlign: "center", fontFamily: t.fonts.heading, fontWeight: 800, fontSize: 52, lineHeight: 1.15 } as const;
   return (
-    <Frame id="hook" sweep>
+    <Frame id="hook" sweep extras={<Mug left={60} />}>
       <Headline delay={cue(0.1)} size={104}>
         Setup tanpa menebak
       </Headline>
@@ -42,7 +42,7 @@ export const KonteksScene: React.FC = () => {
   const { when, p } = useCue("konteks");
   const stamp = p(when("Cuma membaca"), 0.35);
   return (
-    <Frame id="konteks" variant="primary">
+    <Frame id="konteks" variant="primary" extras={<Lamp left={40} />}>
       <Headline delay={cue(when("Namanya"))} size={76} muted>
         Claude Code Setup
       </Headline>
@@ -73,70 +73,92 @@ export const KonteksScene: React.FC = () => {
   );
 };
 
-// ---------- 3. Install: terminal dengan ketikan ----------
+// ---------- 3. Install: monitor dan keyboard, Claude menginjak tuts ----------
+
+const top = (child: React.ReactNode): React.ReactNode => (
+  <div style={{ position: "absolute", left: 0, right: 0, top: 170, display: "flex", flexDirection: "column", alignItems: "center", gap: 30 }}>{child}</div>
+);
 
 export const InstallScene: React.FC = () => {
   const t = useTheme();
   const { when, p } = useCue("install");
-  const typed = INSTALL_CMD.slice(0, Math.round(INSTALL_CMD.length * p(when("di Claude Code") - 0.4, 1.6)));
-  const [head, tail = ""] = typed.split("@");
+  const start = when("di Claude Code") - 0.4;
+  const typed = INSTALL_CMD.slice(0, Math.round(INSTALL_CMD.length * p(start, 1.6)));
+  const [pre, post = ""] = typed.split("@");
+  const [verb = "", pkg = ""] = pre.split(/(?<=install) /);
+  const lines = [verb, pkg, typed.includes("@") ? post : ""];
   return (
-    <Frame id="install" variant="dark">
-      <PointTag delay={cue(0.1)} n={1}>
-        Pasang
-      </PointTag>
-      <Enter name="Terminal" delay={cue(when("satu perintah"))} y={60} style={{ borderRadius: t.radius.large, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, overflow: "hidden" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, padding: "22px 28px", borderBottom: `2px solid ${t.code.line}` }}>
+    <Frame id="install" variant="dark" bare>
+      {top(
+        <PointTag delay={cue(0.1)} n={1}>
+          Pasang
+        </PointTag>,
+      )}
+      <Monitor delay={cue(when("satu perintah"))} top={330} height={820}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, paddingBottom: 26, marginBottom: 26, borderBottom: `2px solid ${t.code.line}` }}>
           {[0, 1, 2].map((i) => (
             <div key={i} style={{ width: 22, height: 22, borderRadius: 999, backgroundColor: t.code.line }} />
           ))}
           <span style={{ marginLeft: 16, fontFamily: t.fonts.mono, fontSize: 30, color: t.code.muted }}>claude</span>
         </div>
-        <div style={{ minHeight: 230, padding: "36px 36px 44px", fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 38, lineHeight: 1.4, color: t.code.text }}>
+        <div style={{ fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 42, lineHeight: 1.5, color: t.code.text }}>
           <span style={{ color: t.colors.groundEmphasis }}>&gt; </span>
-          {head}
-          {typed.includes("@") ? (
+          {lines[0]}
+          {lines[1] ? (
             <>
-              <br />@{tail}
+              <br />
+              {lines[1]}
+            </>
+          ) : null}
+          {lines[2] ? (
+            <>
+              <br />@{lines[2]}
             </>
           ) : null}
           <span style={{ color: t.colors.groundEmphasis }}>_</span>
         </div>
-      </Enter>
+      </Monitor>
+      <Keyboard delay={cue(when("satu perintah") + 0.2)} top={1500} typeStart={start} typeDur={1.6} chars={INSTALL_CMD.length} />
     </Frame>
   );
 };
 
-// ---------- 4. Pakai: kolom prompt dan bar pindai ----------
+// ---------- 4. Pakai: monitor dan keyboard, prompt dan bar pindai ----------
 
 export const PakaiScene: React.FC = () => {
   const t = useTheme();
   const { when, p } = useCue("pakai");
-  const typed = PROMPT_TEXT.slice(0, Math.round(PROMPT_TEXT.length * p(when("merekomendasikan") - 0.8, 1.6)));
+  const start = when("merekomendasikan") - 0.8;
+  const typed = PROMPT_TEXT.slice(0, Math.round(PROMPT_TEXT.length * p(start, 1.6)));
   const scan = p(when("untuk proyekmu"), 1.8);
   return (
-    <Frame id="pakai">
-      <Headline delay={cue(0.1)} size={92}>
-        Tinggal <Accent>minta</Accent>
-      </Headline>
-      <Enter name="Prompt" delay={cue(when("Lalu minta") + 0.2)} x={-60} y={0} style={{ display: "flex", alignItems: "center", gap: 22, padding: "30px 34px", borderRadius: 999, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 31, color: t.code.text, minHeight: 60, whiteSpace: "nowrap" }}>
-        <Icon name="messageCircle" size={48} color={t.colors.groundEmphasis} />
-        <span>{typed}</span>
-      </Enter>
-      <Enter name="Pindai" delay={cue(when("untuk proyekmu") - 0.2)} y={40} style={{ display: "flex", flexDirection: "column", gap: 16, margin: "0 30px" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontFamily: t.fonts.mono, fontSize: 36, color: t.colors.groundTextMuted }}>
-          <span>memindai codebase</span>
-          <span>{Math.round(100 * scan)}%</span>
+    <Frame id="pakai" bare>
+      {top(
+        <Headline delay={cue(0.1)} size={84}>
+          Tinggal <Accent>minta</Accent>
+        </Headline>,
+      )}
+      <Monitor delay={cue(when("Lalu minta") + 0.1)} top={400} height={760}>
+        <div style={{ display: "flex", alignItems: "center", gap: 18, padding: "22px 26px", borderRadius: 999, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.mono, fontWeight: 600, fontSize: 32, color: t.code.text, whiteSpace: "nowrap" }}>
+          <Icon name="messageCircle" size={44} color={t.colors.groundEmphasis} />
+          <span>{typed}</span>
         </div>
-        <Bar value={scan} color={t.colors.primarySoft} height={44} />
-      </Enter>
+        <div style={{ marginTop: 60, display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", fontFamily: t.fonts.mono, fontSize: 36, color: t.code.muted }}>
+            <span>memindai codebase</span>
+            <span>{Math.round(100 * scan)}%</span>
+          </div>
+          <Bar value={scan} color={t.colors.primarySoft} height={44} />
+        </div>
+      </Monitor>
+      <Keyboard delay={cue(when("Lalu minta") + 0.3)} top={1500} typeStart={start} typeDur={1.6} chars={PROMPT_TEXT.length} />
     </Frame>
   );
 };
 
-// ---------- 5. Hasil: grid dua kolom ----------
+// ---------- 5. Hasil: rak laci, Claude menarik satu per satu ----------
 
-const KATEGORI = [
+export const KATEGORI = [
   { icon: "plug", label: "MCP server", phrase: "MCP" },
   { icon: "sparkles", label: "Skill", phrase: "skill" },
   { icon: "fileCog", label: "Hook", phrase: "hook" },
@@ -145,28 +167,21 @@ const KATEGORI = [
 ] as const;
 
 export const HasilScene: React.FC = () => {
-  const t = useTheme();
   const { when } = useCue("hasil");
+  const drawers: readonly DrawerSpec[] = KATEGORI.map((k, i) => ({
+    icon: k.icon,
+    label: k.label,
+    open: when(k.phrase),
+    close: i < KATEGORI.length - 1 ? when(KATEGORI[i + 1].phrase) : null,
+  }));
   return (
-    <Frame id="hasil" variant="primary">
-      <Headline delay={cue(when("satu sampai dua"))} size={64} muted>
-        Tiap kategori, <Accent>1-2</Accent> pilihan
-      </Headline>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 22 }}>
-        {KATEGORI.map((k, i) => (
-          <Enter
-            key={k.label}
-            name={k.label}
-            delay={cue(when(k.phrase))}
-            x={i % 2 === 0 ? -50 : 50}
-            y={20}
-            style={{ gridColumn: i === 4 ? "1 / span 2" : undefined, display: "flex", flexDirection: "column", alignItems: "center", gap: 16, padding: "34px 16px", borderRadius: t.radius.card, backgroundColor: t.code.raised, border: `2px solid ${t.code.line}`, fontFamily: t.fonts.heading, fontWeight: 700, fontSize: 42, color: t.code.text }}
-          >
-            <Icon name={k.icon} size={72} color={t.code.text} />
-            {k.label}
-          </Enter>
-        ))}
-      </div>
+    <Frame id="hasil" variant="primary" bare>
+      {top(
+        <Headline delay={cue(when("satu sampai dua"))} size={64} muted>
+          Tiap kategori, <Accent>1-2</Accent> pilihan
+        </Headline>,
+      )}
+      <Cabinet delay={cue(0.3)} drawers={drawers} />
     </Frame>
   );
 };
@@ -179,7 +194,7 @@ export const CtaScene: React.FC = () => {
   const done = p(when("hook yang") + 0.6, 0.3);
   const dark = t.colors.primary;
   return (
-    <Frame id="cta">
+    <Frame id="cta" extras={<Plant left={50} />}>
       <Headline delay={cue(0.1)} size={80}>
         Pilih <Accent>hook</Accent> yang terpakai
       </Headline>
