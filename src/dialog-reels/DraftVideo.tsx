@@ -553,7 +553,7 @@ export const DraftVideo: React.FC<{ readonly theme: string; readonly meta: Draft
           <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
             <SceneTransitionIn kind={s.transisi}>
               <Camera scene={s} mode={meta.camera ?? "diam"}>
-                <Stage scene={s} style={meta.style} idle={meta.idleMotion} />
+                <Stage scene={s} style={meta.style} idle={meta.idleMotion} shots={meta.shots === "bicara"} />
               </Camera>
               <Spotlight on={s.spotlight} />
               <Tint tone={s.tone} />

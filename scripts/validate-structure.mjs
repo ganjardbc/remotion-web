@@ -37,7 +37,12 @@ const listFiles = (dir, prefix = "") =>
 const INSERT_KINDS = ["promptKode", "terminalError", "muridBertanya", "alarmProduction", "kartuFollow", "gitBlame", "landingKelas", "silabusBaru"];
 const EXPRESSIONS = ["netral", "senang", "sedih", "kaget", "bingung", "mikir", "kesal", "marah", "serius", "malu", "mataTertutup"];
 const TONES = ["terang", "biru", "gelap"];
-const MOTIONS = ["headTurn", "point", "startle", "armGesture", "tunjuk", "surprise", "walk"];
+// Klip rig, lalu nama gesture (gaya stickman dan block; `tunjuk` dipakai kedua kelompok).
+const GESTURES = ["netral", "lambai", "angkatTangan", "sorak", "menyerah", "angkatBahu", "facepalm", "mikir", "garukKepala", "tepuk", "pinggang", "mengetik"];
+// Gerak putar block (bukan gesture lengan).
+const TURNS = ["putar", "membelakangi", "hadap"];
+const MOTIONS = ["headTurn", "point", "startle", "armGesture", "tunjuk", "surprise", "walk", ...GESTURES, ...TURNS];
+const SHOT_KINDS = ["wide", "medium", "closeUp", "extremeCloseUp", "dutch", "lowAngle", "highAngle", "birdsEye", "overShoulder", "pov", "reveal"];
 const TAIL = 0.6;
 // Pedoman irama Reels narator (peringatan saja, bukan error).
 const BEAT_MAX_SCENE = 8;
@@ -62,6 +67,10 @@ const checkDialogScenes = (sc, err, warns) => {
       for (const [, who, ex] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!EXPRESSIONS.includes(ex)) err(`scene ${id}: ekspresi "${ex}" (${who}) tidak ada di kosakata.`);
     for (const e of block.matchAll(/motions:\s*\{([^}]*)\}/g))
       for (const [, who, mo] of e[1].matchAll(/(\w+):\s*"(\w+)"/g)) if (!MOTIONS.includes(mo)) err(`scene ${id}: gerak "${mo}" (${who}) tidak dikenal (${MOTIONS.join(", ")}).`);
+    for (const e of block.matchAll(/(?:\bshot:\s*"(\w+)"|\bat:\s*[\d.]+,\s*kind:\s*"(\w+)")/g)) {
+      const k = e[1] ?? e[2];
+      if (!SHOT_KINDS.includes(k)) err(`scene ${id}: shot "${k}" tidak dikenal (${SHOT_KINDS.join(", ")}).`);
+    }
     const zoom = block.match(/^ {4}zoom:\s*\{\s*from:\s*([\d.]+),\s*to:\s*([\d.]+)/m);
     if (zoom && [zoom[1], zoom[2]].some((z) => Number(z) < 0.8 || Number(z) > 1.4)) err(`scene ${id}: zoom ${zoom[1]} ke ${zoom[2]} di luar 0,8-1,4 (kanvas tepi bisa terlihat atau terlalu dekat).`);
     for (const t of block.matchAll(/(?:screenText|onScreenText):\s*"([^"]*)"/g)) {

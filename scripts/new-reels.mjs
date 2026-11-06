@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Membuat folder Reels baru (Format A/C, narator Claude Code) sesuai docs/struktur-video.md.
 //   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]
-//   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" --dialog [--cast ganjar,robot] [--style rig|stickman] [--scenes ...]
+//   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" --dialog [--cast ganjar,robot] [--style rig|stickman|block] [--scenes ...]
 // Tanpa --dialog: Reels narator Claude Code (config, scenes.tsx, parts.tsx, Video). Dengan --dialog: Reels dialog dua
 // karakter atau lebih (config, scenes.ts berisi data scene dan baris ucapan, Video yang memanggil src/dialog-reels).
 // Menulis README.md, config.ts, scenes.tsx, <Nama>Video.tsx dari scripts/templates/reels, menyalin parts.tsx dari
@@ -27,7 +27,7 @@ const style = flag("--style", "rig");
 const args = argv.filter((a, i) => !a.startsWith("--") && !VALUE_FLAGS.includes(argv[i - 1]));
 const [name, title] = args;
 
-const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta] [--dialog [--cast ganjar,robot] [--style rig|stickman]]';
+const usage = 'Pakai: node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta] [--dialog [--cast ganjar,robot] [--style rig|stickman|block]]';
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
@@ -46,7 +46,7 @@ const CHARACTERS = ["ganjar", "robot", "claudecode"];
 const cast = castArg.split(",").map((c) => c.trim());
 if (dialog) {
   if (cast.length < 1 || cast.length > 3 || cast.some((c) => !CHARACTERS.includes(c)) || new Set(cast).size !== cast.length) fail(`--cast: 1-3 karakter berbeda dari ${CHARACTERS.join(", ")}.`);
-  if (!["rig", "stickman"].includes(style)) fail("--style harus rig atau stickman.");
+  if (!["rig", "stickman", "block"].includes(style)) fail("--style harus rig, stickman, atau block.");
 }
 
 const upper = name.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toUpperCase();
@@ -87,6 +87,8 @@ const write = (f, s) => writeFileSync(join(dst, f), s);
 if (dialog) {
   // Reels dialog: data scene di scenes.ts, mesin di src/dialog-reels. Pembicara bergantian; baris berisi TODO.
   const dtpl = join(root, "scripts/templates/dialog-reels");
+  // Bawaan gaya block: latar komputer malam, subtitle caption, potongan gambar per pembicara (shots: "bicara").
+  const block = style === "block";
   const positions = { 1: ["tengah"], 2: ["kiri", "kanan"], 3: ["kiri", "tengah", "kanan"] }[cast.length];
   const sceneBlocks = ids.map((s, i) => {
     const who = cast[i % cast.length];
@@ -95,8 +97,9 @@ if (dialog) {
       "  {",
       `    id: "${s}",`,
       "    seconds: 5,",
-      '    backdrop: "ruangKerja",',
-      '    time: "siang",',
+      `    backdrop: "${block ? "komputer" : "ruangKerja"}",`,
+      `    time: "${block ? "malam" : "siang"}",`,
+      ...(block ? ['    // Isi layar monitor (latar komputer): meter token, baris kode, warna mood. Lihat docs/dialog-reels.md, bagian latar komputer.', '    tokenBack: { mood: "gelap", level: [1, 1], code: "mengalir" },'] : []),
       "    cast: [",
       castLines,
       "    ],",
@@ -107,7 +110,7 @@ if (dialog) {
       "  },",
     ].join("\n");
   });
-  const scenesTs = `import type { DraftScene } from "../../dialog-reels";\n\n// Data scene ${name}. Ubah tangan: tambah baris dialog (\`who\`, \`from\` detik sejak scene mulai, \`dur\` perkiraan), ekspresi,\n// gerak, dan isi \`spoken\` bila ucapan beda dari subtitle (angka dieja, singkatan dibaca utuh). Mengubah teks atau \`spoken\`\n// membuat baris itu perlu di-generate ulang. Id scene: huruf kecil, satu kata; Format A butuh hook, relate, shift, urgency, closing, cta.\n\nexport const BASE_SCENES: readonly DraftScene[] = [\n${sceneBlocks.join("\n")}\n];\n`;
+  const scenesTs = `import type { DraftScene } from "../../dialog-reels";\n\n// Data scene ${name}. Ubah tangan: tambah baris dialog (\`who\`, \`from\` detik sejak scene mulai, \`dur\` perkiraan), ekspresi,\n// gerak (block: nama gesture, mis. sorak, mikir, putar), jenis shot per baris (\`shot\`, lihat docs/dialog-reels.md), dan isi \`spoken\` bila ucapan beda dari subtitle (angka dieja, singkatan dibaca utuh). Mengubah teks atau \`spoken\`\n// membuat baris itu perlu di-generate ulang. Id scene: huruf kecil, satu kata; Format A butuh hook, relate, shift, urgency, closing, cta.\n\nexport const BASE_SCENES: readonly DraftScene[] = [\n${sceneBlocks.join("\n")}\n];\n`;
   const dfill = (t) =>
     t
       .replaceAll("__NAME__", name)
@@ -115,7 +118,8 @@ if (dialog) {
       .replaceAll("__COUNT__", String(ids.length))
       .replaceAll("__FLOW__", ids.map(cap).join(", "))
       .replaceAll("__CAST__", cast.join(", "))
-      .replaceAll("__STYLE__", style);
+      .replaceAll("__STYLE__", style)
+      .replaceAll("__META_EXTRA__", block ? '\n  subtitle: "caption",\n  shots: "bicara",' : "");
   write("config.ts", dfill(read(join(dtpl, "config.ts.tmpl"))));
   write("scenes.ts", scenesTs);
   write(`${name}Video.tsx`, dfill(read(join(dtpl, "Video.tsx.tmpl"))));

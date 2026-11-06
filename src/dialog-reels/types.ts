@@ -4,17 +4,47 @@ import type { TimeOfDay } from "../assets/backdrops";
 // baris ucapan. `narator`: semua baris diucapkan satu karakter; `dialog`: dua karakter atau lebih bergantian.
 
 export type CharacterId = "ganjar" | "robot" | "claudecode";
-export type VisualStyle = "rig" | "stickman";
+export type VisualStyle = "rig" | "stickman" | "block";
 export type Delivery = "narator" | "dialog";
 // `kelas` = latar polos dengan papan tulis di belakang karakter; teks layar scene tampil di papan.
-export type DraftBackdrop = "ruangKerja" | "kosong" | "luarRuang" | "kelas";
+export type DraftBackdrop = "ruangKerja" | "kosong" | "luarRuang" | "kelas" | "token" | "komputer";
+
+// Latar `token` (TokenBack.tsx) dan `komputer` (ComputerBack.tsx, isi layarnya = `tokenBack`): warna mood, meter token, dan baris kode samar di atas latar polos.
+export type TokenBackMood = "alarm" | "gelap" | "tenang" | "terang" | "brand";
+export type TokenBack = {
+  readonly mood: TokenBackMood;
+  // Isi meter (0-1) di awal dan akhir perubahan; berubah mulai `at` (detik, bawaan 0,3) selama `sec` (bawaan 1,5).
+  readonly level: readonly [number, number];
+  readonly at?: number;
+  readonly sec?: number;
+  // Teks kecil di bawah meter, mis. "Reset 17.00".
+  readonly label?: string;
+  // Baris kode: `mengalir` (bawaan) naik pelan; `beku` diam sejak awal dengan pesan rate limit. `freezeAt` (detik) = membeku di tengah scene.
+  readonly code?: "mengalir" | "beku";
+  readonly freezeAt?: number;
+  // Meter berdenyut pelan (mis. saat urgency).
+  readonly blink?: boolean;
+};
+// Jenis shot per baris (gaya block, latar selain ruangKerja). Lihat `docs/dialog-reels.md`, bagian Jenis shot.
+export type ShotKind =
+  | "wide"
+  | "medium"
+  | "closeUp"
+  | "extremeCloseUp"
+  | "dutch"
+  | "lowAngle"
+  | "highAngle"
+  | "birdsEye"
+  | "overShoulder"
+  | "pov"
+  | "reveal";
 export type Position = "kiri" | "tengah" | "kanan";
 
 export type CastCue = {
   readonly character: CharacterId;
   // Ekspresi dari kosakata karakter dan varian itu.
   readonly expression: string;
-  // Rig: nama clip (headTurn, point, startle, armGesture, surprise, walk). Stickman: nama gesture.
+  // Rig: nama clip (headTurn, point, startle, armGesture, surprise, walk). Stickman dan block: nama gesture (block hanya lambai, angkatTangan, tunjuk, sorak, menyerah).
   readonly motion?: string | null;
   readonly position: Position;
   // Pengali tinggi karakter (bawaan 1), mis. 1.4 untuk Claude Code yang tampil sendirian sebagai pengajar.
@@ -54,6 +84,11 @@ export type DraftLine = {
   readonly reactions?: readonly { readonly who: CharacterId; readonly expression: string; readonly at: number }[];
   // Efek suara di baris ini: `name` = nama berkas di public/sfx/synth (tanpa .wav), `at` = detik sejak baris mulai (bawaan 0).
   readonly sfx?: readonly { readonly name: string; readonly at?: number; readonly volume?: number }[];
+  // Jenis shot untuk baris ini (potong langsung dari baris sebelumnya), atau daftar `{ at, kind }` bila shot berganti di tengah baris
+  // (`at` = detik sejak baris mulai). Tanpa `shot`: close-up pembicara bila `META.shots = "bicara"`, selain itu semua pemeran tampil.
+  readonly shot?: ShotKind | readonly { readonly at: number; readonly kind: ShotKind }[];
+  // Kamera mendorong pelan (zoom in 15%) selama shot ini.
+  readonly push?: boolean;
   readonly id?: string;
   readonly vo?: string;
 };
@@ -109,6 +144,8 @@ export type DraftScene = {
   readonly lines: readonly DraftLine[];
   readonly inserts?: readonly DraftInsert[];
   readonly decor?: readonly DraftDecor[];
+  // Isi latar `token`, atau isi layar monitor bila `backdrop: "komputer"`.
+  readonly tokenBack?: TokenBack;
   // Arahan visual dari draft, untuk dipoles tangan; tidak dirender.
   readonly note?: string;
 };
@@ -133,4 +170,8 @@ export type DraftMeta = {
   // Kamera panggung: `ikuti` = zoom pelan dan geser ke karakter yang bicara; `diam` (bawaan) = tetap.
   readonly camera?: "ikuti" | "diam";
   readonly captionMotion?: "karaoke" | "none";
+  // Potongan gambar per pembicara: `bicara` = layar hanya menampilkan karakter yang sedang bicara (close-up di tengah, potong
+  // langsung saat giliran ganti, bertahan di pembicara terakhir saat jeda); bawaan semua pemeran tampil. Hanya gaya block,
+  // latar selain `ruangKerja`.
+  readonly shots?: "bicara";
 };
