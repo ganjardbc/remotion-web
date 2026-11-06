@@ -26,8 +26,9 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc && npm run validate --silent && npm run validate:structure --silent",
+    "lint": "eslint src && tsc && npm run validate --silent && npm run validate:structure --silent && npm run validate:layout --silent",
     "validate:structure": "node scripts/validate-structure.mjs",
+    "validate:layout": "node scripts/validate-layout.mjs",
     "validate": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/validate-content.mjs",
     "alt": "node --disable-warning=ExperimentalWarning --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/carousel-alt.mjs"
   }
