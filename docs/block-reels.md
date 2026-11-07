@@ -25,13 +25,13 @@ src/videos/<Nama>/
 
 ## Data scene (`scenes.ts`)
 - Scene: `id` (satu kata), `seconds` (batas bawah; memanjang bila baris terakhir lebih panjang), `set`, `cast`, `lines`, `note` (tidak dirender).
-- `set`: `mejaMalam` (kota malam di balik jendela, monitor kode), `kantor` (siang, jendela besar, papan putih), `terminal` (panel kode melayang), `kafe` (bokeh lampu hangat, rak cangkir). Ganti latar antar scene; validator memberi peringatan bila dua scene berurutan sama.
+- `set`: `mejaMalam` (komposisi referensi: Ganjar besar di kiri, maskot kecil di meja depan kiri, monitor besar miring terpotong di kanan, keyboard, catatan tempel, pena, jendela kota malam dengan lampu besar buram, meja memudar gelap ke bawah), `kantor` (siang, jendela besar, papan putih), `terminal` (panel kode melayang), `kafe` (bokeh lampu hangat, rak cangkir). Ganti latar antar scene; validator memberi peringatan bila dua scene berurutan sama.
 - `cast`: `character` (`ganjar`, `robot`, `claudecode`), `expression`, `motion`, `position` (`kiri`, `tengah`, `kanan`), `place` (`belakang` = berdiri di balik meja, bawaan Ganjar; `meja` = berdiri di atas meja, bawaan lainnya), `scale`.
 - Baris: `who`, `from` (detik sejak scene mulai), `dur`, `text`, `expressions`, `motions` (13 gesture block), `motionAt`, `reactions`, `shot`, `push`.
 - `shot` per baris (potong langsung antar baris; tanpa `shot` = `wide`), atau daftar `[{ at, kind }]` bila berganti di tengah baris: `wide`, `medium`, `closeUp`, `extremeCloseUp` (+ goyang 3 px), `dutch` (miring 7°), `lowAngle`, `highAngle`, `birdsEye`, `overShoulder`, `pov`, `reveal` (mulai extreme close-up lalu mundur ke wide 2,6 dtk). `push: true` = zoom in 15% pelan. Kamera selalu bergeser sangat pelan supaya paralaks terlihat walau shot ditahan.
 
 ## Mesin (`src/block-reels`)
-- `World.tsx`: lapisan (`Layer`, faktor `p`: 0,28 langit dan kota, 0,6 dinding, 1 bidang fokus, 1,28 depan), `SETS` (warna dan lapisan tiap latar), benda meja (`Monitor`, `DeskTop`, `DeskFront`, `Foreground`), `Lighting` (cahaya hangat dan vinyet). Konstanta posisi meja di bagian atas.
+- `World.tsx`: tata letak default `wide` per latar (`Layout`: kamera, posisi karakter di balik meja dan di atas meja, skala), lapisan (`Layer`, faktor `p`: 0,28 langit dan kota, 0,6 dinding, 1 bidang fokus, 1,28 depan), `SETS` (warna dan lapisan tiap latar), benda meja (`Monitor`, `DeskTop`, `DeskFront`, `Foreground`), `Lighting` (cahaya hangat dan vinyet). Konstanta posisi meja di bagian atas.
 - `Stage.tsx`: karakter, shot, kamera. Urutan gambar: langit, dinding, monitor, karakter di balik meja, permukaan meja dan benda, karakter di atas meja, sisi depan meja, lapisan depan.
 - `BlockReels.tsx`: `Series` scene, caption atas (`CAPTION_TOP` 250 px, di bawah zona aman atas), `totalFrames`.
 - Warna latar diorama (pencahayaan) ada di `SETS`, bukan dari tema: itu warna dunia, bukan UI. Caption memakai font tema.

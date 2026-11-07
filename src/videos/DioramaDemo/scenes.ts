@@ -11,7 +11,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "netral", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.4, dur: 2.4, text: "Dia bilang sudah selesai.", shot: "reveal", expressions: { ganjar: "serius" } },
+      { who: "ganjar", from: 0.4, dur: 2.4, text: "Dia bilang sudah selesai.", shot: "wide", motions: { ganjar: "mikir" }, expressions: { ganjar: "serius" } },
       { who: "claudecode", from: 3, dur: 2.2, text: "Tinggal satu hal kecil.", shot: "extremeCloseUp", expressions: { claudecode: "malu" } },
     ],
   },
