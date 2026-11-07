@@ -6,9 +6,13 @@
 - `scenes.ts`: data scene (`BASE_SCENES`): latar diorama, pemeran, baris dialog, jenis shot per baris.
 - `BilangSelesaiVideo.tsx`: memanggil mesin `src/block-reels`.
 
+## Efek suara
+
+Whoosh antar scene, pop tiap baris, dan `sfx` per baris di `scenes.ts`: record scratch di "Ternyata belum", ding di "Tugas selesai", "bukan saat masalahmu selesai", "terpenuhi", dan penutup, sad trombone di "error muncul", tiga ketukan key di tiga hal. Belum ada musik.
+
 ## Voiceover
 
-Belum ada. Durasi baris dari perkiraan di `scenes.ts`.
+ElevenLabs `eleven_v4` (tanpa speed), tag emosi per baris di `scenes.ts`. Ganjar = Ari Eko, Claude Code = Nilasari (`src/dialog-reels/voices.json`). 11 klip (`hook-01` ... `cta-01`), id = id scene + nomor urut. Durasi baris dan scene mengikuti audio (`fitBlockScenes`). Cek dan olah ulang: `node scripts/vo-lines.mjs --video BilangSelesai`, `node scripts/vo-generate.mjs --video BilangSelesai [--only id]`.
 
 ```bash
 npx remotion still src/index.ts BilangSelesai-Reels out/still/BilangSelesai.png --frame=30

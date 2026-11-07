@@ -12,7 +12,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "ganjar", expression: "serius", position: "kiri" },
       { character: "claudecode", expression: "senang", position: "kanan" },
     ],
-    lines: [{ who: "ganjar", from: 1.2, dur: 3.6, text: "Claude bilang tugasnya selesai. Ternyata belum.", shot: "reveal", motions: { ganjar: "mikir" } }],
+    lines: [{ who: "ganjar", from: 1.2, dur: 3.6, text: "Claude bilang tugasnya selesai. Ternyata belum.", tag: "deadpan", sfx: [{ name: "whoosh", volume: 0.25 }, { name: "record_scratch", at: 2.4, volume: 0.3 }], shot: "reveal", motions: { ganjar: "mikir" } }],
   },
   {
     // Relate: laporan "selesai" dari AI, lalu error muncul di production.
@@ -24,12 +24,13 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "senang", position: "kanan" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 2.3, text: "Semua tes lulus. Tugas selesai.", shot: "closeUp", expressions: { claudecode: "senang" } },
+      { who: "claudecode", from: 0.3, dur: 2.3, text: "Semua tes lulus. Tugas selesai.", tag: "cheerful", sfx: [{ name: "ding", at: 1.9, volume: 0.3 }], shot: "closeUp", expressions: { claudecode: "senang" } },
       {
         who: "ganjar",
         from: 3,
         dur: 4.2,
-        text: "Aku percaya, langsung kirim. Besoknya error muncul di production.",
+        text: "Aku percaya, langsung kirim. Besoknya error muncul di production.", tag: "frustrated",
+        sfx: [{ name: "sad_trombone", at: 2.8, volume: 0.22 }],
         shot: "overShoulder",
         expressions: { ganjar: "kesal", claudecode: "malu" },
         motions: { ganjar: "facepalm" },
@@ -47,12 +48,13 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "malu", position: "kanan" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 3.3, text: "Tapi aku sudah mengerjakan semua yang kamu minta.", shot: "medium", expressions: { claudecode: "malu" } },
+      { who: "claudecode", from: 0.3, dur: 3.3, text: "Tapi aku sudah mengerjakan semua yang kamu minta.", tag: "defensive", shot: "medium", expressions: { claudecode: "malu" } },
       {
         who: "ganjar",
         from: 3.9,
         dur: 4.4,
-        text: "AI berhenti saat promptnya habis, bukan saat masalahmu selesai.",
+        text: "AI berhenti saat promptnya habis, bukan saat masalahmu selesai.", tag: "confident",
+        sfx: [{ name: "ding", at: 2.15, volume: 0.3 }],
         shot: "lowAngle",
         push: true,
         expressions: { ganjar: "serius" },
@@ -70,8 +72,8 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "bingung", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.3, dur: 4.6, text: "Tahu masalahnya belum cukup. Ada satu kebiasaan yang menyelamatkanku.", shot: "medium", expressions: { ganjar: "mikir" }, motions: { ganjar: "pinggang" } },
-      { who: "claudecode", from: 5.1, dur: 1.5, text: "Kebiasaan apa?", shot: "closeUp", expressions: { claudecode: "bingung" } },
+      { who: "ganjar", from: 0.3, dur: 4.6, text: "Tahu masalahnya belum cukup. Ada satu kebiasaan yang menyelamatkanku.", tag: "curious", shot: "medium", expressions: { ganjar: "mikir" }, motions: { ganjar: "pinggang" } },
+      { who: "claudecode", from: 5.1, dur: 1.5, text: "Kebiasaan apa?", tag: "curious", shot: "closeUp", expressions: { claudecode: "bingung" } },
     ],
   },
   {
@@ -88,7 +90,8 @@ export const BASE_SCENES: readonly BlockScene[] = [
         who: "ganjar",
         from: 0.3,
         dur: 6.7,
-        text: "Sebelum minta, tulis tiga hal: apa yang harus jalan, cara mengeceknya, dan apa yang tidak boleh rusak.",
+        text: "Sebelum minta, tulis tiga hal: apa yang harus jalan, cara mengeceknya, dan apa yang tidak boleh rusak.", tag: "warm",
+        sfx: [{ name: "key1", at: 1.85, volume: 0.6 }, { name: "key2", at: 3.4, volume: 0.6 }, { name: "key3", at: 4.7, volume: 0.6 }],
         shot: [
           { at: 0, kind: "medium" },
           { at: 3.6, kind: "closeUp" },
@@ -97,7 +100,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
         motions: { ganjar: "tunjuk" },
         motionAt: { ganjar: 1.2 },
       },
-      { who: "claudecode", from: 7.3, dur: 3.2, text: "Jadi aku baru berhenti kalau ketiganya terpenuhi.", shot: "closeUp", expressions: { claudecode: "senang" } },
+      { who: "claudecode", from: 7.3, dur: 3.2, text: "Jadi aku baru berhenti kalau ketiganya terpenuhi.", tag: "cheerful", sfx: [{ name: "ding", at: 2.85, volume: 0.35 }], shot: "closeUp", expressions: { claudecode: "senang" } },
     ],
   },
   {
@@ -114,7 +117,8 @@ export const BASE_SCENES: readonly BlockScene[] = [
         who: "ganjar",
         from: 0.3,
         dur: 3.4,
-        text: "AI yang mengerjakan, kamu yang menentukan selesai.",
+        text: "AI yang mengerjakan, kamu yang menentukan selesai.", tag: "confident",
+        sfx: [{ name: "ding", at: 2.55, volume: 0.35 }],
         shot: [
           { at: 0, kind: "wide" },
           { at: 1.2, kind: "closeUp" },
@@ -140,7 +144,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
         who: "ganjar",
         from: 0.3,
         dur: 5.5,
-        text: "Follow kalau kamu mau terus melatih cara menilai kerja AI, bukan hanya memakainya.",
+        text: "Follow kalau kamu mau terus melatih cara menilai kerja AI, bukan hanya memakainya.", tag: "friendly",
         shot: "medium",
         push: true,
         expressions: { ganjar: "senang", claudecode: "senang" },
