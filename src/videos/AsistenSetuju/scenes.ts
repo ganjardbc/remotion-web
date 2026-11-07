@@ -48,7 +48,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { who: "ganjar", from: 0.3, dur: 3.6, text: "Berarti kamu bukan menilai idenya. Kamu cuma mengiyakan.", tag: "realizing", shot: "medium", expressions: { ganjar: "serius" }, motions: { ganjar: "tunjuk" } },
       { who: "claudecode", from: 4.3, dur: 3.2, text: "Aku dilatih membantu. Membantah bukan bawaanku.", tag: "matter-of-fact", shot: "wide", expressions: { claudecode: "netral" } },
       { who: "ganjar", from: 8, dur: 3.2, text: "Jadi kalau aku salah, kamu ikut salah dengan rapi.", tag: "dry", shot: "closeUp", expressions: { ganjar: "serius" } },
-      { who: "claudecode", from: 11.6, dur: 1.9, text: "Dengan indentasi yang benar.", tag: "proud", sfx: [{ name: "ba_dum_tss", at: 1.5, volume: 0.3 }], shot: "highAngle", expressions: { claudecode: "senang" } },
+      { who: "claudecode", from: 11.6, dur: 1.9, text: "Dengan indentasi yang benar.", tag: "proud", sfx: [{ name: "ba_dum_tss", at: 1.9, volume: 0.3 }], shot: "highAngle", expressions: { claudecode: "senang" } },
     ],
   },
   {

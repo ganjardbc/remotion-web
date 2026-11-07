@@ -1,0 +1,94 @@
+{
+  "lines": {
+    "cara-01": {
+      "hash": "1d1190c0f80e",
+      "file": "voiceover/cara-01.mp3",
+      "duration": 3.9
+    },
+    "cara-02": {
+      "hash": "c422b6f9c5e8",
+      "file": "voiceover/cara-02.mp3",
+      "duration": 3.76
+    },
+    "cara-03": {
+      "hash": "fecfdacc7e7c",
+      "file": "voiceover/cara-03.mp3",
+      "duration": 3.22
+    },
+    "closing-01": {
+      "hash": "4c5725f9caec",
+      "file": "voiceover/closing-01.mp3",
+      "duration": 3.46
+    },
+    "cta-01": {
+      "hash": "55f3895d467d",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 4.23
+    },
+    "hook-01": {
+      "hash": "af6e51a32fb1",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 3.22
+    },
+    "hook-02": {
+      "hash": "004b7b5d473d",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 2.5
+    },
+    "hook-03": {
+      "hash": "ddbde963ca15",
+      "file": "voiceover/hook-03.mp3",
+      "duration": 1.98
+    },
+    "hook-04": {
+      "hash": "9967e16ecad6",
+      "file": "voiceover/hook-04.mp3",
+      "duration": 1.6
+    },
+    "relate-01": {
+      "hash": "2714aaced4cf",
+      "file": "voiceover/relate-01.mp3",
+      "duration": 3.43
+    },
+    "relate-02": {
+      "hash": "de32a57d0da5",
+      "file": "voiceover/relate-02.mp3",
+      "duration": 2.52
+    },
+    "relate-03": {
+      "hash": "a3aad427be76",
+      "file": "voiceover/relate-03.mp3",
+      "duration": 2.69
+    },
+    "relate-04": {
+      "hash": "81a124deffc3",
+      "file": "voiceover/relate-04.mp3",
+      "duration": 1.8
+    },
+    "shift-01": {
+      "hash": "1aeff3178633",
+      "file": "voiceover/shift-01.mp3",
+      "duration": 4.09
+    },
+    "shift-02": {
+      "hash": "2da18f3137f4",
+      "file": "voiceover/shift-02.mp3",
+      "duration": 3.85
+    },
+    "shift-03": {
+      "hash": "926fc76128d8",
+      "file": "voiceover/shift-03.mp3",
+      "duration": 3.87
+    },
+    "shift-04": {
+      "hash": "9760d535c138",
+      "file": "voiceover/shift-04.mp3",
+      "duration": 2.36
+    },
+    "urgency-01": {
+      "hash": "5b6feea55792",
+      "file": "voiceover/urgency-01.mp3",
+      "duration": 2.67
+    }
+  }
+}

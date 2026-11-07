@@ -1,13 +1,16 @@
 import type React from "react";
 import type { VideoComposition } from "../../compositions";
-import { BlockReels, totalFrames } from "../../block-reels";
-import { META } from "./config";
+import { BlockReels, fitBlockScenes, totalFrames } from "../../block-reels";
+import { META, VO_MANIFEST } from "./config";
 import { BASE_SCENES } from "./scenes";
+import { VO_FILES } from "./voiceover-files";
 
 // Asisten yang Selalu Setuju (Reels block 9:16). Tanpa BrandFooter: jenis folder ini memang tanpa footer (docs/block-reels.md).
-export const TOTAL_FRAMES = totalFrames(BASE_SCENES);
+// Durasi scene mengikuti voiceover bila sudah ada.
+const SCENES = fitBlockScenes(BASE_SCENES, VO_MANIFEST, VO_FILES);
+export const TOTAL_FRAMES = totalFrames(SCENES);
 
-export const AsistenSetujuVideo: React.FC<{ readonly theme: string }> = ({ theme }) => <BlockReels theme={theme} meta={META} scenes={BASE_SCENES} />;
+export const AsistenSetujuVideo: React.FC<{ readonly theme: string }> = ({ theme }) => <BlockReels theme={theme} meta={META} scenes={SCENES} />;
 
 export const COMPOSITION: VideoComposition = {
   id: "AsistenSetuju-Reels",
