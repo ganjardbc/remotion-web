@@ -201,10 +201,10 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0c0d14", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
-  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
-  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#060919", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
-  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0c0d14", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
+  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
+  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#060919", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
+  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
 };
 
 // ---------- Benda di meja ----------
@@ -215,7 +215,7 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
   const thick = spec.bold ? 18 : 9;
   const bars = Array.from({ length: rows }, (_, r) => ({ r, indent: Math.floor(rnd(r + 61) * 3) * (spec.bold ? 34 : 22), len: (spec.bold ? 110 : 70) + rnd(r + 23) * (spec.bold ? 190 : 150), c: ["#8ee3ef", "#5b7cf0", "#ffffff", "#b7c7ff"][Math.floor(rnd(r + 7) * 4)] }));
   return (
-    <div style={{ ...abs, left: spec.x, top: spec.y, width: 400, height: 330, transformOrigin: "0 50%", transform: `perspective(1300px) rotateY(${spec.tilt}deg) scale(${spec.w / 400})` }}>
+    <div style={{ ...abs, left: spec.x, top: spec.y, width: 400, height: 330, transformOrigin: "0 50%", transform: `perspective(2200px) rotateY(${spec.tilt}deg) scale(${spec.w / 400})` }}>
       <div style={{ ...abs, left: 0, top: 0, width: 400, height: 270, borderRadius: 14, backgroundColor: "#10131d", boxShadow: "0 0 70px 14px rgba(80,120,255,0.28)" }}>
         <div style={{ ...abs, left: 14, top: 14, right: 14, bottom: 14, borderRadius: 6, backgroundColor: screen, overflow: "hidden" }}>
           {bars.map((b) => (
