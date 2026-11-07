@@ -76,27 +76,33 @@ const FaceSvgScaled: React.FC<{
 }> = ({ paint, faceKey, shade, width, height, unit }) => {
   const light = useContext(BlockLightContext);
   const gid = useId();
+  const mid = `${gid}m`;
   const vbW = (width / unit) * 10;
   const vbH = (height / unit) * 10;
   const tint = light?.faces?.[faceKey];
   const g = light?.gradient ?? 0;
+  // Bayangan dan cahaya hanya menutupi piksel yang tergambar (mask alpha dari gambar sisi), supaya bagian transparan
+  // (mis. bawah kubus rambut) tidak ikut gelap atau berwarna dan tampak seperti pita di atas wajah.
   return (
     <svg width={width} height={height} viewBox={`0 0 ${vbW} ${vbH}`} preserveAspectRatio="none" style={{ display: "block" }}>
+      <defs>
+        <mask id={mid} maskUnits="userSpaceOnUse" x={0} y={0} width={vbW} height={vbH} style={{ maskType: "alpha" }}>
+          {paint(vbW, vbH)}
+        </mask>
+        {g > 0 ? (
+          <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity={g * 0.6} />
+            <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
+            <stop offset="1" stopColor="#000" stopOpacity={g} />
+          </linearGradient>
+        ) : null}
+      </defs>
       {paint(vbW, vbH)}
-      <rect width={vbW} height={vbH} fill="#000" opacity={1 - shade} />
-      {tint ? <rect width={vbW} height={vbH} fill={tint.color} opacity={tint.opacity} /> : null}
-      {g > 0 ? (
-        <>
-          <defs>
-            <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#fff" stopOpacity={g * 0.6} />
-              <stop offset="0.5" stopColor="#fff" stopOpacity="0" />
-              <stop offset="1" stopColor="#000" stopOpacity={g} />
-            </linearGradient>
-          </defs>
-          <rect width={vbW} height={vbH} fill={`url(#${gid})`} />
-        </>
-      ) : null}
+      <g mask={`url(#${mid})`}>
+        <rect width={vbW} height={vbH} fill="#000" opacity={1 - shade} />
+        {tint ? <rect width={vbW} height={vbH} fill={tint.color} opacity={tint.opacity} /> : null}
+        {g > 0 ? <rect width={vbW} height={vbH} fill={`url(#${gid})`} /> : null}
+      </g>
     </svg>
   );
 };
