@@ -237,6 +237,8 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
 
 // Keyboard dengan baris tuts: satuan lebar tombol per baris (jumlah 15), baris jauh lebih sempit dan lebih rendah daripada yang dekat
 // sehingga terlihat berperspektif. Tombol pengubah (pertama dan terakhir tiap baris, spasi) lebih gelap.
+// Keyboard menghadap Ganjar (di seberang meja): baris spasi di sisi jauh (atas layar) dan baris angka di sisi dekat kamera,
+// urutan tombol tiap baris terbalik dibanding tampak dari depan keyboard.
 const KEY_ROWS: readonly (readonly number[])[] = [
   [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
   [1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5],
@@ -251,12 +253,13 @@ const KB_GAP = 3;
 
 const Keyboard: React.FC<{ readonly x: number; readonly y: number; readonly keys: readonly [string, string] }> = ({ x, y, keys }) => {
   let top = 6;
+  const rows = [...KEY_ROWS].reverse().map((r) => [...r].reverse());
   return (
     <div style={{ ...abs, left: x, top: y, width: KB_W, height: 96, filter: "drop-shadow(0 9px 10px rgba(0,0,0,0.55))" }}>
       {/* Badan keyboard: trapesium dengan bibir depan lebih terang. */}
       <div style={{ ...abs, left: -6, top: 0, width: KB_W + 12, height: 88, clipPath: "polygon(6% 0, 94% 0, 100% 100%, 0 100%)", background: `linear-gradient(180deg, ${keys[1]} 0%, #0d111f 100%)` }} />
-      <div style={{ ...abs, left: -6, top: 82, width: KB_W + 12, height: 6, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", backgroundColor: "rgba(255,255,255,0.14)" }} />
-      {KEY_ROWS.map((row, r) => {
+      <div style={{ ...abs, left: -6, top: 85, width: KB_W + 12, height: 3, backgroundColor: "rgba(255,255,255,0.1)" }} />
+      {rows.map((row, r) => {
         const rowW = (KB_W - 14) * ROW_SCALE[r];
         const unit = rowW / 15;
         const h = ROW_H[r];
