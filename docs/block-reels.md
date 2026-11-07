@@ -4,6 +4,8 @@ Dibaca hanya saat membuat atau mengubah **Reels block**: dialog karakter block (
 
 Reels block adalah jenis folder sendiri, terpisah dari Reels dialog. Mesinnya di `src/block-reels`, scaffold-nya `node scripts/new-block.mjs`. Hanya atas permintaan, untuk konten yang memang berupa percakapan. Narator Reels biasa tetap Claude Code rig 2D.
 
+Semua latar Reels block bersuasana **malam** (keputusan: tampilan seragam jam malam).
+
 ## Beda dari Reels dialog
 - **Tanpa BrandFooter dan tanpa watermark.** Pengecualian eksplisit dari aturan "BrandFooter di setiap video" di CLAUDE.md. `validate:structure` menolak `<BrandFooter` di `<Nama>Video.tsx` jenis ini. Branding lewat akun dan caption posting.
 - **Semua pemeran block.** Tidak ada pilihan gaya `rig` atau `stickman`.
@@ -25,7 +27,7 @@ src/videos/<Nama>/
 
 ## Data scene (`scenes.ts`)
 - Scene: `id` (satu kata), `seconds` (batas bawah; memanjang bila baris terakhir lebih panjang), `set`, `cast`, `lines`, `note` (tidak dirender).
-- `set`: semua latar memakai komposisi baku yang sama (dari referensi meja malam): Ganjar besar di kiri, maskot kecil di meja depan kiri, monitor besar miring terpotong di kanan (di `kafe` berupa layar laptop), keyboard, catatan tempel, pena, meja memudar gelap ke bawah. Yang berbeda dunia di belakangnya: `mejaMalam` (kota malam, lampu besar buram), `kantor` (siang, jendela besar, papan putih), `terminal` (panel kode melayang), `kafe` (bokeh lampu hangat, rak cangkir). Ganti latar antar scene; validator memberi peringatan bila dua scene berurutan sama.
+- `set`: semua latar memakai komposisi baku yang sama (dari referensi meja malam): Ganjar besar di kiri, maskot kecil di meja depan kiri, monitor besar miring terpotong di kanan (di `kafe` berupa layar laptop), keyboard, catatan tempel, pena, meja memudar gelap ke bawah. Yang berbeda dunia di belakangnya: `mejaMalam` (kota malam, lampu besar buram), `kantor` (kantor malam: menara dengan banyak jendela kecil menyala, papan dinding redup), `terminal` (panel kode melayang), `kafe` (bokeh lampu hangat, rak cangkir). Ganti latar antar scene; validator memberi peringatan bila dua scene berurutan sama.
 - `cast`: `character` (`ganjar`, `robot`, `claudecode`), `expression`, `motion`, `position` (`kiri`, `tengah`, `kanan`), `place` (`belakang` = berdiri di balik meja, bawaan Ganjar; `meja` = berdiri di atas meja, bawaan lainnya), `scale`.
 - Baris: `who`, `from` (detik sejak scene mulai), `dur`, `text`, `expressions`, `motions` (13 gesture block), `motionAt`, `reactions`, `shot`, `push`.
 - `shot` per baris (potong langsung antar baris; tanpa `shot` = `wide`), atau daftar `[{ at, kind }]` bila berganti di tengah baris: `wide`, `medium`, `closeUp`, `extremeCloseUp` (+ goyang 3 px), `dutch` (miring 7°), `lowAngle`, `highAngle`, `birdsEye`, `overShoulder` (kamera medium ke pembicara, pendengar dari belakang besar dan buram di pojok bawah paling depan), `pov`, `reveal` (mulai extreme close-up lalu mundur ke wide 2,6 dtk). `push: true` = zoom in 15% pelan. Kamera selalu bergeser sangat pelan supaya paralaks terlihat walau shot ditahan. Zoom shot dikalibrasi terhadap tinggi acuan karakter, jadi karakter yang diperkecil tata letak (maskot di meja) tetap mendapat close-up yang rapat.

@@ -5,7 +5,7 @@ import type { CharacterId, ShotKind } from "../dialog-reels/types";
 
 export type { CharacterId, ShotKind };
 
-// Latar diorama. `mejaMalam`: kota malam di balik jendela; `kantor`: siang, jendela besar dan papan putih;
+// Latar diorama. `mejaMalam`: kota malam di balik jendela; `kantor`: kantor malam (menara dengan banyak jendela kecil menyala, papan dinding redup);
 // `terminal`: dunia kode (panel kode melayang); `kafe`: bokeh lampu hangat.
 export type BlockSet = "mejaMalam" | "kantor" | "terminal" | "kafe";
 

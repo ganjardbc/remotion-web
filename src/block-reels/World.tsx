@@ -155,19 +155,23 @@ const NightMid: React.FC = () => (
   </>
 );
 
-const DayFar: React.FC = () => (
+// Kantor malam: menara kantor dengan banyak jendela kecil menyala (putih dingin), bingkai jendela gelap, papan dinding redup.
+const OfficeFar: React.FC = () => (
   <>
-    <div style={{ ...abs, left: 0, top: 0, width: W, height: H, background: "linear-gradient(180deg,#9fc6ee 0%,#cfe4f7 60%,#e8f1fa 100%)" }} />
-    <City base="#7f9cc2" shade="#92abcd" colors={["#ffffff", "#e6f1ff"]} lit={0.35} seed={11} />
+    <div style={{ ...abs, left: 0, top: 0, width: W, height: H, background: "linear-gradient(180deg,#050c18 0%,#0a1a2e 55%,#10263f 100%)" }} />
+    <City base="#0b1730" shade="#10203c" colors={["#e3edff", "#c4d6ff", "#ffe9bf"]} lit={0.5} seed={11} />
   </>
 );
-const DayMid: React.FC = () => (
+const OfficeMid: React.FC = () => (
   <>
-    <div style={{ ...abs, left: 170, top: -600, width: 62, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
-    <div style={{ ...abs, left: 548, top: -600, width: 46, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
-    <div style={{ ...abs, left: -200, top: 500, width: W + 400, height: 30, backgroundColor: "#d9dee6" }} />
-    {/* Papan putih kecil di dinding atas kiri. */}
-    <div style={{ ...abs, left: 250, top: 250, width: 260, height: 170, borderRadius: 10, backgroundColor: "#f6f8fb", border: "8px solid #b9c2cf" }} />
+    <div style={{ ...abs, left: 170, top: -600, width: 62, height: DESK_TOP + 600, backgroundColor: "#070d1a" }} />
+    <div style={{ ...abs, left: 548, top: -600, width: 46, height: DESK_TOP + 600, backgroundColor: "#070d1a" }} />
+    <div style={{ ...abs, left: -200, top: 500, width: W + 400, height: 30, backgroundColor: "#070d1a" }} />
+    {/* Papan dinding redup dengan catatan tempel di atas kiri. */}
+    <div style={{ ...abs, left: 250, top: 250, width: 260, height: 170, borderRadius: 10, backgroundColor: "#1c2740", border: "8px solid #2c3956" }} />
+    <div style={{ ...abs, left: 282, top: 290, width: 54, height: 46, backgroundColor: "#a8913a", opacity: 0.7 }} />
+    <div style={{ ...abs, left: 360, top: 310, width: 54, height: 46, backgroundColor: "#b06a3e", opacity: 0.7 }} />
+    <div style={{ ...abs, left: 430, top: 280, width: 54, height: 46, backgroundColor: "#4d6aa8", opacity: 0.7 }} />
   </>
 );
 
@@ -184,7 +188,7 @@ const CafeFar: React.FC = () => {
   const items = Array.from({ length: 26 }, (_, i) => ({ x: rnd(i + 40) * W, y: 120 + rnd(i + 70) * 900, r: 26 + rnd(i + 90) * 62, o: 0.28 + rnd(i + 5) * 0.5 }));
   return (
     <>
-      <div style={{ ...abs, left: 0, top: 0, width: W, height: H, background: "linear-gradient(180deg,#2a1710 0%,#3d2216 60%,#4d2b1b 100%)" }} />
+      <div style={{ ...abs, left: 0, top: 0, width: W, height: H, background: "linear-gradient(180deg,#160a06 0%,#26140c 60%,#34190e 100%)" }} />
       {items.map((b, i) => (
         <div key={i} style={{ ...abs, left: b.x - b.r, top: b.y - b.r, width: b.r * 2, height: b.r * 2, borderRadius: "50%", backgroundColor: i % 3 ? "#ffb25c" : "#ffd89a", opacity: b.o }} />
       ))}
@@ -205,9 +209,9 @@ const CafeMid: React.FC = () => (
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
   mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", light: { faces: { front: { color: "#ffaf6e", opacity: 0.1 }, top: { color: "#ffc88c", opacity: 0.2 }, left: { color: "#ffa05a", opacity: 0.06 }, right: { color: "#78a0ff", opacity: 0.24 } }, gradient: 0.18 }, Far: NightFar, Mid: NightMid },
-  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", light: { faces: { front: { color: "#fff8e1", opacity: 0.06 }, top: { color: "#fffff0", opacity: 0.14 }, left: { color: "#ffffff", opacity: 0.03 }, right: { color: "#a0beff", opacity: 0.1 } }, gradient: 0.12 }, Far: DayFar, Mid: DayMid },
+  kantor: { bg: "#070d1a", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#17110d", keys: ["#303a58", "#1c2338"], deskTop: "#5e4631", deskFront: "#0d0a08", deskEdge: "#80634a", filter: "brightness(0.97) saturate(1.05)", key: "rgba(255,200,140,0.26)", vignette: 0.55, screen: "#24407f", light: { faces: { front: { color: "#ffc890", opacity: 0.08 }, top: { color: "#ffdcb0", opacity: 0.16 }, left: { color: "#ffb478", opacity: 0.05 }, right: { color: "#8cb0ff", opacity: 0.2 } }, gradient: 0.16 }, Far: OfficeFar, Mid: OfficeMid },
   terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", light: { faces: { front: { color: "#82aaff", opacity: 0.1 }, top: { color: "#aac8ff", opacity: 0.16 }, left: { color: "#6e96ff", opacity: 0.12 }, right: { color: "#6e96ff", opacity: 0.22 } }, gradient: 0.2 }, Far: CodeFar, Mid: CodeMid },
-  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", light: { faces: { front: { color: "#ffaa5a", opacity: 0.12 }, top: { color: "#ffc882", opacity: 0.2 }, left: { color: "#ff9650", opacity: 0.1 }, right: { color: "#c87846", opacity: 0.16 } }, gradient: 0.16 }, Far: CafeFar, Mid: CafeMid },
+  kafe: { bg: "#160a06", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(0.95) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.26)", vignette: 0.62, screen: "#2a3550", light: { faces: { front: { color: "#ffaa5a", opacity: 0.12 }, top: { color: "#ffc882", opacity: 0.2 }, left: { color: "#ff9650", opacity: 0.1 }, right: { color: "#c87846", opacity: 0.16 } }, gradient: 0.16 }, Far: CafeFar, Mid: CafeMid },
 };
 
 // ---------- Benda di meja ----------
@@ -304,7 +308,7 @@ export const DeskFront: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
 
 // Blob buram di depan fokus (pot, ujung kabel) supaya ada lapisan paling dekat.
 export const Foreground: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
-  const c = set === "kantor" ? "#8aa07c" : set === "kafe" ? "#c9894f" : "#2b3a7a";
+  const c = set === "kantor" ? "#2f4a3a" : set === "kafe" ? "#c9894f" : "#2b3a7a";
   return (
     <>
       <div style={{ ...abs, left: -90, top: 1500, width: 260, height: 300, borderRadius: "46% 54% 40% 60%", backgroundColor: c, opacity: 0.9 }} />
