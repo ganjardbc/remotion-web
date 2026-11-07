@@ -10,7 +10,7 @@ export const W = 1080;
 export const H = 1920;
 // Tepi jauh permukaan meja, tepi depannya, dan garis lantai karakter.
 export const DESK_TOP = 1190;
-export const DESK_FRONT = 1560;
+export const DESK_FRONT = 1374;
 
 export type LayerCam = { readonly tx: number; readonly ty: number; readonly z: number };
 
@@ -59,8 +59,11 @@ export type Layout = {
 // Komposisi baku semua latar (dari referensi meja malam): Ganjar di kiri, kepala besar; maskot kecil di meja depan kiri; monitor besar di kanan.
 const DESK_LAYOUT: Layout = { wide: { fx: 500, fy: 923, z: 1.5 }, behindX: [400, 760, 540], deskX: [262, 600, 420], behindFloor: 1442, deskFloor: 1293, behindScale: 1.143, deskScale: 0.62 };
 
+// Keyboard di meja (koordinat dunia 1080x1920): x, y = pojok kiri atas sebelum diskala; scale mengecilkan terhadap tengah bawah.
+const KEYBOARD = { x: 298, y: 1199, scale: 0.82, scaleY: 0.7, skew: 42 } as const;
+
 // `stand` false = layar laptop (tanpa leher dan alas, hanya engsel).
-type MonitorSpec = { readonly x: number; readonly y: number; readonly w: number; readonly tilt: number; readonly bold: boolean; readonly stand: boolean };
+type MonitorSpec = { readonly x: number; readonly y: number; readonly w: number; readonly tilt: number; readonly depth?: number; readonly bold: boolean; readonly stand: boolean; readonly plate?: boolean };
 
 type SetSpec = {
   readonly bg: string;
@@ -208,7 +211,7 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", light: { faces: { front: { color: "#ffaf6e", opacity: 0.1 }, top: { color: "#ffc88c", opacity: 0.2 }, left: { color: "#ffa05a", opacity: 0.06 }, right: { color: "#78a0ff", opacity: 0.24 } }, gradient: 0.18 }, Far: NightFar, Mid: NightMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 892, w: 380, tilt: -62, depth: 1000, bold: true, stand: true, plate: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", light: { faces: { front: { color: "#ffaf6e", opacity: 0.1 }, top: { color: "#ffc88c", opacity: 0.2 }, left: { color: "#ffa05a", opacity: 0.06 }, right: { color: "#78a0ff", opacity: 0.24 } }, gradient: 0.18 }, Far: NightFar, Mid: NightMid },
   kantor: { bg: "#070d1a", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#17110d", keys: ["#303a58", "#1c2338"], deskTop: "#5e4631", deskFront: "#0d0a08", deskEdge: "#80634a", filter: "brightness(0.97) saturate(1.05)", key: "rgba(255,200,140,0.26)", vignette: 0.55, screen: "#24407f", light: { faces: { front: { color: "#ffc890", opacity: 0.08 }, top: { color: "#ffdcb0", opacity: 0.16 }, left: { color: "#ffb478", opacity: 0.05 }, right: { color: "#8cb0ff", opacity: 0.2 } }, gradient: 0.16 }, Far: OfficeFar, Mid: OfficeMid },
   terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", light: { faces: { front: { color: "#82aaff", opacity: 0.1 }, top: { color: "#aac8ff", opacity: 0.16 }, left: { color: "#6e96ff", opacity: 0.12 }, right: { color: "#6e96ff", opacity: 0.22 } }, gradient: 0.2 }, Far: CodeFar, Mid: CodeMid },
   kafe: { bg: "#160a06", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(0.95) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.26)", vignette: 0.62, screen: "#2a3550", light: { faces: { front: { color: "#ffaa5a", opacity: 0.12 }, top: { color: "#ffc882", opacity: 0.2 }, left: { color: "#ff9650", opacity: 0.1 }, right: { color: "#c87846", opacity: 0.16 } }, gradient: 0.16 }, Far: CafeFar, Mid: CafeMid },
@@ -222,7 +225,15 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
   const thick = spec.bold ? 18 : 9;
   const bars = Array.from({ length: rows }, (_, r) => ({ r, indent: Math.floor(rnd(r + 61) * 3) * (spec.bold ? 34 : 22), len: (spec.bold ? 110 : 70) + rnd(r + 23) * (spec.bold ? 190 : 150), c: ["#8ee3ef", "#5b7cf0", "#ffffff", "#b7c7ff"][Math.floor(rnd(r + 7) * 4)] }));
   return (
-    <div style={{ ...abs, left: spec.x, top: spec.y, width: 400, height: 330, transformOrigin: "0 50%", transform: `perspective(2200px) rotateY(${spec.tilt}deg) scale(${spec.w / 400})` }}>
+    <>
+    {spec.plate ? (
+      <>
+        {/* Alas rata di meja (jajar genjang miring) digambar lebih dulu, leher berdiri di depannya. */}
+        <div style={{ ...abs, left: 728, top: 1237, width: 192, height: 70, borderRadius: 6, transformOrigin: "0 0", transform: "skewX(59deg)", background: "linear-gradient(180deg, #2b3350 0%, #131828 100%)" }} />
+        <div style={{ ...abs, left: 810, top: 1100, width: 43, height: 162, background: "linear-gradient(90deg, #1a2036 0%, #0b0d15 100%)" }} />
+      </>
+    ) : null}
+    <div style={{ ...abs, left: spec.x, top: spec.y, width: 400, height: 330, transformOrigin: "0 50%", transform: `perspective(${spec.depth ?? 2200}px) rotateY(${spec.tilt}deg) scale(${spec.w / 400})` }}>
       <div style={{ ...abs, left: 0, top: 0, width: 400, height: 270, borderRadius: 14, backgroundColor: "#10131d", boxShadow: "0 0 70px 14px rgba(80,120,255,0.28)" }}>
         <div style={{ ...abs, left: 14, top: 14, right: 14, bottom: 14, borderRadius: 6, backgroundColor: screen, overflow: "hidden" }}>
           {bars.map((b) => (
@@ -230,7 +241,7 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
           ))}
         </div>
       </div>
-      {spec.stand ? (
+      {spec.plate ? null : spec.stand ? (
         <>
           <div style={{ ...abs, left: 175, top: 270, width: 50, height: 36, backgroundColor: "#0b0d15" }} />
           <div style={{ ...abs, left: 135, top: 302, width: 130, height: 18, borderRadius: 8, backgroundColor: "#0b0d15" }} />
@@ -239,6 +250,7 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
         <div style={{ ...abs, left: -24, top: 268, width: 448, height: 16, borderRadius: 8, backgroundColor: "#0b0d15" }} />
       )}
     </div>
+    </>
   );
 };
 
@@ -253,7 +265,7 @@ const KEY_ROWS: readonly (readonly number[])[] = [
   [2.25, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.75],
   [1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25],
 ];
-const ROW_SCALE = [0.9, 0.93, 0.96, 0.98, 1] as const;
+const ROW_SCALE = [1, 1, 1, 1, 1] as const;
 const ROW_H = [11, 12, 13, 14, 15] as const;
 const KB_W = 410;
 const KB_GAP = 3;
@@ -262,9 +274,9 @@ const Keyboard: React.FC<{ readonly x: number; readonly y: number; readonly keys
   let top = 6;
   const rows = [...KEY_ROWS].reverse().map((r) => [...r].reverse());
   return (
-    <div style={{ ...abs, left: x, top: y, width: KB_W, height: 96, filter: "drop-shadow(0 9px 10px rgba(0,0,0,0.55))" }}>
+    <div style={{ ...abs, left: x, top: y, width: KB_W, height: 96, transformOrigin: "50% 100%", transform: `scale(${KEYBOARD.scale}, ${KEYBOARD.scaleY}) skewX(${KEYBOARD.skew}deg)`, filter: "drop-shadow(0 9px 10px rgba(0,0,0,0.55))" }}>
       {/* Badan keyboard: trapesium dengan bibir depan lebih terang. */}
-      <div style={{ ...abs, left: -6, top: 0, width: KB_W + 12, height: 88, clipPath: "polygon(6% 0, 94% 0, 100% 100%, 0 100%)", background: `linear-gradient(180deg, ${keys[1]} 0%, #0d111f 100%)` }} />
+      <div style={{ ...abs, left: -6, top: 0, width: KB_W + 12, height: 88, background: `linear-gradient(180deg, ${keys[1]} 0%, #0d111f 100%)` }} />
       <div style={{ ...abs, left: -6, top: 85, width: KB_W + 12, height: 3, backgroundColor: "rgba(255,255,255,0.1)" }} />
       {rows.map((row, r) => {
         const rowW = (KB_W - 14) * ROW_SCALE[r];
@@ -292,11 +304,8 @@ export const DeskTop: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
       <div style={{ ...abs, left: -40, top: DESK_TOP, width: W + 80, height: DESK_FRONT - DESK_TOP, background: `linear-gradient(180deg, ${s.deskEdge} 0%, ${s.deskTop} 10%, ${s.deskBottom} 100%)` }} />
       {/* Pantulan cahaya layar monitor di permukaan meja. */}
       <div style={{ ...abs, left: s.monitor.x - 120, top: DESK_TOP - 60, width: s.monitor.w + 360, height: 300, background: "radial-gradient(ellipse 50% 50% at 50% 30%, rgba(110,150,255,0.16) 0%, rgba(110,150,255,0) 100%)" }} />
-      {/* Keyboard di tengah, catatan tempel, dan pena (seperti referensi). */}
-      <Keyboard x={313} y={1204} keys={s.keys} />
-      <div style={{ ...abs, left: 437, top: 1306, width: 92, height: 22, transform: "skewX(-30deg)", backgroundColor: "#f0d24a", opacity: 0.95, boxShadow: "0 0 18px rgba(240,210,74,0.35)" }} />
-      <div style={{ ...abs, left: 573, top: 1300, width: 64, height: 18, transform: "skewX(-30deg)", backgroundColor: "#ee8a4e", opacity: 0.9 }} />
-      <div style={{ ...abs, left: 240, top: 1318, width: 118, height: 8, borderRadius: 4, transform: "rotate(-4deg)", backgroundColor: "#6e7a99" }} />
+      {/* Hanya keyboard di meja. */}
+      <Keyboard x={KEYBOARD.x} y={KEYBOARD.y} keys={s.keys} />
     </>
   );
 };
