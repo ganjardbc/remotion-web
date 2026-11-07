@@ -9,7 +9,7 @@ export const W = 1080;
 export const H = 1920;
 // Tepi jauh permukaan meja, tepi depannya, dan garis lantai karakter.
 export const DESK_TOP = 1190;
-export const DESK_FRONT = 1450;
+export const DESK_FRONT = 1560;
 
 export type LayerCam = { readonly tx: number; readonly ty: number; readonly z: number };
 
@@ -56,7 +56,7 @@ export type Layout = {
   readonly deskScale: number;
 };
 // Komposisi baku semua latar (dari referensi meja malam): Ganjar di kiri, kepala besar; maskot kecil di meja depan kiri; monitor besar di kanan.
-const DESK_LAYOUT: Layout = { wide: { fx: 500, fy: 1050, z: 1.5 }, behindX: [400, 760, 540], deskX: [262, 600, 420], behindFloor: 1442, deskFloor: 1293, behindScale: 1.143, deskScale: 0.62 };
+const DESK_LAYOUT: Layout = { wide: { fx: 500, fy: 923, z: 1.5 }, behindX: [400, 760, 540], deskX: [262, 600, 420], behindFloor: 1442, deskFloor: 1293, behindScale: 1.143, deskScale: 0.62 };
 
 // `stand` false = layar laptop (tanpa leher dan alas, hanya engsel).
 type MonitorSpec = { readonly x: number; readonly y: number; readonly w: number; readonly tilt: number; readonly bold: boolean; readonly stand: boolean };
@@ -201,9 +201,9 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0c0d14", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
   kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
-  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#060919", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
+  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
   kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -55, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
 };
 
@@ -235,13 +235,53 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
   );
 };
 
+// Keyboard dengan baris tuts: satuan lebar tombol per baris (jumlah 15), baris jauh lebih sempit dan lebih rendah daripada yang dekat
+// sehingga terlihat berperspektif. Tombol pengubah (pertama dan terakhir tiap baris, spasi) lebih gelap.
+const KEY_ROWS: readonly (readonly number[])[] = [
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2],
+  [1.5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1.5],
+  [1.75, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.25],
+  [2.25, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2.75],
+  [1.25, 1.25, 1.25, 6.25, 1.25, 1.25, 1.25, 1.25],
+];
+const ROW_SCALE = [0.9, 0.93, 0.96, 0.98, 1] as const;
+const ROW_H = [11, 12, 13, 14, 15] as const;
+const KB_W = 410;
+const KB_GAP = 3;
+
+const Keyboard: React.FC<{ readonly x: number; readonly y: number; readonly keys: readonly [string, string] }> = ({ x, y, keys }) => {
+  let top = 6;
+  return (
+    <div style={{ ...abs, left: x, top: y, width: KB_W, height: 96, filter: "drop-shadow(0 9px 10px rgba(0,0,0,0.55))" }}>
+      {/* Badan keyboard: trapesium dengan bibir depan lebih terang. */}
+      <div style={{ ...abs, left: -6, top: 0, width: KB_W + 12, height: 88, clipPath: "polygon(6% 0, 94% 0, 100% 100%, 0 100%)", background: `linear-gradient(180deg, ${keys[1]} 0%, #0d111f 100%)` }} />
+      <div style={{ ...abs, left: -6, top: 82, width: KB_W + 12, height: 6, clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%)", backgroundColor: "rgba(255,255,255,0.14)" }} />
+      {KEY_ROWS.map((row, r) => {
+        const rowW = (KB_W - 14) * ROW_SCALE[r];
+        const unit = rowW / 15;
+        const h = ROW_H[r];
+        const y0 = top;
+        top += h + KB_GAP;
+        let cx = (KB_W - rowW) / 2;
+        return row.map((u, i) => {
+          const kw = u * unit - KB_GAP;
+          const left = cx;
+          cx += u * unit;
+          const mod = i === 0 || i === row.length - 1 || u > 2;
+          return <div key={`${r}-${i}`} style={{ ...abs, left, top: y0, width: kw, height: h, borderRadius: 3, backgroundColor: mod ? "#1a2038" : keys[0], boxShadow: "inset 0 2px 0 rgba(255,255,255,0.16), inset 0 -3px 0 rgba(0,0,0,0.38)" }} />;
+        });
+      })}
+    </div>
+  );
+};
+
 export const DeskTop: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
   const s = SETS[set];
   return (
     <>
       <div style={{ ...abs, left: -40, top: DESK_TOP, width: W + 80, height: DESK_FRONT - DESK_TOP, background: `linear-gradient(180deg, ${s.deskEdge} 0%, ${s.deskTop} 10%, ${s.deskBottom} 100%)` }} />
-      {/* Keyboard kecil di tengah, catatan tempel, dan pena (seperti referensi). */}
-      <div style={{ ...abs, left: 313, top: 1212, width: 410, height: 74, clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)", background: `repeating-linear-gradient(90deg,${s.keys[0]} 0 22px,${s.keys[1]} 22px 25px)`, filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.5))" }} />
+      {/* Keyboard di tengah, catatan tempel, dan pena (seperti referensi). */}
+      <Keyboard x={313} y={1204} keys={s.keys} />
       <div style={{ ...abs, left: 437, top: 1306, width: 92, height: 22, transform: "skewX(-30deg)", backgroundColor: "#f0d24a", opacity: 0.95, boxShadow: "0 0 18px rgba(240,210,74,0.35)" }} />
       <div style={{ ...abs, left: 573, top: 1300, width: 64, height: 18, transform: "skewX(-30deg)", backgroundColor: "#ee8a4e", opacity: 0.9 }} />
       <div style={{ ...abs, left: 240, top: 1318, width: 118, height: 8, borderRadius: 4, transform: "rotate(-4deg)", backgroundColor: "#6e7a99" }} />
@@ -251,7 +291,7 @@ export const DeskTop: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
 
 export const DeskFront: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
   const s = SETS[set];
-  return <div style={{ ...abs, left: -40, top: DESK_FRONT, width: W + 80, height: H - DESK_FRONT + 200, background: `linear-gradient(180deg, ${s.deskBottom} 0, ${s.deskFront} 100%)` }} />;
+  return <div style={{ ...abs, left: -40, top: DESK_FRONT - 2, width: W + 80, height: H - DESK_FRONT + 202, background: `linear-gradient(180deg, ${s.deskBottom} 0, ${s.deskFront} 100%)` }} />;
 };
 
 // Blob buram di depan fokus (pot, ujung kabel) supaya ada lapisan paling dekat.
