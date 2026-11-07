@@ -1,6 +1,6 @@
 import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
-import { ClaudeCodeBlock, claudeCodeBlockSize, GanjarBlock, ganjarBlockSize, RobotBlock, robotBlockSize, type Gesture } from "../assets/characters";
+import { BlockLightContext, ClaudeCodeBlock, claudeCodeBlockSize, GanjarBlock, ganjarBlockSize, RobotBlock, robotBlockSize, type BlockLight, type Gesture } from "../assets/characters";
 import type { BlockCast, BlockLine, BlockScene, CharacterId, Place, ShotKind } from "./types";
 import { DESK_TOP, DeskFront, DeskTop, Foreground, H, Layer, Lighting, Monitor, SETS, W, type LayerCam, type Layout } from "./World";
 
@@ -106,7 +106,7 @@ const blockYaw = (lines: readonly BlockLine[], who: CharacterId, x: number, xOf:
   return prev + (cur - prev) * (1 - Math.pow(1 - p, 3));
 };
 
-const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string }> = ({ actor, scene, xOf, filter }) => {
+const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string; readonly light: BlockLight }> = ({ actor, scene, xOf, filter, light }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
@@ -127,7 +127,11 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; r
     ) : (
       <ClaudeCodeBlock height={actor.h} expression={expression} gestures={gestures} yaw={yaw} pitch={pitch} />
     );
-  return <div style={{ position: "absolute", left: actor.x - s.width / 2, top: s.top(actor.floor) - bounce, filter }}>{body}</div>;
+  return (
+    <div style={{ position: "absolute", left: actor.x - s.width / 2, top: s.top(actor.floor) - bounce, filter }}>
+      <BlockLightContext.Provider value={light}>{body}</BlockLightContext.Provider>
+    </div>
+  );
 };
 
 // Bayangan lembut berbentuk elips (koordinat layar, sesudah kamera).
@@ -253,7 +257,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
   const lc = layerCam(cam);
   const behind = actors.filter((a) => a.place === "belakang");
   const onDesk = actors.filter((a) => a.place === "meja");
-  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} actor={a} scene={scene} xOf={xOf} filter={spec.filter} />;
+  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} actor={a} scene={scene} xOf={xOf} filter={spec.filter} light={spec.light} />;
 
   return (
     <AbsoluteFill style={{ backgroundColor: spec.bg }}>

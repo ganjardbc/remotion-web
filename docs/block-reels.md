@@ -34,6 +34,7 @@ src/videos/<Nama>/
 - `World.tsx`: tata letak default `wide` per latar (`Layout`: kamera, posisi karakter di balik meja dan di atas meja, skala), lapisan (`Layer`, faktor `p`: 0,28 langit dan kota, 0,6 dinding, 1 bidang fokus, 1,28 depan), `SETS` (warna dan lapisan tiap latar), benda meja (`Monitor`, `DeskTop`, `DeskFront`, `Foreground`), `Lighting` (cahaya hangat dan vinyet). Konstanta posisi meja di bagian atas.
 - `Stage.tsx`: karakter, shot, kamera. Urutan gambar: langit, dinding, karakter di balik meja, permukaan meja dan benda, monitor (berdiri di meja, di depan karakter), bayangan kontak, karakter di atas meja, sisi depan meja, lapisan depan, bahu `overShoulder`.
 - `BlockReels.tsx`: `Series` scene, caption atas (`CAPTION_TOP` 250 px, di bawah zona aman atas), `totalFrames`.
+- Cahaya karakter: tiap latar punya `light` (`BlockLight`) di `SETS`: tint per sisi kubus (hangat dari depan dan atas, rim dari monitor di sisi kanan) dan gradasi halus. Disalurkan lewat `BlockLightContext` di `src/assets/characters/shared/blockKit.tsx`; tanpa Provider tampilan karakter di video lain tidak berubah. Tampilan karakter (warna, bentuk) tidak diubah, hanya cahayanya.
 - Warna latar diorama (pencahayaan) ada di `SETS`, bukan dari tema: itu warna dunia, bukan UI. Caption memakai font tema.
 
 ## Cara kerja

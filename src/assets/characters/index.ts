@@ -6,3 +6,4 @@ export { EXPRESSIONS, type Expression } from "./shared/expressions";
 export { GESTURES, type ArmPose, type Gesture } from "./shared/gestures";
 export { CharacterSheet } from "./CharacterSheet";
 export type { LookKey } from "./shared/look";
+export { BlockLightContext, type BlockLight, type FaceLight } from "./shared/blockKit";

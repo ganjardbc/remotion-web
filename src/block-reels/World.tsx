@@ -1,4 +1,5 @@
 import type React from "react";
+import type { BlockLight } from "../assets/characters";
 import type { BlockSet } from "./types";
 
 // Dunia diorama: lapisan datar di kedalaman berbeda. Kamera menggeser dan memperbesar tiap lapisan dengan faktor `p`
@@ -79,6 +80,8 @@ type SetSpec = {
   readonly key: string;
   readonly vignette: number;
   readonly screen: string;
+  // Cahaya di karakter block (lihat BlockLightContext): per sisi kubus dan gradasi.
+  readonly light: BlockLight;
   readonly Far: React.FC;
   readonly Mid: React.FC;
 };
@@ -201,10 +204,10 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", Far: NightFar, Mid: NightMid },
-  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
-  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
-  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", light: { faces: { front: { color: "#ffaf6e", opacity: 0.1 }, top: { color: "#ffc88c", opacity: 0.2 }, left: { color: "#ffa05a", opacity: 0.06 }, right: { color: "#78a0ff", opacity: 0.24 } }, gradient: 0.18 }, Far: NightFar, Mid: NightMid },
+  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", light: { faces: { front: { color: "#fff8e1", opacity: 0.06 }, top: { color: "#fffff0", opacity: 0.14 }, left: { color: "#ffffff", opacity: 0.03 }, right: { color: "#a0beff", opacity: 0.1 } }, gradient: 0.12 }, Far: DayFar, Mid: DayMid },
+  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", light: { faces: { front: { color: "#82aaff", opacity: 0.1 }, top: { color: "#aac8ff", opacity: 0.16 }, left: { color: "#6e96ff", opacity: 0.12 }, right: { color: "#6e96ff", opacity: 0.22 } }, gradient: 0.2 }, Far: CodeFar, Mid: CodeMid },
+  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", light: { faces: { front: { color: "#ffaa5a", opacity: 0.12 }, top: { color: "#ffc882", opacity: 0.2 }, left: { color: "#ff9650", opacity: 0.1 }, right: { color: "#c87846", opacity: 0.16 } }, gradient: 0.16 }, Far: CafeFar, Mid: CafeMid },
 };
 
 // ---------- Benda di meja ----------
