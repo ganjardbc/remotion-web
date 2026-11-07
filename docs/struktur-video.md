@@ -2,7 +2,7 @@
 
 Aturan baku isi folder `src/videos/<Nama>/`. Nama file harus persis seperti di bawah, tanpa variasi. Rujukan Reels: `src/videos/PromptPanjang`. Rujukan carousel: `src/videos/ModelMurah`.
 
-Empat jenis folder: **Reels** (narator Claude Code, 9:16), **Reels dialog** (9:16, `new-reels.mjs --dialog`), **video dialog** (16:9, `new-video.mjs`), dan **carousel**. Aturan Reels dialog dan video dialog ada di [dialog-reels.md](dialog-reels.md); aturan carousel di [carousel.md](carousel.md). Satu folder boleh memuat Reels dan carousel untuk topik yang sama, tapi tidak boleh mencampur Reels dengan Reels dialog atau video dialog. Jenis folder dikenali dari isinya: `carousel.content.ts` = carousel, `SceneRenderer.tsx` = video dialog, `config.ts` + `scenes.tsx` = Reels, `config.ts` + `scenes.ts` = Reels dialog.
+Lima jenis folder: **Reels** (narator Claude Code, 9:16), **Reels dialog** (9:16, `new-reels.mjs --dialog`), **Reels block** (9:16, diorama tanpa footer, `new-block.mjs`, aturan di [block-reels.md](block-reels.md)), **video dialog** (16:9, `new-video.mjs`), dan **carousel**. Aturan Reels dialog dan video dialog ada di [dialog-reels.md](dialog-reels.md); aturan carousel di [carousel.md](carousel.md). Satu folder boleh memuat Reels dan carousel untuk topik yang sama, tapi tidak boleh mencampur Reels dengan Reels dialog atau video dialog. Jenis folder dikenali dari isinya: `carousel.content.ts` = carousel, `SceneRenderer.tsx` = video dialog, `config.ts` + `scenes.tsx` = Reels, `config.ts` + `scenes.ts` = Reels dialog.
 
 ## Nama
 

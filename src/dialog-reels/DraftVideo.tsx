@@ -5,12 +5,13 @@ import { BrandFooter } from "../BrandFooter";
 import { getTheme, ThemeProvider, useTheme } from "../themes";
 import { Enter } from "../motion";
 import { Camera } from "./Camera";
+import { LineCaption } from "./Caption";
 import { Decor } from "./Decor";
 import { Inserts } from "./Inserts";
-import { screenSegments, withHighlight } from "./screenText";
+import { screenSegments, withHighlight, type ScreenTextScene } from "./screenText";
 import { floorOf, Stage } from "./Stage";
 import { ClaudeCode, claudeCodeSize, Ganjar, ganjarSize, Robot, robotSize } from "../assets/characters";
-import type { CharacterId, DraftLine, DraftMeta, DraftScene, SceneTransition } from "./types";
+import type { CharacterId, DraftMeta, DraftScene, SceneTransition } from "./types";
 import { sceneFrames } from "./voiceover";
 
 // Reels 9:16 dari data (Reels dialog): tiap scene = latar dan pemeran (Stage), teks layar di atas, subtitle baris
@@ -189,7 +190,8 @@ const SceneTransitionIn: React.FC<{ readonly kind?: SceneTransition; readonly ch
   );
 };
 
-const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
+// Kartu teks layar atas (komponen bersama Reels dialog dan Reels block). `top` = jarak dari atas kanvas (bawaan 150).
+export const OnScreenText: React.FC<{ readonly scene: ScreenTextScene; readonly top?: number }> = ({ scene, top = 150 }) => {
   const t = useTheme();
   const { fps } = useVideoConfig();
   const tone = scene.tone ?? "terang";
@@ -208,7 +210,7 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
         const end = i + 1 < segs.length ? Math.round(segs[i + 1].from * fps) : undefined;
         return (
           <Sequence key={`${i}-${seg.text}`} from={start} durationInFrames={end === undefined ? Infinity : end - start} layout="none">
-            <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: scene.cardAlign === "kiri" ? "flex-start" : scene.cardAlign === "kanan" ? "flex-end" : "center" }}>
+            <div style={{ position: "absolute", left: 72, right: 72, top, display: "flex", justifyContent: scene.cardAlign === "kiri" ? "flex-start" : scene.cardAlign === "kanan" ? "flex-end" : "center" }}>
               <Enter
                 name="Teks layar"
                 delay={i === 0 ? 4 : 0}
@@ -390,107 +392,15 @@ const Subtitle: React.FC<{ readonly scene: DraftScene; readonly history: readonl
   );
 };
 
-// Waktu mulai tiap kata (detik sejak baris mulai). Dari `wordTimes` bila lengkap, bila tidak diperkirakan dari panjang huruf
-// dengan jeda kecil setelah tanda baca.
-const wordStarts = (line: DraftLine, words: readonly string[]): readonly number[] => {
-  if (line.wordTimes && line.wordTimes.length === words.length) return line.wordTimes;
-  const weights = words.map((w) => w.length + 1 + (/[.?!]$/.test(w) ? 3 : /[,:;]$/.test(w) ? 1.5 : 0));
-  const total = weights.reduce((a, b) => a + b, 0);
-  const span = line.dur * 0.92;
-  let acc = 0;
-  return weights.map((w) => {
-    const at = (acc / total) * span;
-    acc += w;
-    return at;
-  });
-};
-
-const SPEAKER: Readonly<Record<CharacterId, { readonly name: string; readonly fill: "primary" | "surface" }>> = {
-  ganjar: { name: "Ganjar", fill: "primary" },
-  robot: { name: "Robot", fill: "surface" },
-  claudecode: { name: "Claude Code", fill: "surface" },
-};
-
-// Subtitle berbentuk caption: satu baris yang sedang diucapkan, rata tengah (horizontal dan vertikal) di area bawah lantai.
-// Mode karaoke: kata yang sedang diucapkan putih penuh, yang sudah lewat agak redup, yang belum redup; penanda pembicara
-// (titik berwarna per karakter dan nama kecil) di atas teks.
+// Subtitle berbentuk caption (komponen: Caption.tsx): satu baris yang sedang diucapkan di area bawah lantai. Latar kelas siang atau
+// sore: lantai terang, jadi caption gelap tanpa bayangan; saat cutaway aktif, latar layar gelap penuh, jadi caption kembali putih.
 const Caption: React.FC<{ readonly scene: DraftScene; readonly motion: "karaoke" | "none" }> = ({ scene, motion }) => {
-  const t = useTheme();
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const now = frame / fps;
-  const line = scene.lines.find((l) => now >= l.from && now < l.from + l.dur);
-  if (!line) return null;
-  const local = now - line.from;
-  const clampOpts = { extrapolateLeft: "clamp", extrapolateRight: "clamp" } as const;
-  const opacity = EASE(interpolate(local, [0, 0.2], [0, 1], clampOpts)) * interpolate(local, [line.dur - 0.15, line.dur], [1, 0], clampOpts);
-  const words = line.text.split(" ");
-  const starts = wordStarts(line, words);
-  const karaoke = motion === "karaoke";
-  const sp = SPEAKER[line.who];
-  // Latar kelas siang atau sore: lantai terang, jadi caption gelap tanpa bayangan; yang lain putih dengan bayangan tipis.
-  // Saat cutaway aktif, latar layar gelap penuh, jadi caption kembali putih.
   const inCutaway = (scene.inserts ?? []).some((x) => now >= x.from && now < x.from + x.dur);
   const onLight = scene.backdrop === "kelas" && scene.time !== "malam" && !inCutaway;
-  const white = onLight ? t.colors.ink : (t.colors.groundText ?? t.colors.onPrimary);
-  return (
-    <div
-      style={{
-        position: "absolute",
-        left: 80,
-        right: 80,
-        top: floorOf(scene) + 40,
-        bottom: 1920 - FOOTER_TOP,
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 18,
-        opacity,
-      }}
-    >
-      {karaoke ? (
-        <div style={{ display: "flex", alignItems: "center", gap: 12, fontFamily: t.fonts.body, fontWeight: 600, fontSize: 28, color: onLight ? t.colors.muted : t.colors.groundTextMuted }}>
-          <div
-            style={{
-              width: 22,
-              height: 22,
-              borderRadius: 11,
-              backgroundColor: sp.fill === "primary" ? t.colors.primary : t.colors.surface,
-              border: `3px solid ${sp.fill === "primary" ? t.colors.primarySoft : t.colors.primary}`,
-            }}
-          />
-          {sp.name}
-        </div>
-      ) : null}
-      <div
-        style={{
-          textAlign: "center",
-          textWrap: "balance",
-          fontFamily: t.fonts.body,
-          fontWeight: 700,
-          fontSize: 54,
-          lineHeight: 1.3,
-          color: white,
-          textShadow: onLight ? "none" : "0 2px 12px rgba(0, 0, 0, 0.55)",
-        }}
-      >
-        {words.map((w, i) => {
-          // 0 = belum, 1 = sedang/aktif; berpindah halus selama 0,12 detik. Kata yang sudah lewat turun ke 0,75.
-          const on = karaoke ? EASE(interpolate(local, [starts[i], starts[i] + 0.12], [0, 1], clampOpts)) : 1;
-          const last = i + 1 >= words.length;
-          const past = karaoke && !last ? EASE(interpolate(local, [starts[i + 1], starts[i + 1] + 0.12], [0, 1], clampOpts)) : 0;
-          const o = karaoke ? 0.35 + 0.65 * on - 0.25 * past : 1;
-          return (
-            <span key={i} style={{ opacity: o }}>
-              {w}
-              {i < words.length - 1 ? " " : ""}
-            </span>
-          );
-        })}
-      </div>
-    </div>
-  );
+  return <LineCaption lines={scene.lines} motion={motion} onLight={onLight} box={{ top: floorOf(scene) + 40, bottom: 1920 - FOOTER_TOP }} />;
 };
 
 const SFX_VOLUME = 0.5;

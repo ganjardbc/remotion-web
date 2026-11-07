@@ -1,5 +1,5 @@
 import type React from "react";
-import type { DraftScene } from "./types";
+import type { DraftLine, DraftScene } from "./types";
 
 // Teks layar: `*frasa*` jadi sorotan oranye (satu per layar).
 export const withHighlight = (text: string, color: string): React.ReactNode =>
@@ -16,7 +16,13 @@ export const withHighlight = (text: string, color: string): React.ReactNode =>
 export type Segment = { readonly text: string; readonly from: number };
 
 // Teks layar per waktu: awal scene memakai `onScreenText`, lalu berganti di baris yang punya `screenText`.
-export const screenSegments = (scene: DraftScene): readonly Segment[] => {
+// Bagian scene yang dibaca kartu teks atas; Reels dialog (DraftScene) dan Reels block (BlockScene) sama-sama memenuhinya.
+export type ScreenTextScene = Pick<DraftScene, "onScreenText" | "tone" | "cardAlign" | "cardTilt" | "cardMotion" | "screenExtra"> & {
+  readonly backdrop?: DraftScene["backdrop"];
+  readonly lines: readonly Pick<DraftLine, "from" | "screenText">[];
+};
+
+export const screenSegments = (scene: ScreenTextScene): readonly Segment[] => {
   const out: Segment[] = [{ text: scene.onScreenText, from: 0 }];
   for (const l of scene.lines) {
     const text = l.screenText;

@@ -8,6 +8,7 @@ Ringkasan untuk agent lain: [AGENTS.md](AGENTS.md). Aturan konten di bawah adala
 Berkas ini tidak dimuat otomatis. Baca sesuai tugas:
 - Reels (folder `src/videos/<Nama>/`, nama dan isi file, voiceover, alur kerja, storyboard, daftar periksa): [docs/struktur-video.md](docs/struktur-video.md)
 - Reels dialog atau video dialog: [docs/dialog-reels.md](docs/dialog-reels.md)
+- Reels block (dialog karakter block di dunia diorama, tanpa footer): [docs/block-reels.md](docs/block-reels.md)
 - Carousel (isi, field, ukuran, warna, validator, render): [docs/carousel.md](docs/carousel.md)
 
 ## Keputusan yang sudah diambil
@@ -24,7 +25,7 @@ Berkas ini tidak dimuat otomatis. Baca sesuai tugas:
 - Poppins saja. Biru `#3051B8` = primary. Oranye `#FF914D` = highlight, satu frasa atau satu kontrol per layar.
 - Carousel: slide hook dan shift berlatar biru primary (teks putih), sisanya putih; bisa diubah per slide lewat `tone`. Ungu aksen-2 tidak dipakai di carousel (kontras 3,6:1 di putih, rendah di biru).
 - Gerak: ease-out tajam `[0.2, 0.8, 0.2, 1]`, tanpa bounce atau spring.
-- **Wajib di setiap video:** `BrandFooter` (logo kiri; TikTok, Instagram, `@ganjar_hadiatna` kanan) dirender sekali di root video, di luar transisi scene, selama durasi penuh. CTA penutup tetap di isi scene terakhir, terpisah dari footer.
+- **Wajib di setiap video** (kecuali Reels block, yang sengaja tanpa footer dan tanpa watermark, lihat docs/block-reels.md): `BrandFooter` (logo kiri; TikTok, Instagram, `@ganjar_hadiatna` kanan) dirender sekali di root video, di luar transisi scene, selama durasi penuh. CTA penutup tetap di isi scene terakhir, terpisah dari footer.
 - Karakter: Ganjar, Robot, Claude Code (`src/assets/characters`, baca `README.md` di sana). Tampilan Ganjar final, jangan diubah tanpa persetujuan. Impor dari barrel `src/assets/characters`.
 - Kontras teks biasa >= 4,5:1, teks besar dan ikon >= 3:1. Pengecualian: sorotan judul oranye (3,1:1 di biru, 2,2:1 di putih); jangan pakai oranye untuk teks isi. Judul tanpa huruf kapital semua, italic, atau garis bawah. Paragraf rata kiri.
 
@@ -66,7 +67,7 @@ Alur wajib: Hook, Relate, Shift, Closing, CTA.
 
 ## Perintah
 - `npm run dev` (Studio), `npm run lint` (eslint + tsc + validate + validate:structure), `npm run validate` (carousel), `npm run validate:structure`, `npm run validate:layout`, `npm run alt` (alt text, caption, hashtag carousel).
-- Scaffold (jangan buat folder dengan tangan; komposisi terdaftar otomatis): `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes a,b,c] [--dialog [--cast ganjar,robot] [--style rig|stickman]]`, `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`, `node scripts/new-video.mjs <Nama> "<Judul>"` (video dialog).
+- Scaffold (jangan buat folder dengan tangan; komposisi terdaftar otomatis): `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes a,b,c] [--dialog [--cast ganjar,robot] [--style rig|stickman]]`, `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`, `node scripts/new-video.mjs <Nama> "<Judul>"` (video dialog), `node scripts/new-block.mjs <Nama> "<Judul>" [--cast ...] [--sets ...]` (Reels block).
 - Voiceover (ElevenLabs, minta konfirmasi sebelum memakai kredit): `vo-generate.mjs`, `vo-words.mjs`; tanpa API: `vo-check.mjs`, `reels-stills.mjs`. Semua `--video <Nama>`. Rincian di docs/struktur-video.md, bagian Voiceover.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: tambah `--sequence --image-format=png`.
 

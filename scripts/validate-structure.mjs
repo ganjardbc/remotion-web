@@ -2,7 +2,7 @@
 // Memeriksa struktur folder src/videos/<Nama> terhadap docs/struktur-video.md.
 //   node scripts/validate-structure.mjs [Nama...]
 // Jenis folder dikenali dari isinya: carousel (carousel.content.ts), video dialog (SceneRenderer.tsx), Reels
-// (config.ts + scenes.tsx). Folder di EXEMPT dilewati. Keluar dengan kode 1 bila ada ERROR.
+// (config.ts + scenes.tsx), Reels block (config.ts + scenes.ts + Video.tsx yang memakai block-reels). Folder di EXEMPT dilewati. Keluar dengan kode 1 bila ada ERROR.
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -22,6 +22,8 @@ const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
 const REELS_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.tsx", "parts.tsx", "voiceover.json", "voiceover-files.ts"];
 const REELS_DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.ts", "voiceover.json", "voiceover-files.ts"];
+// Reels block (src/block-reels): dialog karakter block di dunia diorama, sengaja tanpa BrandFooter. Voiceover belum terintegrasi.
+const REELS_BLOCK_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.ts"];
 const CAROUSEL_FILES = (n) => [`${n}Carousel.tsx`, "carousel.content.ts"];
 const DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "scenes.tsx", "SceneRenderer.tsx", "world.tsx", "cards.tsx", "sfxTypes.ts", SFX_EXCEPTION[n] ?? `${n}Sfx.tsx`, "voiceover.ts", "voiceover.json", "voiceover-files.ts"];
 
@@ -102,10 +104,11 @@ const checkFolder = (name) => {
 
   if (!/^[A-Z][A-Za-z0-9]*$/.test(name)) err("nama folder harus PascalCase.");
 
-  const type = has("carousel.content.ts") ? "carousel" : has("SceneRenderer.tsx") ? "dialog" : has("config.ts") && has("scenes.tsx") ? "reels" : has("config.ts") && has("scenes.ts") ? "reels-dialog" : null;
-  if (!type) return { type: "?", errors: ["jenis folder tidak dikenali (bukan carousel, dialog, Reels, atau Reels dialog)."], warns };
+  const isBlock = has("config.ts") && has("scenes.ts") && has(`${name}Video.tsx`) && /block-reels/.test(read(join(dir, `${name}Video.tsx`)));
+  const type = has("carousel.content.ts") ? "carousel" : has("SceneRenderer.tsx") ? "dialog" : has("config.ts") && has("scenes.tsx") ? "reels" : isBlock ? "reels-block" : has("config.ts") && has("scenes.ts") ? "reels-dialog" : null;
+  if (!type) return { type: "?", errors: ["jenis folder tidak dikenali (bukan carousel, dialog, Reels, Reels dialog, atau Reels block)."], warns };
 
-  const required = type === "carousel" ? CAROUSEL_FILES(name) : type === "dialog" ? DIALOG_FILES(name) : type === "reels-dialog" ? REELS_DIALOG_FILES(name) : REELS_FILES(name);
+  const required = type === "carousel" ? CAROUSEL_FILES(name) : type === "dialog" ? DIALOG_FILES(name) : type === "reels-block" ? REELS_BLOCK_FILES(name) : type === "reels-dialog" ? REELS_DIALOG_FILES(name) : REELS_FILES(name);
   for (const f of required) if (!has(f)) err(`berkas wajib tidak ada: ${f}`);
   const allowed = new Set([...required, "voiceover"]);
   for (const t of top) if (!allowed.has(t)) err(`berkas tidak diizinkan: ${t}`);
@@ -198,6 +201,37 @@ const checkFolder = (name) => {
       for (const h of ["## Voiceover", "## Caption"]) if (!r.includes(h)) err(`README.md tidak punya bagian "${h}".`);
     }
     if (!top.has("voiceover") && /"file"/.test(read(join(dir, "voiceover.json")))) err("voiceover.json berisi klip tapi folder voiceover/ tidak ada.");
+  } else if (type === "reels-block") {
+    if (!registered(`${name}-Reels`, `${name}Video.tsx`)) err(`${name}Video.tsx tidak mengekspor COMPOSITION dengan id "${name}-Reels".`);
+    if (has("config.ts")) {
+      const cfg = read(join(dir, "config.ts"));
+      for (const e of ["META", "CAPTION", "HASHTAGS"]) if (!new RegExp(`export const ${e}\\b`).test(cfg)) err(`config.ts tidak mengekspor ${e}.`);
+      const tagMatch = cfg.match(/export const HASHTAGS = \[([^\]]*)\]/);
+      if (tagMatch) {
+        const tags = [...tagMatch[1].matchAll(/"([^"]+)"/g)].map((m) => m[1]);
+        if (tags.length !== 5) err(`HASHTAGS harus tepat 5, ada ${tags.length}.`);
+        else if (tags.join(" ") !== HASHTAGS.join(" ")) err("HASHTAGS bukan set baku.");
+      }
+    }
+    if (has("scenes.ts")) {
+      const sc = read(join(dir, "scenes.ts"));
+      if (!/export const BASE_SCENES\b/.test(sc)) err("scenes.ts tidak mengekspor BASE_SCENES.");
+      const ids = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)].map((m) => m[1]);
+      if (ids.length === 0) err("scenes.ts tidak punya scene (id: \"...\" pada indentasi 4 spasi).");
+      for (const id of ids) if (!/^[a-z]+$/.test(id)) err(`id scene "${id}" harus huruf kecil, satu kata.`);
+      for (const m of sc.matchAll(/set: "([^"]+)"/g)) if (!["mejaMalam", "kantor", "terminal", "kafe"].includes(m[1])) err(`set "${m[1]}" tidak dikenal (mejaMalam, kantor, terminal, kafe).`);
+      if (/TODO/.test(sc)) warns.push("scenes.ts masih berisi TODO.");
+      // Latar tidak boleh sama dua scene berurutan (variasi visual).
+      const sets = [...sc.matchAll(/set: "([^"]+)"/g)].map((m) => m[1]);
+      sets.forEach((v, i) => i > 0 && v === sets[i - 1] && warns.push(`scene ${ids[i] ?? i + 1}: latar "${v}" sama dengan scene sebelumnya.`));
+    }
+    if (has(`${name}Video.tsx`)) {
+      const v = read(join(dir, `${name}Video.tsx`));
+      if (!new RegExp(`export const ${name}Video\\b`).test(v)) err(`${name}Video.tsx tidak mengekspor ${name}Video.`);
+      if (!/export const TOTAL_FRAMES\b|export \{ TOTAL_FRAMES \}/.test(v)) err(`${name}Video.tsx tidak mengekspor TOTAL_FRAMES.`);
+      if (/<BrandFooter\b/.test(v)) err("Reels block tidak boleh merender BrandFooter (jenis folder ini sengaja tanpa footer).");
+    }
+    if (has("README.md") && !read(join(dir, "README.md")).includes("## Caption")) err('README.md tidak punya bagian "## Caption".');
   } else if (type === "carousel") {
     if (!registered(`${name}-Carousel`, `${name}Carousel.tsx`)) err(`${name}Carousel.tsx tidak mengekspor COMPOSITION dengan id "${name}-Carousel".`);
     if (has(`${name}Carousel.tsx`) && !new RegExp(`export const ${name}Carousel\\b`).test(read(join(dir, `${name}Carousel.tsx`)))) err(`${name}Carousel.tsx tidak mengekspor ${name}Carousel.`);
