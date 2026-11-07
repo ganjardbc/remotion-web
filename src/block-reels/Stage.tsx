@@ -300,7 +300,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
         <Layer cam={lc} p={1.28}>
           <Foreground set={scene.set} />
         </Layer>
-        {shoulder ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, filter: "blur(4px) brightness(0.8)" }}>{view(shoulder)}</div> : null}
+        {shoulder ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, filter: "blur(4px) brightness(0.5)" }}>{view(shoulder)}</div> : null}
       </div>
       <Lighting set={scene.set} />
     </AbsoluteFill>

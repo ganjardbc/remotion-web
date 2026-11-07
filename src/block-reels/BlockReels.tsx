@@ -34,6 +34,8 @@ export const BlockReels: React.FC<{ readonly theme: string; readonly meta: Block
             <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
               <Stage scene={s} />
               {i === 0 ? <OnScreenText scene={{ onScreenText: title, lines: [], tone: "biru" }} top={CARD_TOP} /> : null}
+              {/* Gradasi gelap lembut di bawah supaya caption terbaca di atas tuts, meja, dan bahu depan shot overShoulder. */}
+              <div style={{ position: "absolute", left: 0, top: 1380, width: 1080, height: 540, background: "linear-gradient(180deg, rgba(3,6,16,0) 0%, rgba(3,6,16,0.55) 45%, rgba(3,6,16,0.7) 100%)" }} />
               <LineCaption lines={s.lines} motion="karaoke" box={CAPTION_BOX} />
             </Series.Sequence>
           ))}
