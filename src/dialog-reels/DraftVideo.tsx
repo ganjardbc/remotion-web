@@ -8,7 +8,7 @@ import { Camera } from "./Camera";
 import { LineCaption } from "./Caption";
 import { Decor } from "./Decor";
 import { Inserts } from "./Inserts";
-import { screenSegments, withHighlight } from "./screenText";
+import { screenSegments, withHighlight, type ScreenTextScene } from "./screenText";
 import { floorOf, Stage } from "./Stage";
 import { ClaudeCode, claudeCodeSize, Ganjar, ganjarSize, Robot, robotSize } from "../assets/characters";
 import type { CharacterId, DraftMeta, DraftScene, SceneTransition } from "./types";
@@ -190,7 +190,8 @@ const SceneTransitionIn: React.FC<{ readonly kind?: SceneTransition; readonly ch
   );
 };
 
-const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
+// Kartu teks layar atas (komponen bersama Reels dialog dan Reels block). `top` = jarak dari atas kanvas (bawaan 150).
+export const OnScreenText: React.FC<{ readonly scene: ScreenTextScene; readonly top?: number }> = ({ scene, top = 150 }) => {
   const t = useTheme();
   const { fps } = useVideoConfig();
   const tone = scene.tone ?? "terang";
@@ -209,7 +210,7 @@ const OnScreenText: React.FC<{ readonly scene: DraftScene }> = ({ scene }) => {
         const end = i + 1 < segs.length ? Math.round(segs[i + 1].from * fps) : undefined;
         return (
           <Sequence key={`${i}-${seg.text}`} from={start} durationInFrames={end === undefined ? Infinity : end - start} layout="none">
-            <div style={{ position: "absolute", left: 72, right: 72, top: 150, display: "flex", justifyContent: scene.cardAlign === "kiri" ? "flex-start" : scene.cardAlign === "kanan" ? "flex-end" : "center" }}>
+            <div style={{ position: "absolute", left: 72, right: 72, top, display: "flex", justifyContent: scene.cardAlign === "kiri" ? "flex-start" : scene.cardAlign === "kanan" ? "flex-end" : "center" }}>
               <Enter
                 name="Teks layar"
                 delay={i === 0 ? 4 : 0}

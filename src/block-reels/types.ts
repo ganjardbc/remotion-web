@@ -1,4 +1,4 @@
-import type { CharacterId, ShotKind } from "../dialog-reels/types";
+import type { CharacterId, SceneTone, ShotKind } from "../dialog-reels/types";
 
 // Bentuk data Reels block 9:16: dialog antar karakter block di dunia diorama (lapisan datar berparalaks, bukan 3D penuh).
 // Tanpa BrandFooter dan tanpa watermark; layar sepenuhnya milik dunia, shot kamera, dan caption atas.
@@ -29,8 +29,10 @@ export type BlockLine = {
   readonly from: number;
   // Perkiraan durasi ucapan (detik); setelah voiceover ada diganti durasi audio.
   readonly dur: number;
-  // Teks caption atas.
+  // Teks caption bawah.
   readonly text: string;
+  // Kartu atas berganti mulai baris ini (judul atau hal penting). `*frasa*` = sorotan oranye, satu per layar.
+  readonly screenText?: string;
   // Waktu mulai tiap kata (detik sejak baris mulai) dari scribe setelah voiceover ada; jumlahnya harus sama dengan jumlah kata `text`.
   // Bila kosong, waktu kata diperkirakan dari panjang huruf.
   readonly wordTimes?: readonly number[];
@@ -52,6 +54,13 @@ export type BlockScene = {
   readonly set: BlockSet;
   readonly cast: readonly BlockCast[];
   readonly lines: readonly BlockLine[];
+  // Kartu atas (judul atau hal penting) yang tampil sejak scene mulai; kosong = tanpa kartu. `*frasa*` = sorotan oranye.
+  readonly onScreenText?: string;
+  // Warna kartu: `biru` (bawaan, primary), `terang` (putih), `gelap`.
+  readonly tone?: SceneTone;
+  readonly cardAlign?: "tengah" | "kiri" | "kanan";
+  // `kata` = teks muncul kata demi kata.
+  readonly cardMotion?: "blok" | "kata";
   // Arahan visual untuk dipoles tangan; tidak dirender.
   readonly note?: string;
 };
