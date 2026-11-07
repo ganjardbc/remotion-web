@@ -10,7 +10,7 @@ Semua latar Reels block bersuasana **malam** (keputusan: tampilan seragam jam ma
 - **Tanpa BrandFooter dan tanpa watermark.** Pengecualian eksplisit dari aturan "BrandFooter di setiap video" di CLAUDE.md. `validate:structure` menolak `<BrandFooter` di `<Nama>Video.tsx` jenis ini. Branding lewat akun dan caption posting.
 - **Semua pemeran block.** Tidak ada pilihan gaya `rig` atau `stickman`.
 - **Dunia diorama**, bukan latar motion graphic: lapisan datar di kedalaman berbeda, kamera menggeser dan memperbesar tiap lapisan dengan faktor paralaks sendiri, latar jauh dan depan di-blur seperti kedalaman bidang. Kesan 3D tanpa render 3D penuh (backdrop kubus 3D pernah membuat Studio crash). Karakter diperbesar lewat tinggi, bukan CSS scale, supaya kubus tetap tajam.
-- **Caption di atas** (pil gelap, kata yang sudah diucapkan putih penuh, sisanya redup), bukan di bawah. Tanpa teks layar, cutaway, atau kartu.
+- **Caption memakai komponen Reels dialog** (`LineCaption` di `src/dialog-reels/Caption.tsx`, diekstrak dari `DraftVideo`): karaoke satu baris, penanda pembicara (titik dan nama), tanpa pil dan tanpa sorotan oranye. Bedanya hanya posisi: di atas karakter (`CAPTION_BOX`, y 250-430), bukan di bawah lantai. Gradasi gelap lembut di atas layar (di `BlockReels`, bukan di komponen) menjaga keterbacaan di atas lampu jendela. Tanpa teks layar, cutaway, atau kartu.
 - Tanpa suara dulu: voiceover, sfx, dan musik belum terintegrasi (lihat "Belum dikerjakan").
 
 ## Isi folder
@@ -35,7 +35,7 @@ src/videos/<Nama>/
 ## Mesin (`src/block-reels`)
 - `World.tsx`: tata letak default `wide` per latar (`Layout`: kamera, posisi karakter di balik meja dan di atas meja, skala), lapisan (`Layer`, faktor `p`: 0,28 langit dan kota, 0,6 dinding, 1 bidang fokus, 1,28 depan), `SETS` (warna dan lapisan tiap latar), benda meja (`Monitor`, `DeskTop`, `DeskFront`, `Foreground`), `Lighting` (cahaya hangat dan vinyet). Konstanta posisi meja di bagian atas.
 - `Stage.tsx`: karakter, shot, kamera. Urutan gambar: langit, dinding, karakter di balik meja, permukaan meja dan benda, monitor (berdiri di meja, di depan karakter), bayangan kontak, karakter di atas meja, sisi depan meja, lapisan depan, bahu `overShoulder`.
-- `BlockReels.tsx`: `Series` scene, caption atas (`CAPTION_TOP` 250 px, di bawah zona aman atas), `totalFrames`.
+- `BlockReels.tsx`: `Series` scene, caption atas lewat `LineCaption` (`CAPTION_BOX`, di bawah zona aman atas), `totalFrames`.
 - Cahaya karakter: tiap latar punya `light` (`BlockLight`) di `SETS`: tint per sisi kubus (hangat dari depan dan atas, rim dari monitor di sisi kanan) dan gradasi halus. Disalurkan lewat `BlockLightContext` di `src/assets/characters/shared/blockKit.tsx`; tanpa Provider tampilan karakter di video lain tidak berubah. Tampilan karakter (warna, bentuk) tidak diubah, hanya cahayanya.
 - Warna latar diorama (pencahayaan) ada di `SETS`, bukan dari tema: itu warna dunia, bukan UI. Caption memakai font tema.
 

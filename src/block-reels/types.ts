@@ -31,6 +31,9 @@ export type BlockLine = {
   readonly dur: number;
   // Teks caption atas.
   readonly text: string;
+  // Waktu mulai tiap kata (detik sejak baris mulai) dari scribe setelah voiceover ada; jumlahnya harus sama dengan jumlah kata `text`.
+  // Bila kosong, waktu kata diperkirakan dari panjang huruf.
+  readonly wordTimes?: readonly number[];
   readonly expressions?: Readonly<Partial<Record<CharacterId, string>>>;
   readonly motions?: Readonly<Partial<Record<CharacterId, string>>>;
   readonly motionAt?: Readonly<Partial<Record<CharacterId, number>>>;
