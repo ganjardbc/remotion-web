@@ -31,6 +31,10 @@ export type BlockLine = {
   readonly dur: number;
   // Teks caption bawah.
   readonly text: string;
+  // Teks yang dikirim ke TTS bila beda dari `text` (angka dieja, singkatan dibaca utuh).
+  readonly spoken?: string;
+  // Tag emosi audio untuk TTS (mis. "deadpan", "frustrated"); dikirim sebagai `[tag] teks`. Butuh model eleven_v4.
+  readonly tag?: string;
   // Waktu mulai tiap kata (detik sejak baris mulai) dari scribe setelah voiceover ada; jumlahnya harus sama dengan jumlah kata `text`.
   // Bila kosong, waktu kata diperkirakan dari panjang huruf.
   readonly wordTimes?: readonly number[];
@@ -43,6 +47,12 @@ export type BlockLine = {
   readonly shot?: ShotKind | readonly { readonly at: number; readonly kind: ShotKind }[];
   // Kamera mendorong pelan (zoom in 15%) selama shot ini.
   readonly push?: boolean;
+  // Diisi `fitBlockScenes` dari voiceover.json: id klip (id scene + nomor urut) dan berkas audionya.
+  readonly id?: string;
+  readonly vo?: string;
+  // Efek suara di baris ini: `name` = nama berkas di public/sfx/synth (tanpa .wav), `at` = detik sejak baris mulai (bawaan 0),
+  // `volume` 0-1 (bawaan 0,5).
+  readonly sfx?: readonly { readonly name: string; readonly at?: number; readonly volume?: number }[];
 };
 
 export type BlockScene = {
@@ -61,4 +71,8 @@ export type BlockMeta = {
   readonly title: string;
   // Satu frasa di dalam `title` yang diwarnai oranye (opsional).
   readonly highlight?: string;
+  // `false` mematikan whoosh antar scene (bawaan menyala).
+  readonly sceneSfx?: boolean;
+  // `false` mematikan pop kecil tiap ganti pembicara (bawaan menyala).
+  readonly speakerPop?: boolean;
 };

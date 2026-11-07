@@ -22,7 +22,7 @@ const cap = (s) => s[0].toUpperCase() + s.slice(1);
 
 const REELS_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.tsx", "parts.tsx", "voiceover.json", "voiceover-files.ts"];
 const REELS_DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.ts", "voiceover.json", "voiceover-files.ts"];
-// Reels block (src/block-reels): dialog karakter block di dunia diorama, sengaja tanpa BrandFooter. Voiceover belum terintegrasi.
+// Reels block (src/block-reels): dialog karakter block di dunia diorama, sengaja tanpa BrandFooter. Voiceover dan musik belum terintegrasi; efek suara lewat `sfx` per baris.
 const REELS_BLOCK_FILES = (n) => ["README.md", `${n}Video.tsx`, "config.ts", "scenes.ts"];
 const CAROUSEL_FILES = (n) => [`${n}Carousel.tsx`, "carousel.content.ts"];
 const DIALOG_FILES = (n) => ["README.md", `${n}Video.tsx`, "scenes.tsx", "SceneRenderer.tsx", "world.tsx", "cards.tsx", "sfxTypes.ts", SFX_EXCEPTION[n] ?? `${n}Sfx.tsx`, "voiceover.ts", "voiceover.json", "voiceover-files.ts"];
@@ -110,7 +110,7 @@ const checkFolder = (name) => {
 
   const required = type === "carousel" ? CAROUSEL_FILES(name) : type === "dialog" ? DIALOG_FILES(name) : type === "reels-block" ? REELS_BLOCK_FILES(name) : type === "reels-dialog" ? REELS_DIALOG_FILES(name) : REELS_FILES(name);
   for (const f of required) if (!has(f)) err(`berkas wajib tidak ada: ${f}`);
-  const allowed = new Set([...required, "voiceover"]);
+  const allowed = new Set([...required, "voiceover", ...(type === "reels-block" ? ["voiceover.json", "voiceover-files.ts"] : [])]);
   for (const t of top) if (!allowed.has(t)) err(`berkas tidak diizinkan: ${t}`);
   if (type === "carousel" && top.has("voiceover")) err("carousel tidak boleh punya voiceover/.");
 
