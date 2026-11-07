@@ -1,8 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node scripts/vo-check.mjs --video SeleraDesain --only hook)",
-      "Bash(node scripts/vo-check.mjs --video SeleraDesain)"
+      "Bash(node scripts/vo-check.mjs:*)",
+      "Bash(node scripts/vo-lines.mjs:*)"
     ],
     "ask": [
       "Bash(node scripts/vo-generate.mjs:*)",
