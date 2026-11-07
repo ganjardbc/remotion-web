@@ -10,8 +10,6 @@ export const H = 1920;
 // Tepi jauh permukaan meja, tepi depannya, dan garis lantai karakter.
 export const DESK_TOP = 1190;
 export const DESK_FRONT = 1450;
-export const FLOOR_BEHIND = 1365;
-export const FLOOR_ON_DESK = 1330;
 
 export type LayerCam = { readonly tx: number; readonly ty: number; readonly z: number };
 
@@ -57,11 +55,11 @@ export type Layout = {
   readonly behindScale: number;
   readonly deskScale: number;
 };
-const DEFAULT_LAYOUT: Layout = { wide: { fx: 540, fy: 1080, z: 1.3 }, behindX: [320, 760, 540], deskX: [780, 300, 540], behindFloor: FLOOR_BEHIND, deskFloor: FLOOR_ON_DESK, behindScale: 1, deskScale: 1 };
-// Meja kerja malam: Ganjar di kiri, kepala besar; maskot kecil di meja depan kiri; monitor besar di kanan.
-const NIGHT_LAYOUT: Layout = { wide: { fx: 500, fy: 1050, z: 1.5 }, behindX: [400, 760, 540], deskX: [262, 600, 420], behindFloor: 1442, deskFloor: 1293, behindScale: 1.143, deskScale: 0.62 };
+// Komposisi baku semua latar (dari referensi meja malam): Ganjar di kiri, kepala besar; maskot kecil di meja depan kiri; monitor besar di kanan.
+const DESK_LAYOUT: Layout = { wide: { fx: 500, fy: 1050, z: 1.5 }, behindX: [400, 760, 540], deskX: [262, 600, 420], behindFloor: 1442, deskFloor: 1293, behindScale: 1.143, deskScale: 0.62 };
 
-type MonitorSpec = { readonly x: number; readonly y: number; readonly w: number; readonly tilt: number; readonly bold: boolean };
+// `stand` false = layar laptop (tanpa leher dan alas, hanya engsel).
+type MonitorSpec = { readonly x: number; readonly y: number; readonly w: number; readonly tilt: number; readonly bold: boolean; readonly stand: boolean };
 
 type SetSpec = {
   readonly bg: string;
@@ -70,6 +68,8 @@ type SetSpec = {
   // Titik cahaya hangat (persen layar) dan warna dasar permukaan meja yang memudar ke arah penonton.
   readonly keyAt: readonly [number, number];
   readonly deskBottom: string;
+  // Dua warna tuts keyboard.
+  readonly keys: readonly [string, string];
   readonly deskTop: string;
   readonly deskFront: string;
   readonly deskEdge: string;
@@ -160,12 +160,11 @@ const DayFar: React.FC = () => (
 );
 const DayMid: React.FC = () => (
   <>
-    <div style={{ ...abs, left: -20, top: -600, width: 90, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
-    <div style={{ ...abs, left: 495, top: -600, width: 56, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
-    <div style={{ ...abs, left: 1010, top: -600, width: 110, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
-    <div style={{ ...abs, left: -200, top: -600, width: W + 400, height: 720, backgroundColor: "#d9dee6" }} />
-    {/* Papan putih di dinding kiri bawah jendela. */}
-    <div style={{ ...abs, left: 70, top: 760, width: 380, height: 260, borderRadius: 10, backgroundColor: "#f6f8fb", border: "8px solid #b9c2cf" }} />
+    <div style={{ ...abs, left: 170, top: -600, width: 62, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
+    <div style={{ ...abs, left: 548, top: -600, width: 46, height: DESK_TOP + 600, backgroundColor: "#d9dee6" }} />
+    <div style={{ ...abs, left: -200, top: 500, width: W + 400, height: 30, backgroundColor: "#d9dee6" }} />
+    {/* Papan putih kecil di dinding atas kiri. */}
+    <div style={{ ...abs, left: 250, top: 250, width: 260, height: 170, borderRadius: 10, backgroundColor: "#f6f8fb", border: "8px solid #b9c2cf" }} />
   </>
 );
 
@@ -202,10 +201,10 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: NIGHT_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true }, keyAt: [36, 34], deskBottom: "#0c0d14", deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
-  kantor: { bg: "#cfd9e6", layout: DEFAULT_LAYOUT, monitor: { x: 640, y: 740, w: 400, tilt: 0, bold: false }, keyAt: [30, 48], deskBottom: "#a98458", deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
-  terminal: { bg: "#070b1d", layout: DEFAULT_LAYOUT, monitor: { x: 640, y: 740, w: 400, tilt: 0, bold: false }, keyAt: [30, 48], deskBottom: "#0e1330", deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
-  kafe: { bg: "#2a1710", layout: DEFAULT_LAYOUT, monitor: { x: 640, y: 740, w: 400, tilt: 0, bold: false }, keyAt: [30, 48], deskBottom: "#4f2f1c", deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0c0d14", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
+  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
+  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#060919", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
+  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 700, y: 840, w: 600, tilt: -20, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
 };
 
 // ---------- Benda di meja ----------
@@ -224,35 +223,28 @@ export const Monitor: React.FC<{ readonly screen: string; readonly spec: Monitor
           ))}
         </div>
       </div>
-      <div style={{ ...abs, left: 170, top: 270, width: 60, height: 36, backgroundColor: "#0b0d15" }} />
-      <div style={{ ...abs, left: 120, top: 302, width: 160, height: 18, borderRadius: 8, backgroundColor: "#0b0d15" }} />
+      {spec.stand ? (
+        <>
+          <div style={{ ...abs, left: 170, top: 270, width: 60, height: 36, backgroundColor: "#0b0d15" }} />
+          <div style={{ ...abs, left: 120, top: 302, width: 160, height: 18, borderRadius: 8, backgroundColor: "#0b0d15" }} />
+        </>
+      ) : (
+        <div style={{ ...abs, left: -24, top: 268, width: 448, height: 16, borderRadius: 8, backgroundColor: "#0b0d15" }} />
+      )}
     </div>
   );
 };
 
 export const DeskTop: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
   const s = SETS[set];
-  const night = set === "mejaMalam";
   return (
     <>
       <div style={{ ...abs, left: -40, top: DESK_TOP, width: W + 80, height: DESK_FRONT - DESK_TOP, background: `linear-gradient(180deg, ${s.deskEdge} 0%, ${s.deskTop} 10%, ${s.deskBottom} 100%)` }} />
-      {night ? (
-        <>
-          {/* Keyboard kecil di tengah, catatan tempel, dan pena (seperti referensi). */}
-          <div style={{ ...abs, left: 313, top: 1212, width: 410, height: 74, clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)", background: "repeating-linear-gradient(90deg,#26304f 0 22px,#141a2e 22px 25px)", filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.5))" }} />
-          <div style={{ ...abs, left: 437, top: 1306, width: 92, height: 22, transform: "skewX(-30deg)", backgroundColor: "#f0d24a", opacity: 0.95, boxShadow: "0 0 18px rgba(240,210,74,0.35)" }} />
-          <div style={{ ...abs, left: 573, top: 1300, width: 64, height: 18, transform: "skewX(-30deg)", backgroundColor: "#ee8a4e", opacity: 0.9 }} />
-          <div style={{ ...abs, left: 240, top: 1318, width: 118, height: 8, borderRadius: 4, transform: "rotate(-4deg)", backgroundColor: "#6e7a99" }} />
-        </>
-      ) : (
-        <>
-          <div style={{ ...abs, left: 250, top: 1292, width: 560, height: 96, clipPath: "polygon(7% 0, 93% 0, 100% 100%, 0 100%)", background: "repeating-linear-gradient(90deg,#222a44 0 26px,#151b30 26px 30px)", filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.5))" }} />
-          <div style={{ ...abs, left: 118, top: 1262, width: 118, height: 128, borderRadius: "14px 14px 22px 22px", backgroundColor: "#f1ece2", boxShadow: "inset -14px 0 0 rgba(0,0,0,0.12), 0 10px 18px rgba(0,0,0,0.4)" }} />
-          <div style={{ ...abs, left: 224, top: 1290, width: 44, height: 62, borderRadius: 22, border: "14px solid #f1ece2", borderLeftColor: "transparent" }} />
-          <div style={{ ...abs, left: 700, top: 1352, width: 250, height: 70, transform: "skewX(-24deg)", backgroundColor: "#e9e6dd", boxShadow: "0 6px 12px rgba(0,0,0,0.35)" }} />
-          <div style={{ ...abs, left: 930, top: 1372, width: 60, height: 40, transform: "skewX(-24deg)", backgroundColor: "#f3c84a" }} />
-        </>
-      )}
+      {/* Keyboard kecil di tengah, catatan tempel, dan pena (seperti referensi). */}
+      <div style={{ ...abs, left: 313, top: 1212, width: 410, height: 74, clipPath: "polygon(5% 0, 95% 0, 100% 100%, 0 100%)", background: `repeating-linear-gradient(90deg,${s.keys[0]} 0 22px,${s.keys[1]} 22px 25px)`, filter: "drop-shadow(0 8px 10px rgba(0,0,0,0.5))" }} />
+      <div style={{ ...abs, left: 437, top: 1306, width: 92, height: 22, transform: "skewX(-30deg)", backgroundColor: "#f0d24a", opacity: 0.95, boxShadow: "0 0 18px rgba(240,210,74,0.35)" }} />
+      <div style={{ ...abs, left: 573, top: 1300, width: 64, height: 18, transform: "skewX(-30deg)", backgroundColor: "#ee8a4e", opacity: 0.9 }} />
+      <div style={{ ...abs, left: 240, top: 1318, width: 118, height: 8, borderRadius: 4, transform: "rotate(-4deg)", backgroundColor: "#6e7a99" }} />
     </>
   );
 };

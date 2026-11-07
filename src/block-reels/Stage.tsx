@@ -265,11 +265,9 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
         <Layer cam={lc} p={0.6}>
           <spec.Mid />
         </Layer>
-        {scene.set === "kafe" ? null : (
-          <Layer cam={lc} p={1}>
-            <Monitor screen={spec.screen} spec={spec.monitor} />
-          </Layer>
-        )}
+        <Layer cam={lc} p={1}>
+          <Monitor screen={spec.screen} spec={spec.monitor} />
+        </Layer>
         {behind.map(view)}
         <Layer cam={lc} p={1}>
           <DeskTop set={scene.set} />

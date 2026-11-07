@@ -24,7 +24,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "netral", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.3, dur: 2.8, text: "Satu hal kecil itu ternyata tiga jam.", shot: "medium", motions: { ganjar: "angkatBahu" }, expressions: { ganjar: "bingung" } },
+      { who: "ganjar", from: 0.3, dur: 2.8, text: "Satu hal kecil itu ternyata tiga jam.", shot: "wide", motions: { ganjar: "angkatBahu" }, expressions: { ganjar: "bingung" } },
       { who: "claudecode", from: 3.3, dur: 2.2, text: "Aku cuma ikut prompt-mu.", shot: "overShoulder", expressions: { claudecode: "malu" } },
     ],
   },
@@ -37,7 +37,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "netral", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.3, dur: 2.6, text: "Masalahnya bukan di dia.", shot: "lowAngle", motions: { ganjar: "mikir" }, expressions: { ganjar: "mikir" } },
+      { who: "ganjar", from: 0.3, dur: 2.6, text: "Masalahnya bukan di dia.", shot: [{ at: 0, kind: "wide" }, { at: 1.6, kind: "lowAngle" }], motions: { ganjar: "mikir" }, expressions: { ganjar: "mikir" } },
       { who: "ganjar", from: 3, dur: 2.6, text: "Aku yang belum jelas minta apa.", shot: "dutch", expressions: { ganjar: "serius" }, push: true },
     ],
   },
