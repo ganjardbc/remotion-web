@@ -14,6 +14,7 @@ Konteks project untuk agent AI apa pun (Claude Code, Codex, Cursor, dll.). Baca 
 | Aturan konten Format A/B/C, brand, keputusan project, cara kerja, perintah | [CLAUDE.md](CLAUDE.md) |
 | Folder `src/videos/<Nama>/` Reels (nama, isi file, voiceover, alur kerja, daftar periksa) | [docs/struktur-video.md](docs/struktur-video.md) |
 | Reels dialog dan video dialog | [docs/dialog-reels.md](docs/dialog-reels.md) |
+| Reels block (diorama, shot kamera, tanpa footer) | [docs/block-reels.md](docs/block-reels.md) |
 | Carousel (field, ukuran, warna, validator, render) | [docs/carousel.md](docs/carousel.md) |
 | Warna, huruf, gerak | `design-system/gh-design-system` (`readme.md`, `SKILL.md`), tema `src/themes/gh.ts` |
 | Karakter Ganjar, Robot, Claude Code | `src/assets/characters/README.md` |
@@ -25,7 +26,7 @@ Aturan yang paling sering dilanggar (bahasa "aku-kamu", 5 hashtag, satu sorotan 
 - `src/compositions.ts`: mendaftarkan komposisi otomatis dari `export const COMPOSITION` di `<Nama>Video.tsx` atau `<Nama>Carousel.tsx`. `src/Root.tsx` tidak perlu diubah.
 - `src/videos/<Nama>/`: satu topik per folder, nama dan isi file baku (docs/struktur-video.md). Reels = `README.md`, `<Nama>Video.tsx`, `config.ts`, `scenes.tsx`, `parts.tsx`, `voiceover.json`, `voiceover-files.ts`, `voiceover/`. Carousel = `carousel.content.ts` + `<Nama>Carousel.tsx`.
 - `src/carousel/CarouselDeck.tsx`: renderer carousel. `src/content/`: tipe dan validator konten.
-- `src/dialog-reels/`: mesin Reels dialog dan stiker karakter carousel. `src/assets/`: karakter, latar, kamera, layar. `src/themes/`: tema GH.
+- `src/block-reels/`: mesin Reels block (dunia diorama berparalaks, shot kamera, caption atas). `src/dialog-reels/`: mesin Reels dialog dan stiker karakter carousel. `src/assets/`: karakter, latar, kamera, layar. `src/themes/`: tema GH.
 
 ## Perintah dan batasan
 - `npm i`, `npm run dev`, `npm run lint` (eslint + tsc + validate + validate:structure; `validate` butuh Node >= 22.18). Rincian perintah: CLAUDE.md.
