@@ -2,7 +2,7 @@ import type React from "react";
 import { AbsoluteFill, useCurrentFrame, useVideoConfig } from "remotion";
 import { ClaudeCodeBlock, claudeCodeBlockSize, GanjarBlock, ganjarBlockSize, RobotBlock, robotBlockSize, type Gesture } from "../assets/characters";
 import type { BlockCast, BlockLine, BlockScene, CharacterId, Place, ShotKind } from "./types";
-import { DeskFront, DeskTop, Foreground, H, Layer, Lighting, Monitor, SETS, W, type LayerCam, type Layout } from "./World";
+import { DESK_TOP, DeskFront, DeskTop, Foreground, H, Layer, Lighting, Monitor, SETS, W, type LayerCam, type Layout } from "./World";
 
 // Panggung Reels block: karakter block di dunia diorama dan kamera virtual. Kamera 2D memilih titik fokus dan zoom; tiap lapisan
 // dunia bergerak dengan faktor paralaks sendiri (lihat World.tsx), dan karakter diperbesar lewat tinggi (bukan CSS scale) supaya
@@ -15,7 +15,7 @@ const ORDER = { kiri: 0, tengah: 1, kanan: 2 } as const;
 // Titik layar tempat fokus kamera diletakkan: di bawah caption atas, di atas zona bawah antarmuka.
 const SCREEN = { x: 540, y: 880 };
 const ZOOM = {
-  medium: { ganjar: 1.8, robot: 1.8, claudecode: 1.7 },
+  medium: { ganjar: 2.1, robot: 1.8, claudecode: 1.7 },
   closeUp: { ganjar: 3.4, robot: 2.4, claudecode: 2.4 },
   extremeCloseUp: { ganjar: 6.2, robot: 4.2, claudecode: 4.2 },
 } as const;
@@ -130,14 +130,17 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; r
   return <div style={{ position: "absolute", left: actor.x - s.width / 2, top: s.top(actor.floor) - bounce, filter }}>{body}</div>;
 };
 
+// Bayangan lembut berbentuk elips (koordinat layar, sesudah kamera).
+const ContactShadow: React.FC<{ readonly x: number; readonly y: number; readonly w: number; readonly h: number; readonly opacity: number }> = ({ x, y, w, h, opacity }) => (
+  <div style={{ position: "absolute", left: x - w / 2, top: y - h / 2, width: w, height: h, borderRadius: "50%", background: `radial-gradient(ellipse at 50% 50%, rgba(0,0,0,${opacity}) 0%, rgba(0,0,0,0) 70%)` }} />
+);
+
 // ---------- Shot dan kamera ----------
 
 type Cam = { readonly fx: number; readonly fy: number; readonly z: number; readonly rot: number; readonly shake: number };
 type Resolved = Cam & { readonly ax: number; readonly ay: number };
 type ShotPlan = { readonly kind: ShotKind; readonly speaker: CharacterId; readonly start: number; readonly dur: number; readonly push: boolean };
 
-// Over the shoulder menaruh karakter langsung di koordinat layar, jadi dunia tidak diperbesar.
-const FLAT: Cam = { fx: W / 2, fy: H / 2, z: 1, rot: 0, shake: 0 };
 
 const shotPlanAt = (scene: BlockScene, t: number): ShotPlan => {
   let line: BlockLine = scene.lines[0];
@@ -157,9 +160,11 @@ const pitchFor = (kind: ShotKind, who: CharacterId): number | undefined => {
   return p === undefined ? undefined : who === "ganjar" ? p : Math.round(p * 0.6);
 };
 
-const camFor = (kind: ShotKind, a: Actor, wide: Cam, lay: Layout): Cam => {
+// Zoom ZOOM dikalibrasi untuk tinggi acuan (HEIGHT, di meja x PLACE_DESK); karakter yang diperkecil tata letak latar mendapat zoom
+// lebih besar supaya bingkai shot tetap sama rapatnya.
+const camFor = (kind: ShotKind, a: Actor, wide: Cam): Cam => {
   const who = a.cue.character;
-  const scale = a.h / (HEIGHT[who] * (a.place === "meja" ? PLACE_DESK * lay.deskScale : lay.behindScale));
+  const scale = (HEIGHT[who] * (a.place === "meja" ? PLACE_DESK : 1)) / a.h;
   const y = (part: "head" | "upper"): number => (who === "ganjar" ? a.floor - (part === "head" ? 0.69 : 0.58) * a.h : a.floor - (who === "robot" ? 0.44 : 0.38) * a.h);
   const zoom = (k: keyof typeof ZOOM): number => ZOOM[k][who] * scale;
   switch (kind) {
@@ -185,14 +190,14 @@ const lerp = (a: number, b: number, p: number): number => a + (b - a) * p;
 const noise = (f: number, seed: number): number => Math.sin(f * 0.37 + seed) * 0.5 + Math.sin(f * 0.91 + seed * 2.1) * 0.3 + Math.sin(f * 1.73 + seed * 3.3) * 0.2;
 
 // Kamera hidup: geser sangat pelan supaya lapisan berparalaks terlihat bergerak walau shot ditahan.
-const camAt = (plan: ShotPlan, a: Actor, t: number, wide: Cam, lay: Layout): Cam => {
+const camAt = (plan: ShotPlan, a: Actor, t: number, wide: Cam): Cam => {
   const p = t - plan.start;
   if (plan.kind === "reveal") {
     const k = ease((p - REVEAL_HOLD) / Math.min(REVEAL_SEC, Math.max(0.1, plan.dur - REVEAL_HOLD)));
-    const c = camFor("reveal", a, wide, lay);
+    const c = camFor("reveal", a, wide);
     return { fx: lerp(c.fx, wide.fx, k), fy: lerp(c.fy, wide.fy, k), z: Math.exp(lerp(Math.log(c.z), Math.log(wide.z), k)), rot: 0, shake: 0 };
   }
-  const c = camFor(plan.kind, a, wide, lay);
+  const c = camFor(plan.kind, a, wide);
   const z = plan.push ? c.z * (1 + PUSH * ease(p / plan.dur)) : c.z;
   return { ...c, z, fx: c.fx + 9 * Math.sin(t * 0.35), fy: c.fy + 5 * Math.sin(t * 0.27 + 1) };
 };
@@ -207,16 +212,15 @@ const resolveCam = (c: Cam): Resolved => {
 const layerCam = (c: Resolved): LayerCam => ({ tx: c.ax - c.z * c.fx, ty: c.ay - c.z * c.fy, z: c.z });
 const mapActor = (a: Actor, c: Resolved): Actor => ({ ...a, x: c.ax + c.z * (a.x - c.fx), floor: c.ay + c.z * (a.floor - c.fy), h: a.h * c.z });
 
-// Over the shoulder: pendengar dari belakang, besar, di tepi layar; pembicara menghadap kamera agak ke pendengar.
-const overShoulder = (actors: readonly Actor[], speaker: CharacterId, floor: number): readonly Actor[] | null => {
-  const spk = actors.find((a) => a.cue.character === speaker);
-  const lis = actors.find((a) => a.cue.character !== speaker);
-  if (!spk || !lis) return null;
-  const left = lis.x < spk.x;
-  return [
-    { ...spk, x: left ? 680 : 400, floor, h: HEIGHT[speaker] * 1.15, yaw: left ? -20 : 20 },
-    { ...lis, x: left ? 130 : 950, floor: floor + 150, h: HEIGHT[lis.cue.character] * 1.5, yaw: left ? 156 : -156 },
-  ];
+// Over the shoulder: kamera medium ke pembicara; pendengar tampil dari belakang, besar, di pojok bawah paling depan (di atas semua
+// lapisan dunia, sedikit buram). Tinggi dan titik kepala dalam koordinat layar.
+const SHOULDER = { ganjar: { h: 1400, head: 1460 }, robot: { h: 900, head: 1560 }, claudecode: { h: 790, head: 1580 } } as const;
+const shoulderActor = (lis: Actor, speakerX: number): Actor => {
+  const who = lis.cue.character;
+  const left = speakerX > W / 2;
+  const { h, head } = SHOULDER[who];
+  const floor = head + (who === "ganjar" ? 0.69 : who === "robot" ? 0.44 : 0.38) * h;
+  return { ...lis, x: left ? 150 : W - 150, floor, h, yaw: left ? 156 : -156, pitch: undefined };
 };
 
 export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
@@ -234,11 +238,16 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
   const spk = world.find((a) => a.cue.character === plan.speaker) ?? world[0];
   let actors: readonly Actor[] = world;
   let cam: Resolved = resolveCam(wide);
-  if (plan.kind === "overShoulder") {
-    actors = overShoulder(world, plan.speaker, lay.behindFloor) ?? world;
-    cam = resolveCam(FLAT);
+  let shoulder: Actor | null = null;
+  const listener = world.find((a) => a.cue.character !== plan.speaker);
+  if (plan.kind === "overShoulder" && spk && listener) {
+    cam = resolveCam(camAt({ ...plan, kind: "medium" }, spk, t, wide));
+    const mapped = mapActor(spk, cam);
+    const toward = mapped.x > W / 2 ? -20 : 20;
+    actors = world.filter((a) => a !== listener).map((a) => mapActor({ ...a, yaw: a === spk ? toward : undefined }, cam));
+    shoulder = shoulderActor(listener, mapped.x);
   } else if (spk) {
-    cam = resolveCam(camAt(plan, spk, t, wide, lay));
+    cam = resolveCam(camAt(plan, spk, t, wide));
     actors = world.map((a) => mapActor({ ...a, pitch: pitchFor(plan.kind, a.cue.character), yaw: a.cue.character === plan.speaker && plan.kind === "pov" ? 0 : undefined }, cam));
   }
   const lc = layerCam(cam);
@@ -265,13 +274,21 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
         <Layer cam={lc} p={0.6}>
           <spec.Mid />
         </Layer>
-        <Layer cam={lc} p={1}>
-          <Monitor screen={spec.screen} spec={spec.monitor} />
-        </Layer>
         {behind.map(view)}
         <Layer cam={lc} p={1}>
           <DeskTop set={scene.set} />
         </Layer>
+        {/* Monitor berdiri di atas meja, di depan karakter yang berdiri di balik meja. */}
+        <Layer cam={lc} p={1}>
+          <Monitor screen={spec.screen} spec={spec.monitor} />
+        </Layer>
+        {/* Bayangan kontak: badan di tepi jauh meja dan kaki karakter di atas meja. */}
+        {behind.map((a) => (
+          <ContactShadow key={`sb-${a.cue.character}`} x={a.x} y={lc.ty + lc.z * DESK_TOP + 6 * lc.z} w={size(a.cue.character, a.h).width * 0.75} h={30 * lc.z} opacity={0.55} />
+        ))}
+        {onDesk.map((a) => (
+          <ContactShadow key={`sd-${a.cue.character}`} x={a.x} y={a.floor + a.h * 0.2} w={a.h * 1.35} h={a.h * 0.16} opacity={0.6} />
+        ))}
         {onDesk.map(view)}
         <Layer cam={lc} p={1}>
           <DeskFront set={scene.set} />
@@ -279,6 +296,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
         <Layer cam={lc} p={1.28}>
           <Foreground set={scene.set} />
         </Layer>
+        {shoulder ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, filter: "blur(4px) brightness(0.8)" }}>{view(shoulder)}</div> : null}
       </div>
       <Lighting set={scene.set} />
     </AbsoluteFill>

@@ -201,10 +201,10 @@ const CafeMid: React.FC = () => (
 );
 
 export const SETS: Readonly<Record<BlockSet, SetSpec>> = {
-  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 560, y: 850, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#1d2c66", Far: NightFar, Mid: NightMid },
-  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 560, y: 850, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
-  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 560, y: 850, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
-  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 560, y: 850, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
+  mejaMalam: { bg: "#060a1c", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#16141c", keys: ["#26304f", "#141a2e"], deskTop: "#4d3c35", deskFront: "#0b0c13", deskEdge: "#6a5246", filter: "brightness(0.97) saturate(1.08)", key: "rgba(255,170,90,0.30)", vignette: 0.62, screen: "#2a3f8f", Far: NightFar, Mid: NightMid },
+  kantor: { bg: "#cfd9e6", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#6e5a40", keys: ["#3b4560", "#252c40"], deskTop: "#c9a47a", deskFront: "#a98458", deskEdge: "#e0c29b", filter: "brightness(1.02) saturate(1.02)", key: "rgba(255,244,214,0.18)", vignette: 0.28, screen: "#2c3f6f", Far: DayFar, Mid: DayMid },
+  terminal: { bg: "#070b1d", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: true }, keyAt: [36, 34], deskBottom: "#0a0e24", keys: ["#2a3a7a", "#141c40"], deskTop: "#1a2246", deskFront: "#0e1330", deskEdge: "#3f56a3", filter: "brightness(0.95) saturate(1.1) hue-rotate(-4deg)", key: "rgba(120,160,255,0.22)", vignette: 0.55, screen: "#12204f", Far: CodeFar, Mid: CodeMid },
+  kafe: { bg: "#2a1710", layout: DESK_LAYOUT, monitor: { x: 693, y: 884, w: 380, tilt: -42, bold: true, stand: false }, keyAt: [36, 34], deskBottom: "#22130d", keys: ["#4a3326", "#2a1a12"], deskTop: "#7b4d2f", deskFront: "#4f2f1c", deskEdge: "#a56d45", filter: "brightness(1) saturate(1.1) sepia(0.08)", key: "rgba(255,160,70,0.24)", vignette: 0.5, screen: "#2a3550", Far: CafeFar, Mid: CafeMid },
 };
 
 // ---------- Benda di meja ----------
@@ -283,6 +283,8 @@ export const DeskTop: React.FC<{ readonly set: BlockSet }> = ({ set }) => {
   return (
     <>
       <div style={{ ...abs, left: -40, top: DESK_TOP, width: W + 80, height: DESK_FRONT - DESK_TOP, background: `linear-gradient(180deg, ${s.deskEdge} 0%, ${s.deskTop} 10%, ${s.deskBottom} 100%)` }} />
+      {/* Pantulan cahaya layar monitor di permukaan meja. */}
+      <div style={{ ...abs, left: s.monitor.x - 120, top: DESK_TOP - 60, width: s.monitor.w + 360, height: 300, background: "radial-gradient(ellipse 50% 50% at 50% 30%, rgba(110,150,255,0.16) 0%, rgba(110,150,255,0) 100%)" }} />
       {/* Keyboard di tengah, catatan tempel, dan pena (seperti referensi). */}
       <Keyboard x={313} y={1204} keys={s.keys} />
       <div style={{ ...abs, left: 437, top: 1306, width: 92, height: 22, transform: "skewX(-30deg)", backgroundColor: "#f0d24a", opacity: 0.95, boxShadow: "0 0 18px rgba(240,210,74,0.35)" }} />
