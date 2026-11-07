@@ -1,7 +1,7 @@
 import type { BlockScene } from "../../block-reels";
 
-// Data scene BilangSelesai. Alur Format A: hook, relate, shift, urgency, closing, cta. Waktu `from` dan `dur` adalah perkiraan
-// (±15 huruf per detik) sampai voiceover ada. Latar berganti tiap scene; semua latar bersuasana malam.
+// Data scene BilangSelesai. Alur Format A: hook, relate, shift, urgency, cara, closing, cta. Konten tuntas dalam satu video, tanpa lanjutan. Waktu `from` dan `dur` adalah perkiraan
+// (±15 huruf per detik) sampai voiceover ada. Semua scene di satu ruangan yang sama (mejaMalam); variasi visual lewat shot kamera, pose, dan ekspresi.
 export const BASE_SCENES: readonly BlockScene[] = [
   {
     // Hook: Ganjar datar, Claude Code ceria. Kamera mulai extreme close-up wajah Ganjar lalu mundur memperlihatkan maskot.
@@ -12,13 +12,13 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "ganjar", expression: "serius", position: "kiri" },
       { character: "claudecode", expression: "senang", position: "kanan" },
     ],
-    lines: [{ who: "ganjar", from: 1.2, dur: 3.6, text: "Claude bilang sudah selesai, tapi aku tahu itu belum.", shot: "reveal", motions: { ganjar: "mikir" } }],
+    lines: [{ who: "ganjar", from: 1.2, dur: 3.6, text: "Claude bilang tugasnya selesai. Ternyata belum.", shot: "reveal", motions: { ganjar: "mikir" } }],
   },
   {
     // Relate: laporan "selesai" dari AI, lalu error muncul di production.
     id: "relate",
     seconds: 7.5,
-    set: "kantor",
+    set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "netral", position: "kiri" },
       { character: "claudecode", expression: "senang", position: "kanan" },
@@ -41,16 +41,16 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Shift: insight inti. Kamera naik pelan dari bawah saat kalimat inti diucapkan.
     id: "shift",
     seconds: 8.5,
-    set: "terminal",
+    set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "mikir", position: "kiri" },
       { character: "claudecode", expression: "malu", position: "kanan" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 2.9, text: "Aku sudah mengerjakan semua yang kamu minta.", shot: "medium", expressions: { claudecode: "malu" } },
+      { who: "claudecode", from: 0.3, dur: 3.3, text: "Tapi aku sudah mengerjakan semua yang kamu minta.", shot: "medium", expressions: { claudecode: "malu" } },
       {
         who: "ganjar",
-        from: 3.5,
+        from: 3.9,
         dur: 4.4,
         text: "AI berhenti saat promptnya habis, bukan saat masalahmu selesai.",
         shot: "lowAngle",
@@ -61,23 +61,49 @@ export const BASE_SCENES: readonly BlockScene[] = [
     ],
   },
   {
-    // Urgency: jeda sebelum jawaban, Claude Code bertanya balik.
+    // Urgency: jeda sebelum jawaban, Claude Code bertanya balik. Jawabannya langsung di scene berikutnya (video ini tuntas).
     id: "urgency",
-    seconds: 6.4,
-    set: "kafe",
+    seconds: 7,
+    set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "mikir", position: "kiri" },
       { character: "claudecode", expression: "bingung", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.3, dur: 3.7, text: "Ini baru bagian pertama. Ada satu kebiasaan yang menyelamatkanku.", shot: "medium", expressions: { ganjar: "mikir" }, motions: { ganjar: "pinggang" } },
-      { who: "claudecode", from: 4.2, dur: 1.4, text: "Kebiasaan apa?", shot: "closeUp", expressions: { claudecode: "bingung" } },
+      { who: "ganjar", from: 0.3, dur: 4.6, text: "Tahu masalahnya belum cukup. Ada satu kebiasaan yang menyelamatkanku.", shot: "medium", expressions: { ganjar: "mikir" }, motions: { ganjar: "pinggang" } },
+      { who: "claudecode", from: 5.1, dur: 1.5, text: "Kebiasaan apa?", shot: "closeUp", expressions: { claudecode: "bingung" } },
     ],
   },
   {
-    // Closing: kebiasaannya, lalu kalimat quote di close-up wajah Ganjar.
+    // Cara: kebiasaan konkret, tiga hal yang ditulis sebelum minta. Isi tuntas di video ini.
+    id: "cara",
+    seconds: 10.6,
+    set: "mejaMalam",
+    cast: [
+      { character: "ganjar", expression: "senang", position: "kiri" },
+      { character: "claudecode", expression: "mikir", position: "kanan" },
+    ],
+    lines: [
+      {
+        who: "ganjar",
+        from: 0.3,
+        dur: 6.7,
+        text: "Sebelum minta, tulis tiga hal: apa yang harus jalan, cara mengeceknya, dan apa yang tidak boleh rusak.",
+        shot: [
+          { at: 0, kind: "medium" },
+          { at: 3.6, kind: "closeUp" },
+        ],
+        expressions: { ganjar: "senang", claudecode: "mikir" },
+        motions: { ganjar: "tunjuk" },
+        motionAt: { ganjar: 1.2 },
+      },
+      { who: "claudecode", from: 7.3, dur: 3.2, text: "Jadi aku baru berhenti kalau ketiganya terpenuhi.", shot: "closeUp", expressions: { claudecode: "senang" } },
+    ],
+  },
+  {
+    // Closing: kalimat quote di close-up wajah Ganjar.
     id: "closing",
-    seconds: 6.4,
+    seconds: 4.4,
     set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "serius", position: "kiri" },
@@ -87,24 +113,24 @@ export const BASE_SCENES: readonly BlockScene[] = [
       {
         who: "ganjar",
         from: 0.3,
-        dur: 5.6,
-        text: "Tulis dulu seperti apa selesai itu. Karena selesai itu keputusanmu, bukan laporan AI.",
+        dur: 3.4,
+        text: "AI yang mengerjakan, kamu yang menentukan selesai.",
         shot: [
           { at: 0, kind: "wide" },
-          { at: 2.6, kind: "closeUp" },
+          { at: 1.2, kind: "closeUp" },
         ],
         expressions: { ganjar: "serius", claudecode: "senang" },
-        reactions: [{ who: "ganjar", expression: "senang", at: 3.2 }],
+        reactions: [{ who: "ganjar", expression: "senang", at: 2 }],
         motions: { ganjar: "tepuk" },
-        motionAt: { ganjar: 3.8 },
+        motionAt: { ganjar: 2.4 },
       },
     ],
   },
   {
     // CTA: dua karakter menghadap kamera, Ganjar melambai di akhir.
     id: "cta",
-    seconds: 6.2,
-    set: "kantor",
+    seconds: 6.3,
+    set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "senang", position: "kiri" },
       { character: "claudecode", expression: "senang", position: "kanan" },
@@ -113,8 +139,8 @@ export const BASE_SCENES: readonly BlockScene[] = [
       {
         who: "ganjar",
         from: 0.3,
-        dur: 5.3,
-        text: "Follow kalau kamu mau contoh brief yang membuat AI berhenti di titik yang benar.",
+        dur: 5.5,
+        text: "Follow kalau kamu mau terus melatih cara menilai kerja AI, bukan hanya memakainya.",
         shot: "medium",
         push: true,
         expressions: { ganjar: "senang", claudecode: "senang" },
