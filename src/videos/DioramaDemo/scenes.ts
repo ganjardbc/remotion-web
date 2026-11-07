@@ -5,7 +5,6 @@ export const BASE_SCENES: readonly BlockScene[] = [
   {
     id: "hook",
     seconds: 6,
-    onScreenText: "AI Bilang *Selesai*, Menurut Siapa?",
     set: "mejaMalam",
     cast: [
       { character: "ganjar", expression: "serius", position: "kiri" },
@@ -32,8 +31,6 @@ export const BASE_SCENES: readonly BlockScene[] = [
   {
     id: "shift",
     seconds: 6,
-    onScreenText: "AI berhenti saat *prompt-mu habis*",
-    cardMotion: "kata",
     set: "terminal",
     cast: [
       { character: "ganjar", expression: "mikir", position: "kiri" },

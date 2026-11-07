@@ -4,7 +4,8 @@ import type { BlockMeta } from "../../block-reels";
 // Tujuannya menguji mesin src/block-reels: empat latar diorama, paralaks, dan jenis shot kamera. Isi naskah placeholder.
 
 export const META: BlockMeta = {
-  title: "Diorama Demo",
+  title: "AI Bilang Selesai, Menurut Siapa?",
+  highlight: "Selesai",
 };
 
 export const CAPTION = "Prototipe Reels block: dunia diorama, kamera berganti sudut. Isi naskah masih contoh.";

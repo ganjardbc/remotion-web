@@ -13,8 +13,8 @@ export const FPS = 30;
 // Jeda setelah baris terakhir sebelum scene berganti.
 const TAIL = 0.6;
 // Bagian bawah (di atas meja gelap): caption karaoke dengan komponen yang sama dengan Reels dialog (src/dialog-reels/Caption.tsx),
-// pusat teks di y ≈ 1640. Bagian atas: kartu teks layar (OnScreenText, komponen yang sama dengan Reels dialog) untuk judul dan hal
-// penting, di bawah zona aman atas antarmuka aplikasi (±250 px).
+// pusat teks di y ≈ 1640. Bagian atas: kartu judul (OnScreenText, komponen yang sama dengan Reels dialog), hanya selama scene pertama,
+// di bawah zona aman atas antarmuka aplikasi (±250 px).
 const CAPTION_BOX = { top: 1500, bottom: 1920 - 1780 } as const;
 const CARD_TOP = 260;
 
@@ -22,8 +22,10 @@ export const sceneFrames = (scenes: readonly BlockScene[]): number[] =>
   scenes.map((s) => Math.ceil(Math.max(s.seconds, ...s.lines.map((l) => l.from + l.dur + TAIL)) * FPS));
 export const totalFrames = (scenes: readonly BlockScene[]): number => sceneFrames(scenes).reduce((a, b) => a + b, 0);
 
-export const BlockReels: React.FC<{ readonly theme: string; readonly meta: BlockMeta; readonly scenes: readonly BlockScene[] }> = ({ theme, scenes }) => {
+export const BlockReels: React.FC<{ readonly theme: string; readonly meta: BlockMeta; readonly scenes: readonly BlockScene[] }> = ({ theme, meta, scenes }) => {
   const frames = sceneFrames(scenes);
+  // `highlight` (frasa di dalam judul) menjadi sorotan oranye lewat tanda `*...*`.
+  const title = meta.highlight ? meta.title.replace(meta.highlight, `*${meta.highlight}*`) : meta.title;
   return (
     <ThemeProvider name={theme}>
       <AbsoluteFill style={{ backgroundColor: "#05070f" }}>
@@ -31,7 +33,7 @@ export const BlockReels: React.FC<{ readonly theme: string; readonly meta: Block
           {scenes.map((s, i) => (
             <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
               <Stage scene={s} />
-              <OnScreenText scene={{ onScreenText: s.onScreenText ?? "", lines: s.lines, tone: s.tone ?? "biru", cardAlign: s.cardAlign, cardMotion: s.cardMotion }} top={CARD_TOP} />
+              {i === 0 ? <OnScreenText scene={{ onScreenText: title, lines: [], tone: "biru" }} top={CARD_TOP} /> : null}
               <LineCaption lines={s.lines} motion="karaoke" box={CAPTION_BOX} />
             </Series.Sequence>
           ))}
