@@ -2,7 +2,7 @@
 // Membuat folder Reels baru (Format A/C, narator Claude Code) sesuai docs/struktur-video.md.
 //   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" [--scenes hook,relate,shift,urgency,closing,cta]
 //   node scripts/new-reels.mjs <NamaPascalCase> "<Judul video>" --dialog [--cast ganjar,robot] [--style rig|stickman|block] [--scenes ...]
-// Tanpa --dialog: Reels narator Claude Code (config, scenes.tsx, parts.tsx, Video). Dengan --dialog: Reels dialog dua
+// Tanpa --dialog: Reels narator Claude Code (config, scenes.tsx, parts.tsx, Video dengan POSES per scene dan subtitle Caption). Dengan --dialog: Reels dialog dua
 // karakter atau lebih (config, scenes.ts berisi data scene dan baris ucapan, Video yang memanggil src/dialog-reels).
 // Menulis README.md, config.ts, scenes.tsx, <Nama>Video.tsx dari scripts/templates/reels, menyalin parts.tsx dari
 // src/videos/PromptPanjang (selalu versi terbaru), menyiapkan voiceover.json kosong dan voiceover-files.ts.
@@ -79,6 +79,15 @@ const scenes = ids
   })
   .join("\n");
 const scenesMap = ids.map((s, i) => `  ${s}: ${components[i]},`).join("\n");
+// Pose karakter: hook, urgency, dan scene terakhir di tengah (besar); sisanya selang-seling kiri dan kanan (kecil).
+let side = 0;
+const poses = ids
+  .map((s, i) => {
+    if (i === 0 || i === ids.length - 1 || s === "urgency") return `  ${s}: { x: 0.5, h: ${s === "urgency" ? 480 : 500} },`;
+    return `  ${s}: { x: ${side++ % 2 === 0 ? "0.32" : "0.68"}, h: 440 },`;
+  })
+  .join("\n");
+const emptyWords = ids.map((s) => `  ${s}: [],`).join("\n");
 const faces = ids.map((s) => `  ${s}: [[0, "netral"]],`).join("\n");
 
 mkdirSync(dst, { recursive: true });
@@ -130,9 +139,9 @@ if (dialog) {
   process.exit(0);
 }
 
-write("config.ts", fill(read(join(tpl, "config.ts.tmpl")), { __SPOKEN__: spoken }));
+write("config.ts", fill(read(join(tpl, "config.ts.tmpl")), { __SPOKEN__: spoken, __WORDS__: emptyWords }));
 write("scenes.tsx", fill(read(join(tpl, "scenes.tsx.tmpl")), { __SCENES__: scenes }));
-write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl")), { __SCENES_MAP__: scenesMap, __FACES__: faces }));
+write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl")), { __SCENES_MAP__: scenesMap, __FACES__: faces, __POSES__: poses }));
 write("README.md", fill(read(join(tpl, "README.md.tmpl"))));
 // Komponen bersama video Reels: salinan versi terbaru dari video rujukan.
 write("parts.tsx", read(join(root, "src/videos/PromptPanjang/parts.tsx")));

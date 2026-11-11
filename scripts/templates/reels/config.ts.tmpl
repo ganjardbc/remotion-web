@@ -19,6 +19,12 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
 __SPOKEN__
 };
 
+// Waktu tiap kata SPOKEN (detik sejak klip suara mulai) untuk subtitle `Caption`. Kosong = pakai estimateWords() di bawah;
+// diisi dari audio asli oleh `node scripts/vo-words.mjs --video __NAME__` setelah voiceover jadi.
+export const WORDS: Readonly<Record<SceneId, readonly (readonly [string, number])[]>> = {
+__WORDS__
+};
+
 export const CAPTION = "TODO: caption pendek, 1-3 kalimat.";
 export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;
 
@@ -28,12 +34,19 @@ export const VO: Readonly<Record<SceneId, { readonly file: string | null; readon
   SCENE_IDS.map((id) => [id, entries[id] ? { file: VO_FILES[id], seconds: entries[id].duration } : { file: null, seconds: SPOKEN[id].length / CHARS_PER_SEC }]),
 ) as Record<SceneId, { file: string | null; seconds: number }>;
 
-// Detik sejak suara mulai saat `phrase` diucapkan, diperkirakan dari posisi huruf di SPOKEN.
+// Detik sejak suara mulai saat `phrase` diucapkan: awal kata tempat frasa dimulai di SPOKEN, dari WORDS (audio asli) atau
+// estimateWords() selama WORDS scene itu masih kosong.
 export const at = (id: SceneId, phrase: string): number => {
   const i = SPOKEN[id].indexOf(phrase);
   if (i < 0) throw new Error(`Frasa "${phrase}" tidak ada di SPOKEN.${id}`);
-  return (i / SPOKEN[id].length) * VO[id].seconds;
+  const index = SPOKEN[id].slice(0, i).split(" ").length - 1;
+  const words = WORDS[id].length > 0 ? WORDS[id] : estimateWords(id);
+  return words[Math.max(0, index)][1];
 };
+
+// Perkiraan waktu kata dari posisi huruf di SPOKEN, dipakai subtitle selama WORDS scene itu masih kosong.
+export const estimateWords = (id: SceneId): readonly (readonly [string, number])[] =>
+  [...SPOKEN[id].matchAll(/\S+/g)].map((m) => [m[0], ((m.index ?? 0) / SPOKEN[id].length) * VO[id].seconds] as const);
 
 export const SCENE_FRAMES: readonly number[] = SCENE_IDS.map((id) => LEAD + Math.ceil((VO[id].seconds + TAIL) * FPS));
 export const SCENE_START: readonly number[] = SCENE_FRAMES.map((_, i) => SCENE_FRAMES.slice(0, i).reduce((a, b) => a + b, 0));

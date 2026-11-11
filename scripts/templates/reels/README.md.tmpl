@@ -2,10 +2,10 @@
 
 "__TITLE__": reels 9:16 (1080x1920, 30 fps), Format A (opini), __COUNT__ scene, komposisi `__NAME__-Reels` (terdaftar otomatis lewat `COMPOSITION`). Alur: __FLOW__. Karakter narator: Claude Code (rig 2D). Dibuat dengan `node scripts/new-reels.mjs`.
 
-- `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`.
+- `config.ts`: teks ucapan (`SPOKEN`, singkatan dieja fonetis "Ei Ai"), caption dan 5 hashtag, durasi scene, `at(scene, frasa)`, `WORDS` (waktu kata untuk subtitle; kosong = perkiraan, isi lewat `vo-words.mjs`).
 - `scenes.tsx`: __COUNT__ scene. Cue ditulis sebagai frasa dari `SPOKEN`.
 - `parts.tsx`: salinan komponen dari PromptPanjang (`Frame`, `Headline`, `Chip`, `Card`, `PointTag`, `Bar`, `Grow`, `GithubMark`, `useCue`).
-- `__NAME__Video.tsx`: `Series` scene, karakter (ekspresi per scene), `BrandFooter` sekali di root, suara.
+- `__NAME__Video.tsx`: `Series` scene, karakter (`POSES` per scene, ekspresi per scene), subtitle `Caption`, `BrandFooter` sekali di root, suara.
 
 ## Voiceover (belum dibuat)
 
