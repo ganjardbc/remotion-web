@@ -28,6 +28,9 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
 export const CAPTION = "Satu model untuk semua pekerjaan itu boros. Opus merancang, Sonnet mengerjakan, Haiku menjalankan tugas rutin. Kuncinya ada di pembagiannya.";
 export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;
 
+// Voiceover lama: eleven_multilingual_v2 speed 1.2. Dikunci di sini karena bawaan Reels baru eleven_v4 (scripts/vo-lines.mjs); mengubahnya mengubah hash klip.
+export const VO_SETTINGS = { model: "eleven_multilingual_v2", speed: 1.2 } as const;
+
 const entries = (manifest as { lines: Record<string, { duration: number }> }).lines;
 
 export const VO: Readonly<Record<SceneId, { readonly file: string | null; readonly seconds: number }>> = Object.fromEntries(

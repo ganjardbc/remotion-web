@@ -6,7 +6,7 @@
 // ulang, supaya kredit tidak terbuang, dan oleh vo-process.mjs untuk mencatat hasilnya.
 // Dua pola video dikenali dari isi folder:
 //   - Reels (config.ts + SPOKEN, tanpa voiceover.ts): satu baris per scene, id = id scene, teks = SPOKEN[id],
-//     suara Nilasari, model eleven_multilingual_v2, speed 1.2 (lihat docs/struktur-video.md).
+//     suara Nilasari, model eleven_v4 (mengabaikan speed; tag emosi lewat VO_TEXT), lihat docs/struktur-video.md.
 //   - Reels dialog (config.ts + scenes.ts, tanpa voiceover.ts): satu baris per baris ucapan, id = id scene + nomor urut
 //     (hook-01), suara per karakter dari src/dialog-reels/voices.json.
 //   - video dialog 16:9 (scenes.tsx + voiceover.ts): baris per dialog, suara per karakter.
@@ -29,8 +29,10 @@ mkdirSync(tmp, { recursive: true });
 
 // Suara baku Reels (narator Claude Code). Ubah di sini dan semua baris Reels berstatus "berubah".
 const REELS_VOICE = { id: "NPDHDOOQCSyifTJZOe6J", name: "Nilasari" };
-const REELS_MODEL = "eleven_multilingual_v2";
-const REELS_SPEED = 1.2;
+// Bawaan Reels baru: eleven_v4 (tag emosi per kalimat lewat VO_TEXT; speed tidak dikirim). Video lama yang memakai
+// eleven_multilingual_v2 speed 1.2 menguncinya lewat VO_SETTINGS di config.ts supaya hash klip tidak berubah.
+const REELS_MODEL = "eleven_v4";
+const REELS_SPEED = null;
 
 const bundle = async (entry, name, external = ["remotion", "react", "react/*", "@remotion/*"]) => {
   const outfile = join(tmp, name);
@@ -74,7 +76,7 @@ if (isReelsDialog) {
   const manifestFile = join(dir, "voiceover.json");
   const manifest = existsSync(manifestFile) ? JSON.parse(readFileSync(manifestFile, "utf8")).lines : {};
   // Opsional per video: VO_SETTINGS (model, speed; speed null = tidak dikirim) dan VO_TEXT (teks TTS per scene, mis. dengan
-  // tag emosi eleven_v4 "[excited] ..."; SPOKEN tetap teks tampilan). Tanpa keduanya, bawaan REELS_* dan SPOKEN dipakai.
+  // tag emosi eleven_v4 "[excited] ..."; SPOKEN tetap teks tampilan). Tanpa keduanya, bawaan REELS_* (eleven_v4) dan SPOKEN dipakai.
   const set = cfg.VO_SETTINGS ?? {};
   const model = set.model ?? REELS_MODEL;
   const speed = "speed" in set ? set.speed : REELS_SPEED;
