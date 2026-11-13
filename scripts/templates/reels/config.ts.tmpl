@@ -2,6 +2,8 @@
 // Voiceover: ElevenLabs, suara Nilasari. Teks yang diucapkan ada di SPOKEN; singkatan Inggris ditulis fonetis
 // ("Ei Ai") agar terbaca benar. Selama voiceover.json kosong, durasi scene diperkirakan dari panjang teks
 // (CHARS_PER_SEC); setelah ada voiceover.json, durasi mengikuti audio.
+import type { DisplayFix } from "../../desk-world";
+import { NARRATOR_MODES, type NarratorMode } from "../../reelsLayout";
 import manifest from "./voiceover.json";
 import { VO_FILES } from "./voiceover-files";
 
@@ -9,8 +11,9 @@ export const FPS = 30;
 // Jeda sebelum suara mulai di tiap scene, dan ekor setelah suara selesai.
 export const LEAD = 6;
 const TAIL = 0.45;
-// Kecepatan bicara Nilasari, speed 1.2 (diukur dari Haiku55).
-const CHARS_PER_SEC = 15.3;
+// Perkiraan kecepatan bicara Nilasari dengan eleven_v4 (rata-rata CodeGraph, SpecKit, ClaudeSetup, SeleraDesain: 11-15 huruf/detik),
+// dipakai selama voiceover.json kosong. Setelah klip jadi, durasi mengikuti audio.
+const CHARS_PER_SEC = 13.2;
 
 export const SCENE_IDS = [__SCENE_IDS__] as const;
 export type SceneId = (typeof SCENE_IDS)[number];
@@ -19,11 +22,31 @@ export const SPOKEN: Readonly<Record<SceneId, string>> = {
 __SPOKEN__
 };
 
-// Waktu tiap kata SPOKEN (detik sejak klip suara mulai) untuk subtitle `Caption`. Kosong = pakai estimateWords() di bawah;
+// Voiceover: eleven_v4 (bawaan Reels baru; mengabaikan speed). Tag emosi Inggris di depan teks TTS membuat intonasi mengikuti isi
+// scene, jadi suara tidak datar. VO_TEXT = teks yang dikirim ke TTS (SPOKEN tetap teks subtitle dan cue); di sini tiap scene diberi satu
+// tag dari VO_TAGS. Untuk kalimat penting, tulis VO_TEXT per scene dengan tag per kalimat: "[curious] Kalimat satu. [serious] Kalimat dua."
+// Mengubah model atau teks TTS mengubah hash klip, jadi putuskan sebelum generate semua.
+export const VO_SETTINGS = { model: "eleven_v4", speed: null } as const;
+const VO_TAGS: Readonly<Partial<Record<string, string>>> = { hook: "[serious]", relate: "[thoughtful]", shift: "[confident]", urgency: "[intrigued]", closing: "[calm]", cta: "[friendly]" };
+export const VO_TEXT: Readonly<Record<SceneId, string>> = Object.fromEntries(SCENE_IDS.map((id) => [id, `${VO_TAGS[id] ?? "[confident]"} ${SPOKEN[id]}`])) as Record<SceneId, string>;
+
+// Waktu tiap kata SPOKEN (detik sejak klip suara mulai) untuk subtitle `SubtitleBand`. Kosong = pakai estimateWords() di bawah;
 // diisi dari audio asli oleh `node scripts/vo-words.mjs --video __NAME__` setelah voiceover jadi.
 export const WORDS: Readonly<Record<SceneId, readonly (readonly [string, number])[]>> = {
 __WORDS__
 };
+
+// Posisi dan mode karakter narator per scene: `x` titik tengah (0-1), `mode` normal | small | hidden (lihat reelsLayout.ts,
+// "Tata letak narator aman platform"). Mode menentukan tinggi karakter, tinggi area konten, dan posisi subtitle scene itu:
+// konten banyak -> small (karakter kecil) atau hidden (tanpa karakter). Sesuaikan per storyboard.
+export const NARRATOR: Readonly<Record<SceneId, { readonly x: number; readonly mode: NarratorMode }>> = {
+__NARRATOR__
+};
+export const SUBTITLE_Y: readonly number[] = SCENE_IDS.map((id) => NARRATOR_MODES[NARRATOR[id].mode].subtitleTop);
+
+// Subtitle menampilkan ejaan asli, bukan ejaan fonetis SPOKEN yang hanya untuk suara. Contoh: { match: ["ei", "ai"], to: "AI" }
+// (urutan kata fonetis huruf kecil -> pengganti). Kosong bila tidak ada singkatan fonetis.
+export const DISPLAY_FIXES: readonly DisplayFix[] = [];
 
 export const CAPTION = "TODO: caption pendek, 1-3 kalimat.";
 export const HASHTAGS = ["#DeveloperIndonesia", "#AIForDeveloper", "#CareerDeveloper", "#ProgrammerIndonesia", "#TechMindset"] as const;

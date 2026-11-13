@@ -2,7 +2,7 @@ import type React from "react";
 import { Easing, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { Icon } from "../icons";
 import { Enter } from "../motion";
-import { ZONES } from "../reelsLayout";
+import { SAFE_RIGHT, SUBTITLE_HEIGHT, ZONES } from "../reelsLayout";
 import { useTheme } from "../themes";
 
 // Dunia meja untuk Reels 9:16 (asal: ClaudeSetup): satu meja yang sama di semua scene, benda di atasnya, monitor dan keyboard
@@ -266,4 +266,119 @@ export const Caption: React.FC<{
       })}
     </div>
   );
+};
+
+// ---------- SubtitleBand (subtitle dua baris, zona aman platform) ----------
+
+const BAND_MAX_CHARS = 46; // dua baris, sekitar 23 huruf per baris pada huruf 46 px di lebar 780 px
+
+// Potongan lebih panjang dari Caption: sampai BAND_MAX_CHARS huruf (dua baris), putus lebih awal setelah tanda baca.
+const bandChunksOf = (words: readonly Word[]): readonly (readonly number[])[] => {
+  const chunks: number[][] = [];
+  let current: number[] = [];
+  let len = 0;
+  words.forEach(([word], i) => {
+    if (current.length > 0 && len + 1 + word.length > BAND_MAX_CHARS) {
+      chunks.push(current);
+      current = [];
+      len = 0;
+    }
+    current.push(i);
+    len += (len > 0 ? 1 : 0) + word.length;
+    if (/[.?:!]$/.test(word) && len >= 16) {
+      chunks.push(current);
+      current = [];
+      len = 0;
+    }
+  });
+  if (current.length > 0) chunks.push(current);
+  return chunks;
+};
+
+// Subtitle karaoke dua baris di pil gelap, dirender sekali di root video (di luar Series). Margin simetris SAFE_RIGHT di kiri dan
+// kanan: teks tepat di tengah layar dan kolom tombol platform tidak menutupinya. `y` = posisi atas, satu angka atau satu per scene (dari NARRATOR_MODES).
+// Kata yang diucapkan putih penuh, yang sudah lewat agak redup, yang belum redup (tanpa oranye).
+export const SubtitleBand: React.FC<{
+  readonly sceneStarts: readonly number[];
+  readonly words: readonly (readonly Word[])[];
+  readonly lead: number;
+  readonly y: number | readonly number[];
+}> = ({ sceneStarts, words: sceneWords, lead, y }) => {
+  const t = useTheme();
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const sceneIndex = sceneStarts.reduce((acc, start, idx) => (start <= frame ? idx : acc), 0);
+  const now = (frame - sceneStarts[sceneIndex] - lead) / fps;
+  const words = sceneWords[sceneIndex];
+  const chunks = bandChunksOf(words);
+  const chunkIndex = chunks.reduce((acc, ids, k) => (now >= words[ids[0]][1] - 0.05 ? k : acc), -1);
+  if (chunkIndex < 0) return null;
+  const ids = chunks[chunkIndex];
+  const enter = interpolate(now, [words[ids[0]][1] - 0.05, words[ids[0]][1] + 0.12], [0, 1], { ...clamp, easing: EASE });
+  return (
+    <div
+      style={{
+        position: "absolute",
+        left: SAFE_RIGHT,
+        right: SAFE_RIGHT,
+        top: typeof y === "number" ? y : y[sceneIndex],
+        height: SUBTITLE_HEIGHT,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: enter,
+        translate: `0 ${(1 - enter) * 12}px`,
+      }}
+    >
+      <div
+        style={{
+          padding: "14px 32px",
+          borderRadius: 28,
+          backgroundColor: "rgba(8, 12, 32, 0.78)",
+          textAlign: "center",
+          textWrap: "balance",
+          fontFamily: t.fonts.body,
+          fontWeight: 700,
+          fontSize: 46,
+          lineHeight: 1.25,
+          color: t.colors.groundText,
+        }}
+      >
+        {ids.map((wi, k) => {
+          const start = words[wi][1];
+          const nextStart = k + 1 < ids.length ? words[ids[k + 1]][1] : Number.POSITIVE_INFINITY;
+          const on = interpolate(now, [start, start + 0.1], [0, 1], { ...clamp, easing: EASE });
+          const past = Number.isFinite(nextStart) ? interpolate(now, [nextStart, nextStart + 0.1], [0, 1], { ...clamp, easing: EASE }) : 0;
+          return (
+            <span key={wi} style={{ opacity: 0.45 + 0.55 * on - 0.12 * past }}>
+              {words[wi][0]}
+              {k < ids.length - 1 ? " " : ""}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+// Ejaan tampilan subtitle: SPOKEN ditulis fonetis untuk suara ("Ei Ai", "Es Di El Si"), tapi layar harus menampilkan ejaan asli
+// ("AI", "SDLC"). Tiap aturan = urutan kata fonetis (huruf kecil, tanpa tanda baca di ujung) dan penggantinya; waktu kata pertama
+// dipertahankan dan tanda baca di ujung kata terakhir ikut dibawa. Aturan yang tidak cocok dibiarkan (mis. hasil scribe yang sudah "AI").
+export type DisplayFix = { readonly match: readonly string[]; readonly to: string };
+
+export const displayWords = (words: readonly (readonly [string, number])[], fixes: readonly DisplayFix[]): readonly (readonly [string, number])[] => {
+  const core = (w: string): string => w.replace(/[.,?:;!]+$/, "").toLowerCase();
+  const out: (readonly [string, number])[] = [];
+  for (let i = 0; i < words.length; ) {
+    const fix = fixes.find((f) => f.match.every((m, k) => i + k < words.length && core(words[i + k][0]) === m));
+    if (fix) {
+      const last = words[i + fix.match.length - 1][0];
+      out.push([fix.to + (last.match(/[.,?:;!]+$/)?.[0] ?? ""), words[i][1]]);
+      i += fix.match.length;
+    } else {
+      out.push(words[i]);
+      i += 1;
+    }
+  }
+  return out;
 };

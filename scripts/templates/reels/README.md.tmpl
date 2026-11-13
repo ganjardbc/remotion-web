@@ -16,7 +16,7 @@ node scripts/vo-lines.mjs --video __NAME__      # status tiap scene
 node scripts/vo-generate.mjs --video __NAME__   # generate yang baru/berubah (minta konfirmasi dulu)
 ```
 
-Suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_multilingual_v2`, `speed` 1.2, satu klip per scene dengan id = id scene. Klip mentah di `out/vo-raw/__NAME__/`, hasil olahan di `voiceover/*.mp3`. Setelah itu durasi scene dan cue ikut audio secara otomatis; cek ulang frasa di `at(...)`. Untuk satu scene saja: `node scripts/vo-process.mjs <id> out/vo-raw/__NAME__/<id>.mp3 --hash <hash> --video __NAME__`.
+Suara Nilasari (`NPDHDOOQCSyifTJZOe6J`), model `eleven_v4` (bawaan; mengabaikan `speed`, tag emosi per scene lewat `VO_TEXT`), satu klip per scene dengan id = id scene. Klip mentah di `out/vo-raw/__NAME__/`, hasil olahan di `voiceover/*.mp3`. Setelah itu durasi scene dan cue ikut audio secara otomatis; cek ulang frasa di `at(...)`. Untuk satu scene saja: `node scripts/vo-process.mjs <id> out/vo-raw/__NAME__/<id>.mp3 --hash <hash> --video __NAME__`.
 
 ```bash
 npx remotion render src/index.ts __NAME__-Reels out/__NAME__-Reels.mp4

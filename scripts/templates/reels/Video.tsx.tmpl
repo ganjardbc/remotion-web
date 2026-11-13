@@ -2,13 +2,14 @@ import type React from "react";
 import { Audio } from "@remotion/media";
 import { Easing, interpolate, Series, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
 import { BrandFooter } from "../../BrandFooter";
-import { Caption } from "../../desk-world";
+import { displayWords, SubtitleBand } from "../../desk-world";
 import { ClaudeCode, CLAUDE_CODE_VIEWBOX, claudeCodeSize } from "../../assets/characters";
 import type { PlacedClip } from "../../assets/characters/robot/rig/clips";
 import type { FaceKey } from "../../assets/characters/robot/rig/face";
 import type { VideoComposition } from "../../compositions";
+import { NARRATOR_FEET_Y, NARRATOR_MODES } from "../../reelsLayout";
 import { ThemeProvider } from "../../themes";
-import { estimateWords, FPS, LEAD, MUSIC_FILE, SCENE_FRAMES, SCENE_IDS, SCENE_START, TOTAL_FRAMES, VO, WORDS, type SceneId } from "./config";
+import { DISPLAY_FIXES, estimateWords, FPS, LEAD, MUSIC_FILE, NARRATOR, SCENE_FRAMES, SCENE_IDS, SCENE_START, SUBTITLE_Y, TOTAL_FRAMES, VO, WORDS, type SceneId } from "./config";
 import { __SCENE_COMPONENTS__ } from "./scenes";
 
 export { TOTAL_FRAMES };
@@ -30,30 +31,25 @@ const FACE_KEYS: readonly FaceKey[] = SCENE_IDS.flatMap((id, i) =>
 // Gerakan sesaat karakter (mis. surprise) ditaruh di sini, lihat PromptPanjangVideo.tsx.
 const CLIPS: readonly PlacedClip[] = [];
 
-// Kaki karakter menapak di atas pita caption (acuan: SeleraDesain, docs/struktur-video.md "Tata letak tanpa meja").
-const CHAR_FEET_Y = 1610;
-
-// Pose per scene: x = titik tengah (0-1 lebar layar), h = tinggi karakter. Pindah 0,5 dtk ease-out di awal scene.
-// Tengah (besar) untuk hook, urgency, dan CTA; kiri atau kanan (kecil) untuk scene padat, selang-seling. Sesuaikan per storyboard.
-const POSES: Readonly<Record<SceneId, { readonly x: number; readonly h: number }>> = {
-__POSES__
-};
-// Subtitle di bawah karakter, di atas BrandFooter (footer mulai y 1825).
-const CAPTION_Y = 1660;
+// Kaki karakter menapak di NARRATOR_FEET_Y (di atas safeBottom, lihat reelsLayout.ts "Tata letak narator aman platform").
 const POSE_EASE = Easing.bezier(0.2, 0.8, 0.2, 1);
+
+// Pose per scene dari NARRATOR (config.ts): x = titik tengah (0-1), tinggi dari mode (normal, small, hidden = 0).
+const poseOf = (id: SceneId): { readonly x: number; readonly h: number } => ({ x: NARRATOR[id].x, h: NARRATOR_MODES[NARRATOR[id].mode].h });
 
 const Character: React.FC = () => {
   const { width } = useVideoConfig();
   const frame = useCurrentFrame();
   const idx = Math.max(0, SCENE_START.filter((s) => frame >= s).length - 1);
-  const prev = POSES[SCENE_IDS[Math.max(0, idx - 1)]];
-  const cur = POSES[SCENE_IDS[idx]];
+  const prev = poseOf(SCENE_IDS[Math.max(0, idx - 1)]);
+  const cur = poseOf(SCENE_IDS[idx]);
   const k = interpolate(frame - SCENE_START[idx], [0, 15], [0, 1], { extrapolateRight: "clamp", easing: POSE_EASE });
   const x = prev.x + (cur.x - prev.x) * k;
   const h = prev.h + (cur.h - prev.h) * k;
+  if (h < 8) return null;
   const size = claudeCodeSize(h);
   return (
-    <div style={{ position: "absolute", left: x * width - size.width / 2, top: CHAR_FEET_Y + CLAUDE_CODE_VIEWBOX.y * (h / CLAUDE_CODE_VIEWBOX.h) }}>
+    <div style={{ position: "absolute", left: x * width - size.width / 2, top: NARRATOR_FEET_Y + CLAUDE_CODE_VIEWBOX.y * (h / CLAUDE_CODE_VIEWBOX.h) }}>
       <ClaudeCode height={h} face={FACE_KEYS} clips={CLIPS} />
     </div>
   );
@@ -81,7 +77,7 @@ const Sound: React.FC = () => (
 
 type Props = { readonly theme: string };
 
-// Reels 9:16: panel penjelasan di atas, Claude Code sebagai narator di bawah, subtitle di paling bawah, BrandFooter sekali di root.
+// Reels 9:16: panel penjelasan di atas, Claude Code sebagai narator di bawah, subtitle dua baris di zona aman, BrandFooter sekali di root.
 export const __NAME__Video: React.FC<Props> = ({ theme }) => {
   const { fps } = useVideoConfig();
   return (
@@ -97,7 +93,7 @@ export const __NAME__Video: React.FC<Props> = ({ theme }) => {
         })}
       </Series>
       <Character />
-      <Caption sceneStarts={SCENE_START} words={SCENE_IDS.map((id) => (WORDS[id].length > 0 ? WORDS[id] : estimateWords(id)))} lead={LEAD} y={CAPTION_Y} />
+      <SubtitleBand sceneStarts={SCENE_START} words={SCENE_IDS.map((id) => displayWords(WORDS[id].length > 0 ? WORDS[id] : estimateWords(id), DISPLAY_FIXES))} lead={LEAD} y={SUBTITLE_Y} />
       <BrandFooter theme={theme} handle="@ganjar_hadiatna" />
       <Sound />
     </ThemeProvider>

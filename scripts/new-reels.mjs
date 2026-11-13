@@ -79,12 +79,12 @@ const scenes = ids
   })
   .join("\n");
 const scenesMap = ids.map((s, i) => `  ${s}: ${components[i]},`).join("\n");
-// Pose karakter: hook, urgency, dan scene terakhir di tengah (besar); sisanya selang-seling kiri dan kanan (kecil).
+// Narator: hook dan scene terakhir di tengah (normal); sisanya selang-seling kiri dan kanan, mode small. Sesuaikan per storyboard.
 let side = 0;
-const poses = ids
+const narrator = ids
   .map((s, i) => {
-    if (i === 0 || i === ids.length - 1 || s === "urgency") return `  ${s}: { x: 0.5, h: ${s === "urgency" ? 480 : 500} },`;
-    return `  ${s}: { x: ${side++ % 2 === 0 ? "0.32" : "0.68"}, h: 440 },`;
+    if (i === 0 || i === ids.length - 1) return `  ${s}: { x: 0.5, mode: "normal" },`;
+    return `  ${s}: { x: ${side++ % 2 === 0 ? "0.3" : "0.7"}, mode: "small" },`;
   })
   .join("\n");
 const emptyWords = ids.map((s) => `  ${s}: [],`).join("\n");
@@ -139,12 +139,17 @@ if (dialog) {
   process.exit(0);
 }
 
-write("config.ts", fill(read(join(tpl, "config.ts.tmpl")), { __SPOKEN__: spoken, __WORDS__: emptyWords }));
+write("config.ts", fill(read(join(tpl, "config.ts.tmpl")), { __SPOKEN__: spoken, __WORDS__: emptyWords, __NARRATOR__: narrator }));
 write("scenes.tsx", fill(read(join(tpl, "scenes.tsx.tmpl")), { __SCENES__: scenes }));
-write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl")), { __SCENES_MAP__: scenesMap, __FACES__: faces, __POSES__: poses }));
+write(`${name}Video.tsx`, fill(read(join(tpl, "Video.tsx.tmpl")), { __SCENES_MAP__: scenesMap, __FACES__: faces }));
 write("README.md", fill(read(join(tpl, "README.md.tmpl"))));
 // Komponen bersama video Reels: salinan versi terbaru dari video rujukan.
-write("parts.tsx", read(join(root, "src/videos/PromptPanjang/parts.tsx")));
+// Frame diganti versi tata letak narator aman platform (scripts/templates/reels/frame.tsx.tmpl); PromptPanjang tidak diubah.
+const frameBlock = read(join(tpl, "frame.tsx.tmpl"));
+const promptParts = read(join(root, "src/videos/PromptPanjang/parts.tsx"))
+  .replace('import { at, FPS, LEAD, SCENE_IDS, type SceneId } from "./config";', 'import { NARRATOR_MODES, SAFE_RIGHT, ZONES } from "../../reelsLayout";\nimport { at, FPS, LEAD, NARRATOR, SCENE_IDS, type SceneId } from "./config";')
+  .replace(/\/\/ Area konten di atas karakter[\s\S]*?\n\};\n\nexport const Headline/, () => `${frameBlock}\nexport const Headline`);
+write("parts.tsx", promptParts);
 // Voiceover kosong; vo-process.mjs mengisinya.
 write("voiceover.json", '{ "lines": {} }\n');
 write("voiceover-files.ts", '// Dibuat otomatis oleh scripts/vo-process.mjs. Jangan diubah tangan.\n\nexport const VO_FILES: Readonly<Record<string, string>> = {};\n');

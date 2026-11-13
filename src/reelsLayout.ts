@@ -35,6 +35,22 @@ export const FEET_ON_DESK = ZONES.deskTop + 100;
 export const KEYBOARD_TOP = ZONES.deskTop - 205;
 export const FEET_ON_KEYBOARD = KEYBOARD_TOP + 150;
 
+// ---------- Tata letak narator aman platform (tanpa meja) ----------
+// Bagian bawah layar Instagram dan TikTok tertutup nama akun, caption postingan, dan info audio; sisi kanan tertutup kolom tombol.
+// Karena itu subtitle dan karakter dipindah ke atas `safeBottom`, dan subtitle dibatasi dari sisi kanan. Angka perkiraan, uji di aplikasi.
+// Tiga mode per scene: karakter `normal`, `small` (konten banyak), atau `hidden` (konten sangat banyak). Konten selalu mulai di
+// contentTop; makin kecil karakter, makin tinggi area konten. Subtitle (dua baris) tepat di bawah konten, di atas karakter.
+export const SAFE_RIGHT = 150; // kolom tombol platform
+export const SAFE_SIDE = 60;
+export const NARRATOR_FEET_Y = 1555; // kaki karakter, di atas safeBottom
+export const SUBTITLE_HEIGHT = 160;
+export const NARRATOR_MODES = {
+  normal: { h: 340, contentBottom: 1010, subtitleTop: 1040 },
+  small: { h: 220, contentBottom: 1140, subtitleTop: 1170 },
+  hidden: { h: 0, contentBottom: 1330, subtitleTop: 1370 },
+} as const;
+export type NarratorMode = keyof typeof NARRATOR_MODES;
+
 // Pemeriksaan kewajaran peta zona; kosong berarti beres. Dipakai scripts/validate-layout.mjs.
 export const layoutProblems = (): readonly string[] => {
   const z = ZONES;
@@ -45,5 +61,11 @@ export const layoutProblems = (): readonly string[] => {
   if (!(z.deskTop < z.captionTop && z.captionTop + z.captionHeight <= DESK_BOTTOM)) p.push("pita caption harus berada di dalam meja (deskTop sampai dasar meja).");
   if (!(DESK_BOTTOM <= z.footerTop)) p.push("dasar meja harus di atas footerTop.");
   if (z.captionTop + z.captionHeight > z.footerTop) p.push("caption tidak boleh menimpa footer.");
+  for (const [name, m] of Object.entries(NARRATOR_MODES)) {
+    if (m.subtitleTop + SUBTITLE_HEIGHT > z.safeBottom) p.push(`mode narator ${name}: subtitle (sampai ${m.subtitleTop + SUBTITLE_HEIGHT}) melewati safeBottom ${z.safeBottom}.`);
+    if (!(m.contentBottom < m.subtitleTop)) p.push(`mode narator ${name}: konten harus berakhir di atas subtitle.`);
+    if (m.h > 0 && !(m.subtitleTop + SUBTITLE_HEIGHT <= NARRATOR_FEET_Y - m.h + 60)) p.push(`mode narator ${name}: subtitle menimpa karakter (kepala di sekitar y ${NARRATOR_FEET_Y - m.h}).`);
+  }
+  if (NARRATOR_FEET_Y > z.safeBottom) p.push(`NARRATOR_FEET_Y ${NARRATOR_FEET_Y} melewati safeBottom ${z.safeBottom}.`);
   return p;
 };

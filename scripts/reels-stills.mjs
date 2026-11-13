@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 // Merender beberapa still per scene Reels lalu menggabungkannya jadi satu contact sheet untuk dicek mata (atau dibaca Claude).
-//   node scripts/reels-stills.mjs --video <Nama> [--per 2] [--only hook,cta] [--width 360]
+//   node scripts/reels-stills.mjs --video <Nama> [--per 2] [--only hook,cta] [--width 360] [--plain]
+// Secara bawaan zona tidak aman platform diberi tint merah: bawah (y >= safeBottom, tertutup nama akun dan caption) dan kolom
+// tombol kanan; --plain mematikannya.
 // Frame tiap scene dihitung dari config.ts (SCENE_START, SCENE_FRAMES, LEAD): --per 1 = tengah, 2 = 30% dan 80%, 3 = 15%,
 // 50%, 90%. Susunan sheet: satu kolom per scene (urutan scene), satu baris per posisi. Hasil di
 // out/still/<Nama>/ (still per frame) dan out/still/<Nama>-sheet.png. Butuh ffmpeg dan Chrome Remotion.
@@ -22,6 +24,7 @@ if (!video) {
 }
 const per = Math.max(1, Math.min(3, Number(arg("--per", "2"))));
 const only = arg("--only")?.split(",");
+const plain = process.argv.includes("--plain");
 const width = Number(arg("--width", "360"));
 const POS = { 1: [0.5], 2: [0.3, 0.8], 3: [0.15, 0.5, 0.9] }[per];
 
@@ -50,5 +53,5 @@ for (const p of POS) {
 const sheet = join(root, "out/still", `${video}-sheet.png`);
 const listFile = join(dir, "list.txt");
 writeFileSync(listFile, files.map((f) => `file '${f}'\nduration 1`).join("\n"));
-execFileSync("ffmpeg", ["-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", listFile, "-vf", `scale=${width}:-1,tile=${ids.length}x${POS.length}:padding=6:color=black`, "-frames:v", "1", sheet]);
+execFileSync("ffmpeg", ["-y", "-v", "error", "-f", "concat", "-safe", "0", "-i", listFile, "-vf", `${plain ? "" : "drawbox=x=0:y=1570:w=iw:h=ih-1570:color=red@0.22:t=fill,drawbox=x=930:y=1100:w=150:h=470:color=red@0.22:t=fill,"}scale=${width}:-1,tile=${ids.length}x${POS.length}:padding=6:color=black`, "-frames:v", "1", sheet]);
 console.log(`Contact sheet: ${sheet} (${ids.length} kolom x ${POS.length} baris)`);

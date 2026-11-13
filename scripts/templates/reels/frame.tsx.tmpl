@@ -1,0 +1,32 @@
+// Area konten: dari ZONES.contentTop sampai batas bawah mode narator scene ini (NARRATOR di config.ts); subtitle dan karakter di bawahnya.
+export const Frame: React.FC<{ readonly id: SceneId; readonly sweep?: boolean; readonly variant?: "ground" | "dark" | "primary"; readonly children: React.ReactNode }> = ({ id, sweep, variant = "ground", children }) => {
+  const index = SCENE_IDS.indexOf(id) + 1;
+  const frame = useCurrentFrame();
+  const fade = interpolate(frame, [0, 6], [0, 1], { extrapolateRight: "clamp" });
+  const bottom = NARRATOR_MODES[NARRATOR[id].mode].contentBottom;
+  // Semua scene memakai lebar konten yang sama (margin SAFE_RIGHT di kiri dan kanan, sama dengan subtitle): konten simetris di tengah
+  // dan tidak tertutup kolom tombol platform (kanan, mulai sekitar y 1100). Jangan ubah per mode atau per scene.
+  const side = SAFE_RIGHT;
+  return (
+    <>
+      <Backdrop variant={variant} label={`${String(index).padStart(2, "0")} / ${String(SCENE_IDS.length).padStart(2, "0")}`} sweep={sweep} />
+      <div
+        style={{
+          position: "absolute",
+          left: side,
+          right: side,
+          top: ZONES.contentTop,
+          height: bottom - ZONES.contentTop,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "stretch",
+          gap: 36,
+          opacity: fade,
+        }}
+      >
+        {children}
+      </div>
+    </>
+  );
+};
