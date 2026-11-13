@@ -31,6 +31,7 @@ Berkas ini tidak dimuat otomatis. Baca sesuai tugas:
 
 ## Aturan penulisan (semua format)
 - Bahasa Indonesia natural, seperti orang berbagi pemikiran, bukan nada AI. "Aku-kamu" konsisten. Dilarang "gue/lo".
+- Naskah Reels dibaca keras sebagai satu aliran. Jangan menumpuk kalimat fragmen yang masing-masing berdiri sendiri; sambung dengan penghubung agar suara terdengar utuh, bukan terpotong-potong. Bacakan keras sebelum disetujui. Konten yang bersumber dari artikel atau dokumen pihak lain menyebut sumbernya di hook dan di caption (contoh: "Anthropic menjelaskan ..."); closing yang mengambil inti kalimat sumber ditulis sebagai parafrasa, bukan kutipan.
 - Paragraf pendek, 1-2 kalimat. Insight di atas informasi, cara berpikir di atas tutorial (kecuali Format C).
 - Judul 4-8 kata, pendek, memancing penasaran, tidak terdengar seperti tutorial (kecuali Format C, judul boleh menyebut hasil).
 - Setiap konten membawa **caption pendek** dan **tepat 5 hashtag**: `#DeveloperIndonesia #AIForDeveloper #CareerDeveloper #ProgrammerIndonesia #TechMindset`.
@@ -40,11 +41,12 @@ Berkas ini tidak dimuat otomatis. Baca sesuai tugas:
 Alur wajib: Hook, Relate, Shift, Closing, CTA.
 - **Hook**: 1 kalimat, memicu konflik atau penasaran, menahan scroll dalam 1-3 detik. Hook aman atau umum tidak dipakai.
 - **Relate**: masalah audiens (developer/pengguna AI), supaya terasa "ini aku banget".
-- **Shift**: sudut pandang tidak umum yang membongkar asumsi. Setelah insight tajam pertama, **wajib** 1 kalimat urgency follow ("ini baru bagian pertama...").
+- **Shift**: sudut pandang tidak umum yang membongkar asumsi. Setelah insight tajam pertama, **wajib** 1 kalimat urgency follow. Urgency harus **dibayar di video yang sama** (scene sesudahnya menjawab), jangan menjanjikan konten lanjutan yang belum ada. Tulis sebagai **satu kalimat utuh yang mengalir** (satu pikiran, ada penghubung seperti "tapi", "yang", "dan"), bukan dua fragmen pendek yang terdengar terpotong. Contoh baik: "Tapi loop saja belum cukup. Yang bikin loop ini benar-benar jalan adalah apa yang ditulis di tiap file, dan itu yang paling sering dilewatkan." Hindari: "Ini baru bagian pertama. Bagian kedua soal X."
 - **Closing**: kesimpulan tajam, ada kalimat yang layak jadi quote.
 - **CTA**: ajakan follow dengan alasan spesifik ke isi konten, bukan "follow untuk tips lainnya".
+- **Subtitle wajib terbaca di Instagram dan TikTok** (banyak penonton tanpa suara): jangan di bagian bawah layar atau sisi kanan yang tertutup UI platform. Reels baru memakai tata letak narator aman platform (subtitle dua baris di atas karakter, karakter `normal`/`small`/`hidden` sesuai banyaknya konten): lihat docs/struktur-video.md. Video lama yang sudah diposting tidak diubah.
 - Irama, variasi visual antar scene, layout (`src/reelsLayout.ts`, `src/desk-world/`), dan daftar periksa: lihat docs/struktur-video.md. Pedoman, `npm run validate:structure` memberi peringatan.
-- Referensi implementasi dan durasi: `src/videos/PromptPanjang` (hook 5 dtk, relate 7, shift 9, urgency 5, cara 9, closing 4, CTA 5).
+- Referensi implementasi dan durasi: `src/videos/PromptPanjang` (hook 5 dtk, relate 7, shift 9, urgency 5, cara 9, closing 4, CTA 5). Urgency di PromptPanjang ditulis dua kalimat pendek; untuk konten baru pakai satu kalimat mengalir seperti aturan Urgency di atas.
 
 ## Format B: Carousel (Instagram/LinkedIn, 1080x1350)
 - 5-8 slide (boleh 9-10 untuk topik kaya). **Setiap slide wajib punya judul**, termasuk hook dan closing.
@@ -68,7 +70,7 @@ Alur wajib: Hook, Relate, Shift, Closing, CTA.
 ## Perintah
 - `npm run dev` (Studio), `npm run lint` (eslint + tsc + validate + validate:structure), `npm run validate` (carousel), `npm run validate:structure`, `npm run validate:layout`, `npm run alt` (alt text, caption, hashtag carousel).
 - Scaffold (jangan buat folder dengan tangan; komposisi terdaftar otomatis): `node scripts/new-reels.mjs <Nama> "<Judul>" [--scenes a,b,c] [--dialog [--cast ganjar,robot] [--style rig|stickman]]`, `node scripts/new-carousel.mjs <Nama> "<Judul>" [--format B|C] [--variant quick-tips|walkthrough]`, `node scripts/new-video.mjs <Nama> "<Judul>"` (video dialog), `node scripts/new-block.mjs <Nama> "<Judul>" [--cast ...] [--sets ...]` (Reels block).
-- Voiceover (ElevenLabs, minta konfirmasi sebelum memakai kredit): `vo-generate.mjs`, `vo-words.mjs`; tanpa API: `vo-check.mjs`, `reels-stills.mjs`. Semua `--video <Nama>`. Rincian di docs/struktur-video.md, bagian Voiceover.
+- Voiceover (ElevenLabs, model bawaan `eleven_v4` dengan tag emosi lewat `VO_TEXT`; minta konfirmasi sebelum memakai kredit): `vo-generate.mjs`, `vo-words.mjs`; tanpa API: `vo-check.mjs`, `reels-stills.mjs`. Semua `--video <Nama>`. Rincian di docs/struktur-video.md, bagian Voiceover.
 - Render Reels: `npx remotion render src/index.ts <Id> out/<Nama>.mp4`. Carousel: tambah `--sequence --image-format=png`.
 
 ## Belum dikerjakan

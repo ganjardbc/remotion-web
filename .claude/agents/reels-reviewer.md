@@ -14,7 +14,7 @@ Periksa dengan membaca kode:
 1. **Zona**: posisi y tulis-tangan di `scenes.tsx` atau `<Nama>Video.tsx` yang seharusnya dari `src/reelsLayout.ts`; judul di atas `contentTop`; benda yang turun ke pita caption; karakter di luar layar.
 2. **Sorotan oranye**: hitung `Accent`, `groundEmphasis`, `accent` per scene; lebih dari satu frasa atau kontrol oranye per layar adalah pelanggaran (kecuali sorotan judul yang disengaja, per CLAUDE.md).
 3. **Variasi**: tulis jenis hero, latar (`variant`), dan pose karakter tiap scene berurutan; dua scene berurutan yang sama adalah temuan.
-4. **Naskah**: kalimat tanya ya/tidak yang ditutup kata kerja atau kata ulang; "gue/lo" (dilarang, pakai aku-kamu); judul bukan Title Case; Format A tanpa urgency; CTA generik ("follow untuk tips lainnya").
+4. **Naskah**: kalimat tanya ya/tidak yang ditutup kata kerja atau kata ulang; "gue/lo" (dilarang, pakai aku-kamu); judul bukan Title Case; subtitle atau konten penting di zona tidak aman platform (bawah y >= 1570 atau kolom kanan, lihat reelsLayout.ts) atau tidak memakai `SubtitleBand` dan `NARRATOR`; Format A tanpa urgency, atau urgency yang terpotong (dua fragmen pendek) atau menjanjikan "bagian kedua" yang tidak dibayar di video yang sama; naskah terdengar putus-putus saat dibaca keras; konten bersumber artikel tapi sumbernya tidak disebut di hook dan caption; CTA generik ("follow untuk tips lainnya").
 5. **Konten**: caption pendek dan tepat 5 hashtag baku; `BrandFooter` satu kali di root; komposisi terdaftar lewat `COMPOSITION`; tidak mengimpor dari folder video lain; warna dan huruf dari tema, bukan hardcode.
 6. **Voiceover dan caption**: `WORDS` ada dan cocok dengan `SPOKEN`; catatan `vo-check` yang belum ditangani; `at(...)` yang menunjuk frasa yang sudah berubah.
 
