@@ -3,6 +3,7 @@ import { Audio } from "@remotion/media";
 import { AbsoluteFill, Series, staticFile } from "remotion";
 import { LineCaption } from "../dialog-reels/Caption";
 import { OnScreenText } from "../dialog-reels/DraftVideo";
+import { BLOCK_CAPTION_BOX } from "../reelsLayout";
 import { ThemeProvider } from "../themes";
 import { Stage } from "./Stage";
 import type { BlockMeta, BlockScene } from "./types";
@@ -13,10 +14,10 @@ import type { BlockMeta, BlockScene } from "./types";
 export const FPS = 30;
 // Jeda setelah baris terakhir sebelum scene berganti.
 const TAIL = 0.6;
-// Bagian bawah (di atas meja gelap): caption karaoke dengan komponen yang sama dengan Reels dialog (src/dialog-reels/Caption.tsx),
-// pusat teks di y ≈ 1640. Bagian atas: kartu judul (OnScreenText, komponen yang sama dengan Reels dialog), hanya selama scene pertama,
+// Bagian bawah (di bawah sisi depan meja, di atas `safeBottom`): caption dengan komponen yang sama dengan Reels dialog
+// (src/dialog-reels/Caption.tsx), kotaknya dari src/reelsLayout.ts supaya tidak tertutup UI Instagram dan TikTok. Bagian atas: kartu judul (OnScreenText, komponen yang sama dengan Reels dialog), hanya selama scene pertama,
 // di bawah zona aman atas antarmuka aplikasi (±250 px).
-const CAPTION_BOX = { top: 1500, bottom: 1920 - 1780 } as const;
+const CAPTION_BOX = BLOCK_CAPTION_BOX;
 const CARD_TOP = 260;
 
 export const sceneFrames = (scenes: readonly BlockScene[]): number[] =>
@@ -63,8 +64,8 @@ export const BlockReels: React.FC<{ readonly theme: string; readonly meta: Block
             <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
               <Stage scene={s} />
               {i === 0 ? <OnScreenText scene={{ onScreenText: title, lines: [], tone: "biru" }} top={CARD_TOP} /> : null}
-              {/* Gradasi gelap lembut di bawah supaya caption terbaca di atas tuts, meja, dan bahu depan shot overShoulder. */}
-              <div style={{ position: "absolute", left: 0, top: 1380, width: 1080, height: 540, background: "linear-gradient(180deg, rgba(3,6,16,0) 0%, rgba(3,6,16,0.55) 45%, rgba(3,6,16,0.7) 100%)" }} />
+              {/* Gradasi gelap lembut di belakang caption supaya terbaca di atas meja dan bahu depan shot overShoulder. */}
+              <div style={{ position: "absolute", left: 0, top: CAPTION_BOX.top - 90, width: 1080, height: 1920 - (CAPTION_BOX.top - 90), background: "linear-gradient(180deg, rgba(3,6,16,0) 0%, rgba(3,6,16,0.55) 30%, rgba(3,6,16,0.7) 100%)" }} />
               <LineCaption lines={s.lines} motion="baris" box={CAPTION_BOX} />
             </Series.Sequence>
           ))}

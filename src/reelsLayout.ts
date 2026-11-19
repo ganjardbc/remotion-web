@@ -51,6 +51,15 @@ export const NARRATOR_MODES = {
 } as const;
 export type NarratorMode = keyof typeof NARRATOR_MODES;
 
+// Caption Reels block: kotak (px dari tepi atas dan bawah kanvas) di bawah sisi depan meja diorama (y 1374) dan seluruhnya di atas
+// `safeBottom`, jadi tidak tertutup nama akun dan caption postingan. Tingginya cukup untuk nama pembicara dan satu baris teks.
+export const BLOCK_CAPTION_HEIGHT = 170;
+export const BLOCK_CAPTION_BOX = {
+  top: ZONES.safeBottom - 20 - BLOCK_CAPTION_HEIGHT,
+  bottom: REELS_H - (ZONES.safeBottom - 20),
+} as const;
+export const BLOCK_DESK_FRONT = 1374; // sama dengan DESK_FRONT di src/block-reels/World.tsx
+
 // Pemeriksaan kewajaran peta zona; kosong berarti beres. Dipakai scripts/validate-layout.mjs.
 export const layoutProblems = (): readonly string[] => {
   const z = ZONES;
@@ -66,6 +75,8 @@ export const layoutProblems = (): readonly string[] => {
     if (!(m.contentBottom < m.subtitleTop)) p.push(`mode narator ${name}: konten harus berakhir di atas subtitle.`);
     if (m.h > 0 && !(m.subtitleTop + SUBTITLE_HEIGHT <= NARRATOR_FEET_Y - m.h + 60)) p.push(`mode narator ${name}: subtitle menimpa karakter (kepala di sekitar y ${NARRATOR_FEET_Y - m.h}).`);
   }
+  if (BLOCK_CAPTION_BOX.top + BLOCK_CAPTION_HEIGHT > z.safeBottom) p.push(`caption Reels block (sampai ${BLOCK_CAPTION_BOX.top + BLOCK_CAPTION_HEIGHT}) melewati safeBottom ${z.safeBottom}.`);
+  if (BLOCK_CAPTION_BOX.top < BLOCK_DESK_FRONT) p.push(`caption Reels block (mulai ${BLOCK_CAPTION_BOX.top}) menimpa sisi depan meja diorama (${BLOCK_DESK_FRONT}).`);
   if (NARRATOR_FEET_Y > z.safeBottom) p.push(`NARRATOR_FEET_Y ${NARRATOR_FEET_Y} melewati safeBottom ${z.safeBottom}.`);
   return p;
 };
