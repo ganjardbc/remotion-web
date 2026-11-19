@@ -14,7 +14,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "netral", position: "kanan" },
     ],
     lines: [
-      { who: "ganjar", from: 0.3, dur: 3.6, text: "Guru, aku pakai AI persis kayak Google. Ada yang salah?", tag: "curious", shot: "wide", expressions: { ganjar: "bingung" }, motions: { ganjar: "garukKepala" } },
+      { who: "ganjar", from: 0.3, dur: 3.6, text: "Guru, aku pakai AI persis kayak Google. Ada yang salah?", spoken: "Guru, aku pakai Ei Ai persis kayak Google. Ada yang salah?", tag: "curious", shot: "wide", expressions: { ganjar: "bingung" }, motions: { ganjar: "garukKepala" } },
       { who: "claudecode", from: 4.1, dur: 2.9, text: "Salah besar. Keduanya bukan hal yang sama.", tag: "firmly", shot: "lowAngle", expressions: { claudecode: "serius", ganjar: "kaget" }, motions: { claudecode: "angkatTangan" }, sfx: [{ name: "ding", at: 0.1, volume: 0.3 }] },
     ],
   },
@@ -30,7 +30,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
     lines: [
       { who: "ganjar", from: 0.3, dur: 1, text: "Bedanya apa?", tag: "curious", shot: "closeUp", expressions: { ganjar: "mikir" }, motions: { ganjar: "mikir" } },
       { who: "claudecode", from: 1.6, dur: 4.9, text: "Google itu mencari. Kamu mengetik, dia menunjukkan halaman yang sudah ada.", tag: "calmly", shot: "medium", push: true, expressions: { claudecode: "senang" }, motions: { claudecode: "tunjuk" } },
-      { who: "ganjar", from: 6.9, dur: 0.8, text: "Kalau AI?", tag: "curious", shot: "dutch", expressions: { ganjar: "bingung" }, motions: { ganjar: "angkatBahu" } },
+      { who: "ganjar", from: 6.9, dur: 0.8, text: "Kalau AI?", spoken: "Kalau Ei Ai?", tag: "curious", shot: "dutch", expressions: { ganjar: "bingung" }, motions: { ganjar: "angkatBahu" } },
     ],
   },
   {
@@ -43,7 +43,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "serius", position: "kanan" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 2.6, text: "AI menyusun. Dia tidak membuka arsip.", tag: "calmly", shot: "medium", expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
+      { who: "claudecode", from: 0.3, dur: 2.6, text: "AI menyusun. Dia tidak membuka arsip.", spoken: "Ei Ai menyusun. Dia tidak membuka arsip.", tag: "calmly", shot: "medium", expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
       { who: "claudecode", from: 3, dur: 6.4, text: "Dia menebak kata berikutnya yang paling masuk akal, dari pola jutaan tulisan yang pernah dia pelajari.", tag: "calmly", shot: [{ at: 0, kind: "closeUp" }, { at: 3.4, kind: "highAngle" }], expressions: { claudecode: "serius" } },
     ],
   },
@@ -71,7 +71,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "serius", position: "kanan" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 3, text: "Google menemukan jawaban. AI membuat jawaban.", tag: "calm", shot: "closeUp", push: true, expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
+      { who: "claudecode", from: 0.3, dur: 3, text: "Google menemukan jawaban. AI membuat jawaban.", spoken: "Google menemukan jawaban. Ei Ai membuat jawaban.", tag: "calm", shot: "closeUp", push: true, expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
     ],
   },
   {
@@ -85,7 +85,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
     ],
     lines: [
       { who: "ganjar", from: 0.3, dur: 1.5, text: "Terus aku harus gimana?", tag: "confused", shot: "medium", expressions: { ganjar: "bingung" }, motions: { ganjar: "angkatBahu" } },
-      { who: "claudecode", from: 2.1, dur: 6.9, text: "Karena AI menebak dari tulisanmu, cara kamu bertanya menentukan hasilnya. Itu pelajaran berikutnya.", tag: "calmly", shot: "wide", expressions: { claudecode: "senang", ganjar: "mikir" }, motions: { claudecode: "tunjuk" } },
+      { who: "claudecode", from: 2.1, dur: 6.9, text: "Karena AI menebak dari tulisanmu, cara kamu bertanya menentukan hasilnya. Itu pelajaran berikutnya.", spoken: "Karena Ei Ai menebak dari tulisanmu, cara kamu bertanya menentukan hasilnya. Itu pelajaran berikutnya.", tag: "calmly", shot: "wide", expressions: { claudecode: "senang", ganjar: "mikir" }, motions: { claudecode: "tunjuk" } },
     ],
   },
   {
