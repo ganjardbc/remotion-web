@@ -1,1 +1,69 @@
-{ "lines": {} }
+{
+  "lines": {
+    "beda-01": {
+      "hash": "ea677a5faea0",
+      "file": "voiceover/beda-01.mp3",
+      "duration": 1.26
+    },
+    "beda-02": {
+      "hash": "6cf32e8eb52e",
+      "file": "voiceover/beda-02.mp3",
+      "duration": 5.82
+    },
+    "beda-03": {
+      "hash": "f2a1f7ffa80a",
+      "file": "voiceover/beda-03.mp3",
+      "duration": 1.37
+    },
+    "cta-01": {
+      "hash": "c96afb1111e1",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.48
+    },
+    "hook-01": {
+      "hash": "42af54b450a8",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 4.1
+    },
+    "hook-02": {
+      "hash": "df72d07849d2",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 3.08
+    },
+    "kesimpulan-01": {
+      "hash": "92831206c9b4",
+      "file": "voiceover/kesimpulan-01.mp3",
+      "duration": 4.35
+    },
+    "susun-01": {
+      "hash": "491a1a8d1476",
+      "file": "voiceover/susun-01.mp3",
+      "duration": 3.68
+    },
+    "susun-02": {
+      "hash": "5e2bb44abbc2",
+      "file": "voiceover/susun-02.mp3",
+      "duration": 6.81
+    },
+    "teaser-01": {
+      "hash": "f8a376544ac9",
+      "file": "voiceover/teaser-01.mp3",
+      "duration": 1.86
+    },
+    "teaser-02": {
+      "hash": "a147863a6cc3",
+      "file": "voiceover/teaser-02.mp3",
+      "duration": 7.3
+    },
+    "yakin-01": {
+      "hash": "a1a3507400c9",
+      "file": "voiceover/yakin-01.mp3",
+      "duration": 2.98
+    },
+    "yakin-02": {
+      "hash": "6c4948c778ad",
+      "file": "voiceover/yakin-02.mp3",
+      "duration": 3.86
+    }
+  }
+}
