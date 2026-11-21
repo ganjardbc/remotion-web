@@ -79,7 +79,7 @@ export const BASE_SCENES: readonly BlockScene[] = [
       { character: "claudecode", expression: "senang", position: "kiri" },
     ],
     lines: [
-      { who: "claudecode", from: 0.3, dur: 9.9, text: "\"Kamu penulis konten kuliner. Buatkan caption jualan kopi susu. Tokonya kecil di Bandung, pembelinya mahasiswa. Maksimal tiga kalimat, gaya santai.\"", tag: "matter-of-fact", shot: [{ at: 0, kind: "overShoulder" }, { at: 4.4, kind: "medium" }, { at: 7.4, kind: "highAngle" }], expressions: { claudecode: "senang", ganjar: "mikir" }, motions: { claudecode: "tunjuk" } },
+      { who: "claudecode", from: 0.3, dur: 9.9, text: "\"Kamu penulis konten kuliner. Buatkan caption jualan kopi susu. Tokonya kecil di Bandung, pembelinya mahasiswa. Maksimal tiga kalimat, gaya santai.\"", tag: "matter-of-fact", shot: [{ at: 0, kind: "medium" }, { at: 4.4, kind: "closeUp" }, { at: 7.4, kind: "highAngle" }], expressions: { claudecode: "senang", ganjar: "mikir" }, motions: { claudecode: "tunjuk" } },
       { who: "ganjar", from: 10.7, dur: 1.5, text: "Wah, jauh lebih jelas.", tag: "impressed", shot: "closeUp", expressions: { ganjar: "senang" }, motions: { ganjar: "tepuk" }, sfx: [{ name: "ding", at: 0.1, volume: 0.3 }] },
     ],
   },
