@@ -7,6 +7,9 @@ import manifest from "./voiceover.json";
 export const META: BlockMeta = {
   title: "Belajar AI #2: Prompt Itu Bukan Mantra",
   highlight: "Bukan Mantra",
+  // Jeda lebih rapat dari bawaan supaya durasi total tidak melewati batas Reels.
+  voGap: 0.15,
+  voTail: 0.4,
 };
 
 // Voiceover per baris ucapan (id klip = id scene + nomor urut, mis. hook-01), suara per karakter dari src/dialog-reels/voices.json.

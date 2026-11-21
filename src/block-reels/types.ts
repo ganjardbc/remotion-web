@@ -82,4 +82,7 @@ export type BlockMeta = {
   readonly sceneSfx?: boolean;
   // `false` mematikan pop kecil tiap ganti pembicara (bawaan menyala).
   readonly speakerPop?: boolean;
+  // Jeda antar baris dan ekor scene saat voiceover (detik); bawaan 0,25 dan 0,6. Lebih kecil = video lebih rapat.
+  readonly voGap?: number;
+  readonly voTail?: number;
 };

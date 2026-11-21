@@ -1,3 +1,64 @@
 {
-  "lines": {}
+  "lines": {
+    "contoh-01": {
+      "hash": "4565f31aab92",
+      "file": "voiceover/contoh-01.mp3",
+      "duration": 9.98
+    },
+    "contoh-02": {
+      "hash": "77536736b35f",
+      "file": "voiceover/contoh-02.mp3",
+      "duration": 2.53
+    },
+    "cta-01": {
+      "hash": "c96afb1111e1",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.61
+    },
+    "empat-01": {
+      "hash": "e0bf356e0278",
+      "file": "voiceover/empat-01.mp3",
+      "duration": 5.66
+    },
+    "empat-02": {
+      "hash": "de69d10b78b5",
+      "file": "voiceover/empat-02.mp3",
+      "duration": 0.82
+    },
+    "hook-01": {
+      "hash": "14ab651d828e",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 4.96
+    },
+    "hook-02": {
+      "hash": "88aba20808af",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 3.67
+    },
+    "kesimpulan-01": {
+      "hash": "f06db9c8cca3",
+      "file": "voiceover/kesimpulan-01.mp3",
+      "duration": 6.25
+    },
+    "kosong-01": {
+      "hash": "757773ec91ee",
+      "file": "voiceover/kosong-01.mp3",
+      "duration": 1.18
+    },
+    "kosong-02": {
+      "hash": "54f0f2a54bc3",
+      "file": "voiceover/kosong-02.mp3",
+      "duration": 5.15
+    },
+    "teaser-01": {
+      "hash": "683599ad6597",
+      "file": "voiceover/teaser-01.mp3",
+      "duration": 3.94
+    },
+    "teaser-02": {
+      "hash": "a137553b021f",
+      "file": "voiceover/teaser-02.mp3",
+      "duration": 3.43
+    }
+  }
 }
