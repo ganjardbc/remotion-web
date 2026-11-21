@@ -1,0 +1,54 @@
+{
+  "lines": {
+    "cta-01": {
+      "hash": "c96afb1111e1",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.49
+    },
+    "hook-01": {
+      "hash": "b1c576a3e682",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 5.01
+    },
+    "hook-02": {
+      "hash": "7cb17f6d0bb6",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 3.05
+    },
+    "kesimpulan-01": {
+      "hash": "67c1800b00d0",
+      "file": "voiceover/kesimpulan-01.mp3",
+      "duration": 4.46
+    },
+    "meja-01": {
+      "hash": "c7728f88cd2f",
+      "file": "voiceover/meja-01.mp3",
+      "duration": 1.04
+    },
+    "meja-02": {
+      "hash": "ca108e99b8fd",
+      "file": "voiceover/meja-02.mp3",
+      "duration": 12.36
+    },
+    "penuh-01": {
+      "hash": "df20770a7f0a",
+      "file": "voiceover/penuh-01.mp3",
+      "duration": 1.69
+    },
+    "penuh-02": {
+      "hash": "0da44ee02d09",
+      "file": "voiceover/penuh-02.mp3",
+      "duration": 6.95
+    },
+    "teaser-01": {
+      "hash": "953b0a51ab3c",
+      "file": "voiceover/teaser-01.mp3",
+      "duration": 6.76
+    },
+    "ukuran-01": {
+      "hash": "9ca243d89d26",
+      "file": "voiceover/ukuran-01.mp3",
+      "duration": 7.09
+    }
+  }
+}
