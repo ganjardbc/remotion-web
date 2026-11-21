@@ -24,7 +24,7 @@ src/videos/<Nama>/
   scenes.ts         BASE_SCENES
 ```
 
-`node scripts/new-block.mjs <Nama> "<Judul>" [--cast ganjar,claudecode] [--scenes hook,relate,...] [--sets mejaMalam,kantor,terminal,kafe]`. Latar dipakai bergantian per scene; pembicara bergantian; semua teks `TODO`.
+`node scripts/new-block.mjs <Nama> "<Judul>" [--cast ganjar,claudecode] [--scenes hook,relate,...] [--sets kantor]`. Gaya bawaan = `src/videos/AsistenSetuju`: 7 scene (hook, relate, shift, urgency, cara, closing, cta), latar `kantor` di semua scene (variasi dari shot, ekspresi, gesture; peringatan validator "latar sama" disengaja), Ganjar kiri dan Claude Code kanan, `tag` emosi per baris, dan voiceover siap (`fitBlockScenes`, `voiceover.json` dan `voiceover-files.ts` kosong). Pembicara bergantian; semua teks `TODO`. `--sets a,b` memakai latar bergantian.
 
 ## Data scene (`scenes.ts`)
 - Scene: `id` (satu kata), `seconds` (batas bawah; memanjang bila baris terakhir lebih panjang), `set`, `cast`, `lines`, `note` (tidak dirender).
