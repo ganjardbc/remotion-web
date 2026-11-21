@@ -1,4 +1,4 @@
-import type React from "react";
+import React, { useLayoutEffect, useRef, useState } from "react";
 import type { BlockLight } from "../assets/characters";
 import { useCurrentFrame, useVideoConfig } from "remotion";
 import type { BlockSet, BoardLine } from "./types";
@@ -97,7 +97,8 @@ type SetSpec = {
   // Cahaya di karakter block (lihat BlockLightContext): per sisi kubus dan gradasi.
   readonly light: BlockLight;
   readonly Far: React.FC;
-  readonly Mid: React.FC<{ readonly board?: readonly BoardLine[]; readonly title?: { readonly text: string; readonly highlight?: string } }>;
+  // `zoom` = zoom kamera; tulisan papan diredupkan di shot rapat (>2) karena terpotong dan buram di belakang karakter.
+  readonly Mid: React.FC<{ readonly board?: readonly BoardLine[]; readonly title?: { readonly text: string; readonly highlight?: string }; readonly zoom?: number }>;
   // Judul video ditulis di papan (scene pertama) menggantikan kartu judul atas.
   readonly titleOnBoard?: boolean;
 };
@@ -239,15 +240,22 @@ const ClassFar: React.FC = () => (
 );
 const BOARD = { x: 70, y: 300, w: 800, h: 680 } as const;
 // Area tulisan di papan: dari bawah judul (scene pertama) atau dekat atas papan, sampai dekat rak kapur.
-const BOARD_TEXT = { left: 110, topTitle: 560, topPlain: 400, bottom: 950, size: 58 } as const;
-const BoardText: React.FC<{ readonly line: BoardLine; readonly top: number; readonly step: number }> = ({ line, top, step }) => {
+const BOARD_TEXT = { left: 110, topTitle: 560, topPlain: 400, bottom: 950, size: 58, maxW: BOARD.x + BOARD.w - 40 - 110 } as const;
+const BoardText: React.FC<{ readonly line: BoardLine; readonly top: number; readonly step: number; readonly dim: boolean }> = ({ line, top, step, dim }) => {
   const frame = useCurrentFrame();
+  // Baris yang lebih lebar dari area tulisan diperkecil sampai muat (tidak melewati bingkai papan).
+  const ref = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+  useLayoutEffect(() => {
+    const w = ref.current?.scrollWidth ?? 0;
+    setScale(w > BOARD_TEXT.maxW ? BOARD_TEXT.maxW / w : 1);
+  }, [line.text]);
   const { fps } = useVideoConfig();
   // Tersapu dari kiri dalam 0,5 dtk, ease-out tajam.
   const p = Math.min(1, Math.max(0, (frame / fps - line.at) / 0.5));
   const k = 1 - Math.pow(1 - p, 4);
   return (
-    <div style={{ ...abs, left: BOARD_TEXT.left, top, height: step, whiteSpace: "nowrap", fontFamily: "Poppins, sans-serif", fontWeight: 600, fontSize: BOARD_TEXT.size, lineHeight: `${step}px`, color: line.hot ? "#ffc89a" : CHALK, opacity: 0.92, textShadow: "0 0 6px rgba(233,240,234,0.25)", clipPath: `inset(0 ${(1 - k) * 100}% 0 0)` }}>
+    <div ref={ref} style={{ ...abs, left: BOARD_TEXT.left, top, height: step, whiteSpace: "nowrap", transformOrigin: "0 50%", transform: `scale(${scale})`, fontFamily: "Poppins, sans-serif", fontWeight: 600, fontSize: BOARD_TEXT.size, lineHeight: `${step}px`, color: line.hot ? "#ffc89a" : CHALK, opacity: dim ? 0.3 : 0.92, textShadow: "0 0 6px rgba(233,240,234,0.25)", clipPath: `inset(0 ${(1 - k) * 100}% 0 0)` }}>
       {line.text}
     </div>
   );
@@ -256,14 +264,14 @@ const BoardTitle: React.FC<{ readonly text: string; readonly highlight?: string 
   const i = highlight ? text.indexOf(highlight) : -1;
   const parts = i >= 0 && highlight ? [text.slice(0, i), highlight, text.slice(i + highlight.length)] : [text, "", ""];
   return (
-    <div style={{ ...abs, left: BOARD_TEXT.left, top: 360, width: 700, fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: 76, lineHeight: "88px", color: "#ffffff", opacity: 0.95, textShadow: "0 0 6px rgba(233,240,234,0.25)" }}>
+    <div style={{ ...abs, left: BOARD_TEXT.left, top: 360, width: 740, fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: text.length > 32 ? 64 : 76, lineHeight: "88px", color: "#ffffff", opacity: 0.95, textShadow: "0 0 6px rgba(233,240,234,0.25)" }}>
       {parts[0]}
       <span style={{ color: "#ffc89a" }}>{parts[1]}</span>
       {parts[2]}
     </div>
   );
 };
-const ClassMid: React.FC<{ readonly board?: readonly BoardLine[]; readonly title?: { readonly text: string; readonly highlight?: string } }> = ({ board, title }) => (
+const ClassMid: React.FC<{ readonly board?: readonly BoardLine[]; readonly title?: { readonly text: string; readonly highlight?: string }; readonly zoom?: number }> = ({ board, title, zoom = 1 }) => (
   <>
     <div style={{ ...abs, left: BOARD.x - 18, top: BOARD.y - 18, width: BOARD.w + 36, height: BOARD.h + 36, borderRadius: 10, backgroundColor: "#6b4a2f", boxShadow: "0 18px 40px rgba(0,0,0,0.45)" }} />
     <div style={{ ...abs, left: BOARD.x, top: BOARD.y, width: BOARD.w, height: BOARD.h, borderRadius: 4, background: "linear-gradient(160deg,#27483f 0%,#1d3a33 60%,#183029 100%)" }} />
@@ -276,7 +284,7 @@ const ClassMid: React.FC<{ readonly board?: readonly BoardLine[]; readonly title
           const top = title ? BOARD_TEXT.topTitle : BOARD_TEXT.topPlain;
           const step = Math.min(120, (BOARD_TEXT.bottom - top) / lines.length);
           const start = top + (BOARD_TEXT.bottom - top - step * lines.length) / 2;
-          return lines.map((l, i) => <BoardText key={i} line={l} top={start + i * step} step={step} />);
+          return lines.map((l, i) => <BoardText key={i} line={l} top={start + i * step} step={step} dim={zoom > 2} />);
         })()}
       </>
     ) : null}

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Membuat folder Reels block baru (dialog karakter block di dunia diorama, 9:16, tanpa BrandFooter). Lihat docs/block-reels.md.
-//   node scripts/new-block.mjs <NamaPascalCase> "<Judul video>" [--cast ganjar,claudecode] [--scenes hook,relate,shift,urgency,cara,closing,cta] [--sets kantor]
+//   node scripts/new-block.mjs <NamaPascalCase> "<Judul video>" [--cast ganjar,claudecode] [--scenes hook,relate,shift,urgency,cara,closing,cta] [--sets kantor|kelas|...]
 // Menulis README.md, config.ts, scenes.ts, <Nama>Video.tsx. Komposisi <Nama>-Reels terdaftar otomatis (src/compositions.ts).
 // Gaya bawaan = AsistenSetuju: semua scene latar `kantor` (variasi dari shot, ekspresi, gesture), pemeran Ganjar kiri dan Claude Code kanan,
 // tag emosi per baris, dan voiceover siap (fitBlockScenes + voiceover.json kosong). `--sets a,b` memakai latar bergantian per scene.
@@ -18,7 +18,7 @@ const flag = (n, fallback) => {
 };
 const args = argv.filter((a, i) => !a.startsWith("--") && !VALUE_FLAGS.includes(argv[i - 1]));
 const [name, title] = args;
-const usage = 'Pakai: node scripts/new-block.mjs <NamaPascalCase> "<Judul video>" [--cast ganjar,claudecode] [--scenes hook,relate,shift,urgency,cara,closing,cta] [--sets kantor]';
+const usage = 'Pakai: node scripts/new-block.mjs <NamaPascalCase> "<Judul video>" [--cast ganjar,claudecode] [--scenes hook,relate,shift,urgency,cara,closing,cta] [--sets kantor|kelas|...]';
 const fail = (msg) => {
   console.error(msg);
   process.exit(1);
@@ -26,7 +26,7 @@ const fail = (msg) => {
 if (!name || !title || !/^[A-Z][A-Za-z0-9]*$/.test(name)) fail(usage);
 
 const CHARACTERS = ["ganjar", "robot", "claudecode"];
-const SETS = ["mejaMalam", "kantor", "terminal", "kafe"];
+const SETS = ["mejaMalam", "kantor", "terminal", "kafe", "kelas"];
 const ids = flag("--scenes", "hook,relate,shift,urgency,cara,closing,cta").split(",").map((s) => s.trim());
 const cast = flag("--cast", "ganjar,claudecode").split(",").map((s) => s.trim());
 const sets = flag("--sets", "kantor").split(",").map((s) => s.trim());

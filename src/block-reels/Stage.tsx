@@ -277,7 +277,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene; readonly title?: { re
           <spec.Far />
         </Layer>
         <Layer cam={lc} p={0.6}>
-          <spec.Mid board={scene.board} title={spec.titleOnBoard ? title : undefined} />
+          <spec.Mid board={scene.board} title={spec.titleOnBoard ? title : undefined} zoom={cam.z} />
         </Layer>
         {spec.Floor ? (
           <Layer cam={lc} p={1}>
