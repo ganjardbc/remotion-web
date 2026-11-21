@@ -219,7 +219,7 @@ const checkFolder = (name) => {
       const ids = [...sc.matchAll(/^ {4}id: "([^"]+)",$/gm)].map((m) => m[1]);
       if (ids.length === 0) err("scenes.ts tidak punya scene (id: \"...\" pada indentasi 4 spasi).");
       for (const id of ids) if (!/^[a-z]+$/.test(id)) err(`id scene "${id}" harus huruf kecil, satu kata.`);
-      for (const m of sc.matchAll(/set: "([^"]+)"/g)) if (!["mejaMalam", "kantor", "terminal", "kafe"].includes(m[1])) err(`set "${m[1]}" tidak dikenal (mejaMalam, kantor, terminal, kafe).`);
+      for (const m of sc.matchAll(/set: "([^"]+)"/g)) if (!["mejaMalam", "kantor", "terminal", "kafe", "kelas"].includes(m[1])) err(`set "${m[1]}" tidak dikenal (mejaMalam, kantor, terminal, kafe, kelas).`);
       if (/TODO/.test(sc)) warns.push("scenes.ts masih berisi TODO.");
       // Latar tidak boleh sama dua scene berurutan (variasi visual).
       const sets = [...sc.matchAll(/set: "([^"]+)"/g)].map((m) => m[1]);

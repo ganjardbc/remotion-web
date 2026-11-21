@@ -6,6 +6,7 @@ import { OnScreenText } from "../dialog-reels/DraftVideo";
 import { BLOCK_CAPTION_BOX } from "../reelsLayout";
 import { ThemeProvider } from "../themes";
 import { Stage } from "./Stage";
+import { SETS } from "./World";
 import type { BlockMeta, BlockScene } from "./types";
 
 // Reels block 9:16: dialog karakter block di dunia diorama, ganti shot kamera per baris, kartu atas (judul, hal penting) dan caption bawah.
@@ -62,8 +63,8 @@ export const BlockReels: React.FC<{ readonly theme: string; readonly meta: Block
         <Series>
           {scenes.map((s, i) => (
             <Series.Sequence key={s.id} name={s.id} durationInFrames={frames[i]} premountFor={FPS}>
-              <Stage scene={s} />
-              {i === 0 ? <OnScreenText scene={{ onScreenText: title, lines: [], tone: "biru" }} top={CARD_TOP} /> : null}
+              <Stage scene={s} title={i === 0 ? { text: meta.title, highlight: meta.highlight } : undefined} />
+              {i === 0 && !SETS[s.set].titleOnBoard ? <OnScreenText scene={{ onScreenText: title, lines: [], tone: "biru" }} top={CARD_TOP} /> : null}
               {/* Gradasi gelap lembut di belakang caption supaya terbaca di atas meja dan bahu depan shot overShoulder. */}
               <div style={{ position: "absolute", left: 0, top: CAPTION_BOX.top - 90, width: 1080, height: 1920 - (CAPTION_BOX.top - 90), background: "linear-gradient(180deg, rgba(3,6,16,0) 0%, rgba(3,6,16,0.55) 30%, rgba(3,6,16,0.7) 100%)" }} />
               <LineCaption lines={s.lines} motion="baris" box={CAPTION_BOX} />

@@ -2,16 +2,19 @@ import type { BlockScene } from "../../block-reels";
 
 // Data scene AiBukanGoogleBlock (Reels block, seri "Belajar AI" episode 1). Ganjar = murid, Claude Code = guru.
 // Waktu `from` dan `dur` adalah perkiraan (±15 huruf per detik) sampai voiceover ada; geser ulang `sfx.at` dan `shot` setelah klip jadi.
-// Latar bergantian, tidak ada dua scene berurutan yang sama. Judul tampil di kartu atas hanya di scene pertama (config.ts).
+// Latar kelas di semua scene: guru (Claude Code) di atas meja kiri, murid (Ganjar) berdiri di lantai kanan, papan tulis besar di belakang. Judul tampil di kartu atas hanya di scene pertama (config.ts).
 export const BASE_SCENES: readonly BlockScene[] = [
   {
     // Hook: Ganjar menyamakan AI dengan Google, Claude Code langsung membantah.
     id: "hook",
     seconds: 7.6,
-    set: "kantor",
+    set: "kelas",
+    board: [
+      { text: "AI = Google?", at: 0.6 },
+    ],
     cast: [
-      { character: "ganjar", expression: "bingung", position: "kiri" },
-      { character: "claudecode", expression: "netral", position: "kanan" },
+      { character: "ganjar", expression: "bingung", position: "kanan" },
+      { character: "claudecode", expression: "netral", position: "kiri" },
     ],
     lines: [
       { who: "ganjar", from: 0.3, dur: 3.6, text: "Guru, aku pakai AI persis kayak Google. Ada yang salah?", spoken: "Guru, aku pakai Ei Ai persis kayak Google. Ada yang salah?", tag: "curious", shot: "wide", expressions: { ganjar: "bingung" }, motions: { ganjar: "garukKepala" } },
@@ -22,10 +25,14 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Penjelasan 1: Google mencari.
     id: "beda",
     seconds: 8.3,
-    set: "mejaMalam",
+    set: "kelas",
+    board: [
+      { text: "Google = mencari", at: 1.8 },
+      { text: "tunjuk halaman yang ada", at: 4.2 },
+    ],
     cast: [
-      { character: "ganjar", expression: "mikir", position: "kiri" },
-      { character: "claudecode", expression: "senang", position: "kanan" },
+      { character: "ganjar", expression: "mikir", position: "kanan" },
+      { character: "claudecode", expression: "senang", position: "kiri" },
     ],
     lines: [
       { who: "ganjar", from: 0.3, dur: 1, text: "Bedanya apa?", tag: "curious", shot: "closeUp", expressions: { ganjar: "mikir" }, motions: { ganjar: "mikir" } },
@@ -37,10 +44,15 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Penjelasan 2: AI menyusun, menebak kata berikutnya.
     id: "susun",
     seconds: 9.7,
-    set: "terminal",
+    set: "kelas",
+    board: [
+      { text: "AI = menyusun", at: 0.4 },
+      { text: "tebak kata berikutnya", at: 3.2 },
+      { text: "dari pola jutaan tulisan", at: 5.6 },
+    ],
     cast: [
-      { character: "ganjar", expression: "mikir", position: "kiri" },
-      { character: "claudecode", expression: "serius", position: "kanan" },
+      { character: "ganjar", expression: "mikir", position: "kanan" },
+      { character: "claudecode", expression: "serius", position: "kiri" },
     ],
     lines: [
       { who: "claudecode", from: 0.3, dur: 2.6, text: "AI menyusun. Dia tidak membuka arsip.", spoken: "Ei Ai menyusun. Dia tidak membuka arsip.", tag: "calmly", shot: "medium", expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
@@ -51,10 +63,14 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Penjelasan 3: terdengar yakin, belum tentu benar.
     id: "yakin",
     seconds: 6.4,
-    set: "kafe",
+    set: "kelas",
+    board: [
+      { text: "Terdengar yakin", at: 0.6 },
+      { text: "belum tentu benar", at: 3.6, hot: true },
+    ],
     cast: [
-      { character: "ganjar", expression: "kaget", position: "kiri" },
-      { character: "claudecode", expression: "netral", position: "kanan" },
+      { character: "ganjar", expression: "kaget", position: "kanan" },
+      { character: "claudecode", expression: "netral", position: "kiri" },
     ],
     lines: [
       { who: "ganjar", from: 0.3, dur: 2.7, text: "Pantas jawabannya selalu terdengar yakin.", tag: "realizing", shot: "closeUp", expressions: { ganjar: "kaget" }, motions: { ganjar: "tepuk" } },
@@ -65,10 +81,14 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Kesimpulan: kalimat quote.
     id: "kesimpulan",
     seconds: 3.8,
-    set: "kantor",
+    set: "kelas",
+    board: [
+      { text: "Google menemukan", at: 0.4 },
+      { text: "AI membuat", at: 1.8, hot: true },
+    ],
     cast: [
-      { character: "ganjar", expression: "mikir", position: "kiri" },
-      { character: "claudecode", expression: "serius", position: "kanan" },
+      { character: "ganjar", expression: "mikir", position: "kanan" },
+      { character: "claudecode", expression: "serius", position: "kiri" },
     ],
     lines: [
       { who: "claudecode", from: 0.3, dur: 3, text: "Google menemukan jawaban. AI membuat jawaban.", spoken: "Google menemukan jawaban. Ei Ai membuat jawaban.", tag: "calm", shot: "closeUp", push: true, expressions: { claudecode: "serius" }, motions: { claudecode: "tunjuk" } },
@@ -78,10 +98,15 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // Teaser: pelajaran berikutnya soal cara bertanya.
     id: "teaser",
     seconds: 9.6,
-    set: "mejaMalam",
+    set: "kelas",
+    board: [
+      { text: "Cara bertanya", at: 2.3 },
+      { text: "menentukan hasil", at: 4.1 },
+      { text: "Pelajaran berikutnya", at: 7.2 },
+    ],
     cast: [
-      { character: "ganjar", expression: "bingung", position: "kiri" },
-      { character: "claudecode", expression: "netral", position: "kanan" },
+      { character: "ganjar", expression: "bingung", position: "kanan" },
+      { character: "claudecode", expression: "netral", position: "kiri" },
     ],
     lines: [
       { who: "ganjar", from: 0.3, dur: 1.5, text: "Terus aku harus gimana?", tag: "confused", shot: "medium", expressions: { ganjar: "bingung" }, motions: { ganjar: "angkatBahu" } },
@@ -92,10 +117,13 @@ export const BASE_SCENES: readonly BlockScene[] = [
     // CTA: Claude Code menghadap penonton.
     id: "cta",
     seconds: 4.2,
-    set: "terminal",
+    set: "kelas",
+    board: [
+      { text: "Belajar AI #1 dari 15", at: 0.5 },
+    ],
     cast: [
-      { character: "ganjar", expression: "senang", position: "kiri" },
-      { character: "claudecode", expression: "senang", position: "kanan" },
+      { character: "ganjar", expression: "senang", position: "kanan" },
+      { character: "claudecode", expression: "senang", position: "kiri" },
     ],
     lines: [
       { who: "claudecode", from: 0.3, dur: 3.3, text: "Follow supaya kamu tidak ketinggalan urutannya.", tag: "warmly", shot: "pov", expressions: { claudecode: "senang", ganjar: "senang" }, motions: { claudecode: "lambai" } },

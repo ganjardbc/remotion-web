@@ -6,8 +6,9 @@ import type { CharacterId, ShotKind } from "../dialog-reels/types";
 export type { CharacterId, ShotKind };
 
 // Latar diorama. `mejaMalam`: kota malam di balik jendela; `kantor`: kantor malam (menara dengan banyak jendela kecil menyala, papan dinding redup);
-// `terminal`: dunia kode (panel kode melayang); `kafe`: bokeh lampu hangat.
-export type BlockSet = "mejaMalam" | "kantor" | "terminal" | "kafe";
+// `terminal`: dunia kode (panel kode melayang); `kafe`: bokeh lampu hangat; `kelas`: ruang kelas (papan tulis besar, meja guru di kiri,
+// murid berdiri di lantai kanan).
+export type BlockSet = "mejaMalam" | "kantor" | "terminal" | "kafe" | "kelas";
 
 // `belakang`: berdiri di balik meja (tubuh bawah tertutup meja); `meja`: berdiri di atas meja (karakter kecil seperti Claude Code).
 export type Place = "belakang" | "meja";
@@ -55,6 +56,10 @@ export type BlockLine = {
   readonly sfx?: readonly { readonly name: string; readonly at?: number; readonly volume?: number }[];
 };
 
+// Tulisan kapur di papan tulis latar `kelas`: tiap baris muncul (tersapu dari kiri) `at` detik sejak scene mulai. `hot` = kapur oranye muda,
+// pakai hemat (satu sorotan per layar). Maks 4 baris per scene; area papan di bawah kartu judul.
+export type BoardLine = { readonly text: string; readonly at: number; readonly hot?: boolean };
+
 export type BlockScene = {
   readonly id: string;
   // Durasi minimal (detik); scene memanjang bila baris terakhir lebih panjang.
@@ -62,6 +67,8 @@ export type BlockScene = {
   readonly set: BlockSet;
   readonly cast: readonly BlockCast[];
   readonly lines: readonly BlockLine[];
+  // Tulisan di papan tulis (hanya latar `kelas`).
+  readonly board?: readonly BoardLine[];
   // Arahan visual untuk dipoles tangan; tidak dirender.
   readonly note?: string;
 };

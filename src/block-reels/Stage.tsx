@@ -84,15 +84,15 @@ const gestureKeys = (lines: readonly BlockLine[], who: CharacterId, base: string
 };
 
 // Pendengar berputar ke pembicara (34 derajat), pembicara sedikit lebih ke kamera (10); berpindah 0,4 dtk tiap giliran.
-const blockYaw = (lines: readonly BlockLine[], who: CharacterId, x: number, xOf: (c: CharacterId) => number | undefined, t: number): number => {
+const blockYaw = (lines: readonly BlockLine[], who: CharacterId, x: number, xOf: (c: CharacterId) => number | undefined, t: number, k = 1): number => {
   const toward = (c: CharacterId | undefined): number => {
     const cx = c ? xOf(c) : undefined;
     return cx === undefined || cx === x ? 1 : Math.sign(cx - x);
   };
   const other = lines.find((l) => l.who !== who)?.who;
   const dir = toward(other);
-  const target = (l: BlockLine): number => (l.who === who ? dir * 10 : toward(l.who) * 34);
-  const base = dir * 24;
+  const target = (l: BlockLine): number => (l.who === who ? dir * 10 * k : toward(l.who) * 34 * k);
+  const base = dir * 24 * k;
   let prev = base;
   let cur = base;
   let at = 0;
@@ -106,7 +106,7 @@ const blockYaw = (lines: readonly BlockLine[], who: CharacterId, x: number, xOf:
   return prev + (cur - prev) * (1 - Math.pow(1 - p, 3));
 };
 
-const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string; readonly light: BlockLight }> = ({ actor, scene, xOf, filter, light }) => {
+const ActorView: React.FC<{ readonly yawScale: number; readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string; readonly light: BlockLight }> = ({ actor, scene, xOf, filter, light, yawScale }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
@@ -114,7 +114,7 @@ const ActorView: React.FC<{ readonly actor: Actor; readonly scene: BlockScene; r
   const talking = speakingAt(scene.lines, who, t);
   const expression = expressionAt(scene.lines, who, t, actor.cue.expression) as never;
   const gestures = gestureKeys(scene.lines, who, actor.cue.motion);
-  const yaw = actor.yaw ?? blockYaw(scene.lines, who, actor.x, xOf, t);
+  const yaw = actor.yaw ?? blockYaw(scene.lines, who, actor.x, xOf, t, yawScale);
   const pitch = actor.pitch ?? -9;
   const s = size(who, actor.h);
   // Robot dan Claude Code tidak punya mulut: badan memantul saat bicara.
@@ -227,7 +227,8 @@ const shoulderActor = (lis: Actor, speakerX: number): Actor => {
   return { ...lis, x: left ? 150 : W - 150, floor, h, yaw: left ? 156 : -156, pitch: undefined };
 };
 
-export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
+// `title` (hanya scene pertama) ditulis di papan tulis bila latar menulis judul di papan (`titleOnBoard`), bukan di kartu atas.
+export const Stage: React.FC<{ readonly scene: BlockScene; readonly title?: { readonly text: string; readonly highlight?: string } }> = ({ scene, title }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
@@ -257,7 +258,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
   const lc = layerCam(cam);
   const behind = actors.filter((a) => a.place === "belakang");
   const onDesk = actors.filter((a) => a.place === "meja");
-  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} actor={a} scene={scene} xOf={xOf} filter={spec.filter} light={spec.light} />;
+  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} yawScale={spec.Floor ? 1.7 : 1} actor={a} scene={scene} xOf={xOf} filter={spec.filter} light={spec.light} />;
 
   return (
     <AbsoluteFill style={{ backgroundColor: spec.bg }}>
@@ -276,30 +277,47 @@ export const Stage: React.FC<{ readonly scene: BlockScene }> = ({ scene }) => {
           <spec.Far />
         </Layer>
         <Layer cam={lc} p={0.6}>
-          <spec.Mid />
+          <spec.Mid board={scene.board} title={spec.titleOnBoard ? title : undefined} />
         </Layer>
+        {spec.Floor ? (
+          <Layer cam={lc} p={1}>
+            <spec.Floor />
+          </Layer>
+        ) : null}
+        {/* Latar berlantai: bayangan kontak di bawah kaki murid, digambar sebelum karakter. */}
+        {spec.Floor
+          ? behind.map((a) => <ContactShadow key={`sf-${a.cue.character}`} x={a.x} y={a.floor + a.h * 0.06} w={size(a.cue.character, a.h).width * 0.85} h={a.h * 0.07} opacity={0.6} />)
+          : null}
         {behind.map(view)}
-        <Layer cam={lc} p={1}>
-          <DeskTop set={scene.set} />
-        </Layer>
+        {spec.Floor ? null : (
+          <Layer cam={lc} p={1}>
+            <DeskTop set={scene.set} />
+          </Layer>
+        )}
         {/* Monitor berdiri di atas meja, di depan karakter yang berdiri di balik meja. */}
-        <Layer cam={lc} p={1}>
-          <Monitor screen={spec.screen} spec={spec.monitor} />
-        </Layer>
+        {spec.monitor ? (
+          <Layer cam={lc} p={1}>
+            <Monitor screen={spec.screen} spec={spec.monitor} />
+          </Layer>
+        ) : null}
         {/* Bayangan kontak: badan di tepi jauh meja dan kaki karakter di atas meja. */}
-        {behind.map((a) => (
+        {(spec.Floor ? [] : behind).map((a) => (
           <ContactShadow key={`sb-${a.cue.character}`} x={a.x} y={lc.ty + lc.z * DESK_TOP + 6 * lc.z} w={size(a.cue.character, a.h).width * 0.75} h={30 * lc.z} opacity={0.55} />
         ))}
         {onDesk.map((a) => (
-          <ContactShadow key={`sd-${a.cue.character}`} x={a.x} y={a.floor + a.h * 0.2} w={a.h * 1.35} h={a.h * 0.16} opacity={0.6} />
+          <ContactShadow key={`sd-${a.cue.character}`} x={a.x} y={spec.Floor ? a.floor + a.h * 0.12 : a.floor + a.h * 0.2} w={spec.Floor ? a.h * 1.05 : a.h * 1.35} h={spec.Floor ? a.h * 0.12 : a.h * 0.16} opacity={spec.Floor ? 0.75 : 0.6} />
         ))}
         {onDesk.map(view)}
-        <Layer cam={lc} p={1}>
-          <DeskFront set={scene.set} />
-        </Layer>
-        <Layer cam={lc} p={1.28}>
-          <Foreground set={scene.set} />
-        </Layer>
+        {spec.Floor ? null : (
+          <>
+            <Layer cam={lc} p={1}>
+              <DeskFront set={scene.set} />
+            </Layer>
+            <Layer cam={lc} p={1.28}>
+              <Foreground set={scene.set} />
+            </Layer>
+          </>
+        )}
         {shoulder ? <div style={{ position: "absolute", left: 0, top: 0, width: W, height: H, filter: "blur(4px) brightness(0.5)" }}>{view(shoulder)}</div> : null}
       </div>
       <Lighting set={scene.set} />
