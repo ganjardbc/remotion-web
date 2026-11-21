@@ -1,0 +1,54 @@
+{
+  "lines": {
+    "cta-01": {
+      "hash": "c96afb1111e1",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.59
+    },
+    "hitung-01": {
+      "hash": "5f82343c724a",
+      "file": "voiceover/hitung-01.mp3",
+      "duration": 7.78
+    },
+    "hook-01": {
+      "hash": "fb597c6e1ace",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 4.89
+    },
+    "hook-02": {
+      "hash": "ad7e2c47494f",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 5.05
+    },
+    "kesimpulan-01": {
+      "hash": "c87c71bd76e7",
+      "file": "voiceover/kesimpulan-01.mp3",
+      "duration": 4.59
+    },
+    "limit-01": {
+      "hash": "41bdf83c9a8c",
+      "file": "voiceover/limit-01.mp3",
+      "duration": 7.52
+    },
+    "potong-01": {
+      "hash": "f131348a8888",
+      "file": "voiceover/potong-01.mp3",
+      "duration": 1.19
+    },
+    "potong-02": {
+      "hash": "a9a96c42c7ab",
+      "file": "voiceover/potong-02.mp3",
+      "duration": 10.24
+    },
+    "teaser-01": {
+      "hash": "197c68992a52",
+      "file": "voiceover/teaser-01.mp3",
+      "duration": 2.86
+    },
+    "teaser-02": {
+      "hash": "ebdc916eae76",
+      "file": "voiceover/teaser-02.mp3",
+      "duration": 4.65
+    }
+  }
+}

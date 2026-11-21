@@ -264,7 +264,7 @@ const BoardTitle: React.FC<{ readonly text: string; readonly highlight?: string 
   const i = highlight ? text.indexOf(highlight) : -1;
   const parts = i >= 0 && highlight ? [text.slice(0, i), highlight, text.slice(i + highlight.length)] : [text, "", ""];
   return (
-    <div style={{ ...abs, left: BOARD_TEXT.left, top: 360, width: 740, fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: text.length > 32 ? 64 : 76, lineHeight: "88px", color: "#ffffff", opacity: 0.95, textShadow: "0 0 6px rgba(233,240,234,0.25)" }}>
+    <div style={{ ...abs, left: BOARD_TEXT.left, top: 360, width: 740, fontFamily: "Poppins, sans-serif", fontWeight: 700, fontSize: text.length > 40 ? 56 : text.length > 32 ? 64 : 76, lineHeight: "88px", color: "#ffffff", opacity: 0.95, textShadow: "0 0 6px rgba(233,240,234,0.25)" }}>
       {parts[0]}
       <span style={{ color: "#ffc89a" }}>{parts[1]}</span>
       {parts[2]}
