@@ -209,8 +209,9 @@ export const RobotBlock: React.FC<RobotBlockProps> = ({
 
           {([1, -1] as const).map((side) => (
             <Joint key={side} transform={`translate(${side * 3.2 * u}px, ${-0.2 * u}px) rotateX(${(side === 1 ? pose.legR : pose.legL) - side * swing}deg) rotateZ(${-side * pose.spread}deg)`}>
-              <Cube w={3.4} h={3.9} d={3.4} u={u} faces={LEG} transform={`translateY(${1.95 * u}px)`} />
-              <Cube w={3.9} h={1.5} d={4.8} u={u} faces={FOOT} transform={`translate3d(0, ${4.65 * u}px, ${0.5 * u}px)`} />
+              <Cube w={3.4} h={3.2} d={3.4} u={u} faces={LEG} transform={`translateY(${1.6 * u}px)`} />
+              {/* Telapak selebar dan sedalam kaki (3,4 x 3,4), tanpa menjorok ke depan. */}
+              <Cube w={3.4} h={1.5} d={3.4} u={u} faces={FOOT} transform={`translateY(${3.95 * u}px)`} />
             </Joint>
           ))}
         </Joint>

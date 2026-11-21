@@ -9,8 +9,11 @@ import { DESK_TOP, DeskFront, DeskTop, Foreground, H, Layer, Lighting, Monitor, 
 // kubus 3D tetap tajam. Sudut pandang 3D karakter datang dari `pitch` dan `yaw`.
 
 // Tinggi karakter (px) pada zoom 1; di atas meja dikali PLACE_DESK.
-const HEIGHT: Readonly<Record<CharacterId, number>> = { ganjar: 700, robot: 400, claudecode: 330 };
+const HEIGHT: Readonly<Record<CharacterId, number>> = { ganjar: 700, robot: 450, claudecode: 330 };
 const PLACE_DESK = 0.8;
+// Telapak kaki di bawah garis lantai nominal (pecahan tinggi): Claude Code (acuan tata letak) paling rendah, Robot dan Ganjar lebih tinggi.
+// Dipakai agar karakter di atas meja menapak di titik yang sama dan bayangan kontak tepat di bawah telapak.
+const FEET: Readonly<Record<CharacterId, number>> = { ganjar: 0.06, robot: 0.03, claudecode: 0.12 };
 const ORDER = { kiri: 0, tengah: 1, kanan: 2 } as const;
 // Titik layar tempat fokus kamera diletakkan: di bawah caption atas, di atas zona bawah antarmuka.
 const SCREEN = { x: 540, y: 880 };
@@ -45,7 +48,7 @@ const buildActors = (scene: BlockScene, lay: Layout): Actor[] => {
     const i = used[place]++;
     const xs = place === "belakang" ? lay.behindX : lay.deskX;
     const base = HEIGHT[cue.character] * (place === "meja" ? PLACE_DESK * lay.deskScale : lay.behindScale);
-    return { cue, x: xs[Math.min(i, xs.length - 1)], floor: place === "belakang" ? lay.behindFloor : lay.deskFloor, h: base * (cue.scale ?? 1), place };
+    return { cue, x: xs[Math.min(i, xs.length - 1)], floor: place === "belakang" ? lay.behindFloor : lay.deskFloor + (FEET.claudecode - FEET[cue.character]) * base * (cue.scale ?? 1), h: base * (cue.scale ?? 1), place };
   });
 };
 
@@ -106,7 +109,7 @@ const blockYaw = (lines: readonly BlockLine[], who: CharacterId, x: number, xOf:
   return prev + (cur - prev) * (1 - Math.pow(1 - p, 3));
 };
 
-const ActorView: React.FC<{ readonly yawScale: number; readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string; readonly light: BlockLight }> = ({ actor, scene, xOf, filter, light, yawScale }) => {
+const ActorView: React.FC<{ readonly yawScale: number; readonly bounceScale: number; readonly actor: Actor; readonly scene: BlockScene; readonly xOf: (c: CharacterId) => number | undefined; readonly filter: string; readonly light: BlockLight }> = ({ actor, scene, xOf, filter, light, yawScale, bounceScale }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const t = frame / fps;
@@ -118,7 +121,7 @@ const ActorView: React.FC<{ readonly yawScale: number; readonly actor: Actor; re
   const pitch = actor.pitch ?? -9;
   const s = size(who, actor.h);
   // Robot dan Claude Code tidak punya mulut: badan memantul saat bicara.
-  const bounce = talking && who !== "ganjar" ? Math.abs(Math.sin(t * 12)) * 6 * (actor.h / 330) : 0;
+  const bounce = talking && who !== "ganjar" ? Math.abs(Math.sin(t * 12)) * 6 * bounceScale * (actor.h / 330) : 0;
   const body =
     who === "ganjar" ? (
       <GanjarBlock height={actor.h} expression={expression} gestures={gestures} talking={talking} yaw={yaw} pitch={pitch} />
@@ -258,7 +261,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene; readonly title?: { re
   const lc = layerCam(cam);
   const behind = actors.filter((a) => a.place === "belakang");
   const onDesk = actors.filter((a) => a.place === "meja");
-  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} yawScale={spec.Floor ? 1.7 : 1} actor={a} scene={scene} xOf={xOf} filter={spec.filter} light={spec.light} />;
+  const view = (a: Actor): React.ReactNode => <ActorView key={a.cue.character} yawScale={spec.Floor ? 1.7 : 1} bounceScale={spec.Floor ? 0.35 : 1} actor={a} scene={scene} xOf={xOf} filter={spec.filter} light={spec.light} />;
 
   return (
     <AbsoluteFill style={{ backgroundColor: spec.bg }}>
@@ -305,7 +308,7 @@ export const Stage: React.FC<{ readonly scene: BlockScene; readonly title?: { re
           <ContactShadow key={`sb-${a.cue.character}`} x={a.x} y={lc.ty + lc.z * DESK_TOP + 6 * lc.z} w={size(a.cue.character, a.h).width * 0.75} h={30 * lc.z} opacity={0.55} />
         ))}
         {onDesk.map((a) => (
-          <ContactShadow key={`sd-${a.cue.character}`} x={a.x} y={spec.Floor ? a.floor + a.h * 0.12 : a.floor + a.h * 0.2} w={spec.Floor ? a.h * 1.05 : a.h * 1.35} h={spec.Floor ? a.h * 0.12 : a.h * 0.16} opacity={spec.Floor ? 0.75 : 0.6} />
+          <ContactShadow key={`sd-${a.cue.character}`} x={a.x} y={spec.Floor ? a.floor + a.h * FEET[a.cue.character] : a.floor + a.h * 0.2} w={spec.Floor ? a.h * 1.05 : a.h * 1.35} h={spec.Floor ? a.h * 0.12 : a.h * 0.16} opacity={spec.Floor ? 0.75 : 0.6} />
         ))}
         {onDesk.map(view)}
         {spec.Floor ? null : (

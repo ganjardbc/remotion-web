@@ -1,7 +1,7 @@
 import type { BlockMeta, VoEntry, VoSettings } from "../../block-reels";
 import manifest from "./voiceover.json";
 
-// Belajar AI #2: Prompt Itu Bukan Mantra. Reels block 9:16, 30 fps, pemeran: ganjar, claudecode. Data scene dan baris ada di scenes.ts.
+// Belajar AI #2: Prompt Itu Bukan Mantra. Reels block 9:16, 30 fps, pemeran: ganjar, robot. Data scene dan baris ada di scenes.ts.
 
 // Judul tampil di kartu atas hanya selama scene pertama. highlight = satu frasa di dalam judul yang diwarnai oranye (opsional).
 export const META: BlockMeta = {
