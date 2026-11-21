@@ -1,0 +1,59 @@
+{
+  "lines": {
+    "cara-01": {
+      "hash": "3f514f06da92",
+      "file": "voiceover/cara-01.mp3",
+      "duration": 1.78
+    },
+    "cara-02": {
+      "hash": "e39fb1d8fc43",
+      "file": "voiceover/cara-02.mp3",
+      "duration": 8.42
+    },
+    "cta-01": {
+      "hash": "7dd252dd7b22",
+      "file": "voiceover/cta-01.mp3",
+      "duration": 3.77
+    },
+    "hook-01": {
+      "hash": "78e274012c26",
+      "file": "voiceover/hook-01.mp3",
+      "duration": 5.92
+    },
+    "hook-02": {
+      "hash": "eeca322a9de3",
+      "file": "voiceover/hook-02.mp3",
+      "duration": 3.2
+    },
+    "kesimpulan-01": {
+      "hash": "71e00d252c08",
+      "file": "voiceover/kesimpulan-01.mp3",
+      "duration": 5.34
+    },
+    "rawan-01": {
+      "hash": "1caaaec2eb00",
+      "file": "voiceover/rawan-01.mp3",
+      "duration": 8.81
+    },
+    "teaser-01": {
+      "hash": "2f614dcb8ef9",
+      "file": "voiceover/teaser-01.mp3",
+      "duration": 2.37
+    },
+    "teaser-02": {
+      "hash": "d2730eafab7a",
+      "file": "voiceover/teaser-02.mp3",
+      "duration": 9.78
+    },
+    "tebak-01": {
+      "hash": "61bfc9361d29",
+      "file": "voiceover/tebak-01.mp3",
+      "duration": 1.02
+    },
+    "tebak-02": {
+      "hash": "8a4b7646ba81",
+      "file": "voiceover/tebak-02.mp3",
+      "duration": 7.61
+    }
+  }
+}

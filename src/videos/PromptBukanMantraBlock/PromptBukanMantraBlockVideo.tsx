@@ -8,7 +8,7 @@ import { VO_FILES } from "./voiceover-files";
 // Belajar AI #2: Prompt Itu Bukan Mantra (Reels block 9:16). Tanpa BrandFooter: jenis folder ini memang tanpa footer (docs/block-reels.md).
 // Durasi scene mengikuti voiceover bila sudah ada.
 const SCENES = fitBlockScenes(BASE_SCENES, VO_MANIFEST, VO_FILES, META);
-export const TOTAL_FRAMES = totalFrames(SCENES);
+export const TOTAL_FRAMES = totalFrames(SCENES, META.voTail);
 
 export const PromptBukanMantraBlockVideo: React.FC<{ readonly theme: string }> = ({ theme }) => <BlockReels theme={theme} meta={META} scenes={SCENES} />;
 

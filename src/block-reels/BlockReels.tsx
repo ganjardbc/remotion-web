@@ -21,9 +21,10 @@ const TAIL = 0.6;
 const CAPTION_BOX = BLOCK_CAPTION_BOX;
 const CARD_TOP = 260;
 
-export const sceneFrames = (scenes: readonly BlockScene[]): number[] =>
-  scenes.map((s) => Math.ceil(Math.max(s.seconds, ...s.lines.map((l) => l.from + l.dur + TAIL)) * FPS));
-export const totalFrames = (scenes: readonly BlockScene[]): number => sceneFrames(scenes).reduce((a, b) => a + b, 0);
+// `tail` = ekor setelah baris terakhir (bawaan 0,6; `BlockMeta.voTail` menggantinya, harus sama dengan yang dipakai fitBlockScenes).
+export const sceneFrames = (scenes: readonly BlockScene[], tail: number = TAIL): number[] =>
+  scenes.map((s) => Math.ceil(Math.max(s.seconds, ...s.lines.map((l) => l.from + l.dur + tail)) * FPS));
+export const totalFrames = (scenes: readonly BlockScene[], tail: number = TAIL): number => sceneFrames(scenes, tail).reduce((a, b) => a + b, 0);
 
 const SFX_VOLUME = 0.5;
 const POP_VOLUME = 0.22;
@@ -53,7 +54,7 @@ const Sound: React.FC<{ readonly scenes: readonly BlockScene[]; readonly starts:
 );
 
 export const BlockReels: React.FC<{ readonly theme: string; readonly meta: BlockMeta; readonly scenes: readonly BlockScene[] }> = ({ theme, meta, scenes }) => {
-  const frames = sceneFrames(scenes);
+  const frames = sceneFrames(scenes, meta.voTail);
   const starts = frames.map((_, i) => frames.slice(0, i).reduce((a, b) => a + b, 0));
   // `highlight` (frasa di dalam judul) menjadi sorotan oranye lewat tanda `*...*`.
   const title = meta.highlight ? meta.title.replace(meta.highlight, `*${meta.highlight}*`) : meta.title;
