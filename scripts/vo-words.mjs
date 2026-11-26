@@ -92,20 +92,43 @@ const scribe = async (id) => {
 };
 
 const letters = (s) => s.replace(/[^A-Za-z0-9]/g, "").length;
-// Waktu mulai tiap token SPOKEN: posisi huruf pertama token dicari di daftar kata scribe (diurutkan menurut jumlah huruf).
+const norm = (s) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+// Waktu mulai tiap token SPOKEN. Token yang sama persis dengan kata scribe (setelah normalisasi) jadi jangkar; token di antara dua
+// jangkar (angka, singkatan, nama yang salah dengar) dibagi rata menurut jumlah huruf di rentang waktu kata scribe yang tersisa
+// sampai jangkar berikutnya. Dulu dipetakan lewat jumlah huruf kumulatif, yang meleset bila scribe menulis "22" untuk "dua puluh dua".
 const mapWords = (spoken, scribeWords) => {
-  const cum = [];
-  let c = 0;
-  for (const w of scribeWords) {
-    cum.push({ a: c, b: c + letters(w.text), start: w.start });
-    c += letters(w.text);
+  const toks = spoken.split(" ");
+  const out = new Array(toks.length);
+  let j = 0;
+  const anchors = []; // [indeks token, indeks kata scribe]
+  for (let i = 0; i < toks.length; i++) {
+    const k = scribeWords.findIndex((w, idx) => idx >= j && norm(w.text) === norm(toks[i]) && norm(toks[i]) !== "");
+    if (k >= 0 && k - j <= 2) {
+      anchors.push([i, k]);
+      j = k + 1;
+    }
   }
-  let pos = 0;
-  return spoken.split(" ").map((tok) => {
-    const hit = cum.find((x) => x.a <= pos && pos < x.b) ?? cum[cum.length - 1];
-    pos += letters(tok);
-    return [tok, Math.round(hit.start * 100) / 100];
-  });
+  anchors.push([toks.length, scribeWords.length]);
+  let pi = 0;
+  let pj = 0;
+  for (const [ai, aj] of anchors) {
+    const gap = toks.slice(pi, ai);
+    if (gap.length) {
+      const endT = aj < scribeWords.length ? scribeWords[aj].start : (scribeWords[scribeWords.length - 1].end ?? scribeWords[scribeWords.length - 1].start);
+      const prevT = pj > 0 ? scribeWords[pj - 1].start : 0;
+      const startT = aj > pj ? scribeWords[pj].start : prevT + (endT - prevT) * 0.5;
+      const total = gap.reduce((a, t) => a + Math.max(1, letters(t)), 0);
+      let acc = 0;
+      gap.forEach((t, n) => {
+        out[pi + n] = [t, Math.round((startT + ((endT - startT) * acc) / total) * 100) / 100];
+        acc += Math.max(1, letters(t));
+      });
+    }
+    if (ai < toks.length) out[ai] = [toks[ai], Math.round(scribeWords[aj].start * 100) / 100];
+    pi = ai + 1;
+    pj = aj + 1;
+  }
+  return out;
 };
 
 const result = {};
