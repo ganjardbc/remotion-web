@@ -1,0 +1,44 @@
+{
+  "lines": {
+    "agen": {
+      "hash": "be87b2e59fa8",
+      "file": "voiceover/agen.mp3",
+      "duration": 7.94
+    },
+    "cta": {
+      "hash": "44068cd0854a",
+      "file": "voiceover/cta.mp3",
+      "duration": 5.22
+    },
+    "hook": {
+      "hash": "e6967ecf7a14",
+      "file": "voiceover/hook.mp3",
+      "duration": 7.92
+    },
+    "init": {
+      "hash": "b194b2aef52d",
+      "file": "voiceover/init.mp3",
+      "duration": 7.03
+    },
+    "install": {
+      "hash": "9378b54662ae",
+      "file": "voiceover/install.mp3",
+      "duration": 7.77
+    },
+    "konteks": {
+      "hash": "eac4c6a6220a",
+      "file": "voiceover/konteks.mp3",
+      "duration": 7.84
+    },
+    "pakai": {
+      "hash": "dd35fa520510",
+      "file": "voiceover/pakai.mp3",
+      "duration": 7.1
+    },
+    "syarat": {
+      "hash": "536e433499d5",
+      "file": "voiceover/syarat.mp3",
+      "duration": 8.2
+    }
+  }
+}
