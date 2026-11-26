@@ -1,0 +1,44 @@
+{
+  "lines": {
+    "agen": {
+      "hash": "597e84c0a63f",
+      "file": "voiceover/agen.mp3",
+      "duration": 6.68
+    },
+    "closing": {
+      "hash": "1e050ebda167",
+      "file": "voiceover/closing.mp3",
+      "duration": 5.68
+    },
+    "cta": {
+      "hash": "b8630649fbef",
+      "file": "voiceover/cta.mp3",
+      "duration": 5.5
+    },
+    "hook": {
+      "hash": "a412c085420c",
+      "file": "voiceover/hook.mp3",
+      "duration": 6.01
+    },
+    "install": {
+      "hash": "702e226b3525",
+      "file": "voiceover/install.mp3",
+      "duration": 7.91
+    },
+    "kode": {
+      "hash": "77c32d65cf83",
+      "file": "voiceover/kode.mp3",
+      "duration": 8.22
+    },
+    "konteks": {
+      "hash": "bbcaac446214",
+      "file": "voiceover/konteks.mp3",
+      "duration": 8.1
+    },
+    "render": {
+      "hash": "fe3cc4d9bbde",
+      "file": "voiceover/render.mp3",
+      "duration": 8.37
+    }
+  }
+}
